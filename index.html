@@ -693,6 +693,8 @@ async function doLogin() {
     if (error) {
       showLoginError('ã¡ã¼ã«ã¢ãã¬ã¹ã¾ãã¯ãã¹ã¯ã¼ããéãã¾ã: ' + error.message);
       btn.disabled = false; btn.textContent = 'ã­ã°ã¤ã³';
+    } else if (data?.user) {
+      await onLogin(data.user);
     }
   } catch(e) {
     showLoginError('æ¥ç¶ã¨ã©ã¼ãçºçãã¾ããããã°ããå¾ã£ã¦ããåè©¦è¡ãã¦ãã ããã');
