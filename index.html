@@ -688,10 +688,17 @@ async function doLogin() {
   const errEl = document.getElementById('login-error');
   if (!email || !password) { showLoginError('メールアドレスとパスワードを入力してください'); return; }
   btn.disabled = true; btn.textContent = 'ログイン中...';
-  const { error } = await sbClient.auth.signInWithPassword({ email, password });
-  if (error) {
-    showLoginError('メールアドレスまたはパスワードが違います');
+  try {
+    const { error } = await sbClient.auth.signInWithPassword({ email, password });
+    if (error) {
+      showLoginError('メールアドレスまたはパスワードが違います: ' + error.message);
+      btn.disabled = false; btn.textContent = 'ログイン';
+    }
+  } catch(e) {
+    showLoginError('接続エラーが発生しました。しばらく待ってから再試行してください。');
     btn.disabled = false; btn.textContent = 'ログイン';
+    // loadingが残っていたら消す
+    document.getElementById('loading').style.display = 'none';
   }
 }
 
@@ -748,7 +755,8 @@ function onLogout() {
 
 async function onLogin(user) {
   currentUser = user;
-  document.getElementById('loading').style.display = 'flex';
+  // ログイン中はボタンをdisabledのまま・login-screenを残す
+  // loadingは表示しない（エラー時に消えなくなるため）
 
   try {
     // プロフィール取得
