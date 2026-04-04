@@ -342,7 +342,7 @@
 <body>
 
 <!-- ===== LOADING ===== -->
-<div class="loading-overlay" id="loading">
+<div class="loading-overlay" id="loading" style="display:flex;">
   <div class="loading-spinner"></div>
   <div class="loading-text">読み込み中...</div>
 </div>
@@ -640,13 +640,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  // セッション確認
-  const { data: { session } } = await sbClient.auth.getSession();
-  if (session) {
-    await onLogin(session.user);
-  } else {
-    showLogin();
-  }
+  // 常にログイン画面から開始
+  showLogin();
 
   // 認証状態の変化を監視
   sbClient.auth.onAuthStateChange(async (event, session) => {
