@@ -600,9 +600,9 @@
 // Supabaseダッシュボードから取得してここに貼る
 // ========================================
 const SUPABASE_URL = 'https://wyeodzyywcvsaywocbgk.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_CgLtLvDgw1k-tE2s3U9TWg_D2hP8DrK';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5ZW9kenl5d2N2c2F5d29jYmdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzMDMzMjYsImV4cCI6MjA5MDg3OTMyNn0.0jRfnWsyQABP2V5wLcz1nClIW5-lp5ZSjNf-fdPmaF8';
 
-const LINE_ID = "@xxxxx"; // 自分の公式LINEのIDに書き換える
+const LINE_ID = "@597ckygq"; // 自分の公式LINEのIDに書き換える
 
 // ========================================
 // CARRIER CONFIG
@@ -631,22 +631,21 @@ let currentFilter = "all";
 // INIT
 // ========================================
 document.addEventListener('DOMContentLoaded', async () => {
-  // Supabase初期化
+  // まず確実にloadingを非表示・ログイン画面を表示
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+
+  // Supabase未設定の場合はデモモード
   if (SUPABASE_URL === 'YOUR_SUPABASE_URL') {
     showDemoMode();
     return;
   }
 
-  // 最初にloadingを表示
-  document.getElementById('loading').style.display = 'flex';
-
+  // Supabase初期化
   sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  // 少し待ってからログイン画面を表示（SDK初期化待ち）
-  await new Promise(r => setTimeout(r, 500));
-  showLogin();
-
-  // 認証状態の変化を監視
+  // 認証状態の変化を監視（ログイン・ログアウト）
   sbClient.auth.onAuthStateChange(async (event, session) => {
     if (event === 'SIGNED_IN' && session) {
       await onLogin(session.user);
