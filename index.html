@@ -344,28 +344,28 @@
 <!-- ===== LOADING ===== -->
 <div class="loading-overlay" id="loading" style="display:none;">
   <div class="loading-spinner"></div>
-  <div class="loading-text">読み込み中...</div>
+  <div class="loading-text">èª­ã¿è¾¼ã¿ä¸­...</div>
 </div>
 
 <!-- ===== LOGIN SCREEN ===== -->
 <div id="login-screen" style="display:none;">
   <div class="login-logo">
-    <div class="logo-mark">📋</div>
+    <div class="logo-mark">ð</div>
     <h1>SALES EVENT PORTAL</h1>
     <p>STAFF INTRANET</p>
   </div>
   <div class="login-card">
-    <h2>ログイン</h2>
-    <p>スタッフ専用ポータルへようこそ</p>
+    <h2>ã­ã°ã¤ã³</h2>
+    <p>ã¹ã¿ããå°ç¨ãã¼ã¿ã«ã¸ãããã</p>
     <div class="form-group">
-      <label class="form-label">メールアドレス</label>
+      <label class="form-label">ã¡ã¼ã«ã¢ãã¬ã¹</label>
       <input type="email" class="form-input" id="login-email" placeholder="staff@example.com" autocomplete="email">
     </div>
     <div class="form-group">
-      <label class="form-label">パスワード</label>
-      <input type="password" class="form-input" id="login-password" placeholder="••••••••" autocomplete="current-password">
+      <label class="form-label">ãã¹ã¯ã¼ã</label>
+      <input type="password" class="form-input" id="login-password" placeholder="â¢â¢â¢â¢â¢â¢â¢â¢" autocomplete="current-password">
     </div>
-    <button class="btn-login" id="btn-login" onclick="doLogin()">ログイン</button>
+    <button class="btn-login" id="btn-login" onclick="doLogin()">ã­ã°ã¤ã³</button>
     <div class="login-error" id="login-error"></div>
 
   </div>
@@ -373,57 +373,57 @@
 
 <!-- ===== MAIN APP ===== -->
 <div id="app">
-  <!-- ユーザーヘッダー -->
+  <!-- ã¦ã¼ã¶ã¼ãããã¼ -->
   <div class="user-header">
     <div class="user-avatar" id="header-avatar">?</div>
     <div class="user-info">
-      <div class="name" id="header-name">—</div>
+      <div class="name" id="header-name">â</div>
       <div class="role"><span class="role-badge" id="header-role-badge"></span></div>
     </div>
-    <button class="btn-logout" onclick="doLogout()">ログアウト</button>
+    <button class="btn-logout" onclick="doLogout()">ã­ã°ã¢ã¦ã</button>
   </div>
 
   <!-- ===== PAGE: HOME ===== -->
   <div class="page active" id="page-home">
     <div style="margin-bottom:24px;">
       <div style="font-family:'Space Mono',monospace;font-size:11px;color:var(--muted);margin-bottom:6px;" id="today-date"></div>
-      <h2 style="font-size:24px;font-weight:900;color:var(--text);">おはようございます、<br><span style="color:var(--accent);" id="user-name">—</span>さん 👋</h2>
+      <h2 style="font-size:24px;font-weight:900;color:var(--text);">ãã¯ãããããã¾ãã<br><span style="color:var(--accent);" id="user-name">â</span>ãã ð</h2>
     </div>
     <div class="stats-grid">
       <div class="stat-card highlight">
-        <div class="stat-label">今月の予想報酬</div>
-        <div class="stat-value" id="home-monthly-salary">¥0</div>
-        <div style="font-size:11px;color:var(--muted);margin-top:6px;" id="home-salary-sub">稼働データを入力してください</div>
+        <div class="stat-label">ä»æã®äºæ³å ±é¬</div>
+        <div class="stat-value" id="home-monthly-salary">Â¥0</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:6px;" id="home-salary-sub">ç¨¼åãã¼ã¿ãå¥åãã¦ãã ãã</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">今月の稼働日数</div>
-        <div class="stat-value" id="home-days">0<small> 日</small></div>
+        <div class="stat-label">ä»æã®ç¨¼åæ¥æ°</div>
+        <div class="stat-value" id="home-days">0<small> æ¥</small></div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">交通費（申請済）</div>
-        <div class="stat-value" id="home-transport">¥0</div>
+        <div class="stat-label">äº¤éè²»ï¼ç³è«æ¸ï¼</div>
+        <div class="stat-value" id="home-transport">Â¥0</div>
       </div>
     </div>
-    <div class="section-title">🔥 あなた向けの案件</div>
+    <div class="section-title">ð¥ ããªãåãã®æ¡ä»¶</div>
     <div id="home-jobs-preview"></div>
-    <button class="btn btn-secondary btn-block" onclick="switchPage('page-jobs')" style="margin-bottom:16px;">すべての案件を見る →</button>
-    <div class="section-title">📌 応募中の案件</div>
+    <button class="btn btn-secondary btn-block" onclick="switchPage('page-jobs')" style="margin-bottom:16px;">ãã¹ã¦ã®æ¡ä»¶ãè¦ã â</button>
+    <div class="section-title">ð å¿åä¸­ã®æ¡ä»¶</div>
     <div id="home-applied-preview"></div>
   </div>
 
   <!-- ===== PAGE: JOBS ===== -->
   <div class="page" id="page-jobs">
     <div class="page-header">
-      <h1>📋 案件リスト</h1>
-      <p>SALES EVENT PORTAL <span id="jobs-count-badge" class="badge badge-accent" style="margin-left:8px;">募集中 0件</span></p>
+      <h1>ð æ¡ä»¶ãªã¹ã</h1>
+      <p>SALES EVENT PORTAL <span id="jobs-count-badge" class="badge badge-accent" style="margin-left:8px;">åéä¸­ 0ä»¶</span></p>
     </div>
     <div class="filter-bar" id="filter-bar">
-      <button class="filter-btn active" data-carrier="all" onclick="filterJobs(this)">すべて</button>
-      <button class="filter-btn" data-carrier="docomo" onclick="filterJobs(this)">🍄 docomo</button>
-      <button class="filter-btn" data-carrier="au" onclick="filterJobs(this)">🍊 au</button>
-      <button class="filter-btn" data-carrier="softbank" onclick="filterJobs(this)">⚪ SoftBank</button>
-      <button class="filter-btn" data-carrier="uq" onclick="filterJobs(this)">♕ UQ</button>
-      <button class="filter-btn" data-carrier="ymobile" onclick="filterJobs(this)">🐱 Y!mobile</button>
+      <button class="filter-btn active" data-carrier="all" onclick="filterJobs(this)">ãã¹ã¦</button>
+      <button class="filter-btn" data-carrier="docomo" onclick="filterJobs(this)">ð docomo</button>
+      <button class="filter-btn" data-carrier="au" onclick="filterJobs(this)">ð au</button>
+      <button class="filter-btn" data-carrier="softbank" onclick="filterJobs(this)">âª SoftBank</button>
+      <button class="filter-btn" data-carrier="uq" onclick="filterJobs(this)">â UQ</button>
+      <button class="filter-btn" data-carrier="ymobile" onclick="filterJobs(this)">ð± Y!mobile</button>
     </div>
     <div id="jobs-container"></div>
   </div>
@@ -431,8 +431,8 @@
   <!-- ===== PAGE: MY PAGE ===== -->
   <div class="page" id="page-mypage">
     <div class="page-header">
-      <h1>✅ 応募管理</h1>
-      <p>応募中・確定済みの案件を管理</p>
+      <h1>â å¿åç®¡ç</h1>
+      <p>å¿åä¸­ã»ç¢ºå®æ¸ã¿ã®æ¡ä»¶ãç®¡ç</p>
     </div>
     <div id="applied-list"></div>
   </div>
@@ -440,95 +440,95 @@
   <!-- ===== PAGE: TRANSPORT ===== -->
   <div class="page" id="page-transport">
     <div class="page-header flex-between" style="display:flex;justify-content:space-between;align-items:flex-start;">
-      <div><h1>🚗 交通費申請</h1><p>案件ごとの交通費を記録・申請</p></div>
-      <button class="btn btn-primary btn-sm" onclick="openTransportForm()">＋ 新規申請</button>
+      <div><h1>ð äº¤éè²»ç³è«</h1><p>æ¡ä»¶ãã¨ã®äº¤éè²»ãè¨é²ã»ç³è«</p></div>
+      <button class="btn btn-primary btn-sm" onclick="openTransportForm()">ï¼ æ°è¦ç³è«</button>
     </div>
     <div class="stats-grid" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:20px;">
-      <div class="stat-card" style="padding:14px;"><div class="stat-label">申請中</div><div class="stat-value" style="font-size:22px;" id="t-pending-count">0</div></div>
-      <div class="stat-card" style="padding:14px;"><div class="stat-label">承認済</div><div class="stat-value" style="font-size:22px;color:var(--green);" id="t-approved-count">0</div></div>
-      <div class="stat-card" style="padding:14px;"><div class="stat-label">今月合計</div><div class="stat-value" style="font-size:16px;" id="t-month-total">¥0</div></div>
+      <div class="stat-card" style="padding:14px;"><div class="stat-label">ç³è«ä¸­</div><div class="stat-value" style="font-size:22px;" id="t-pending-count">0</div></div>
+      <div class="stat-card" style="padding:14px;"><div class="stat-label">æ¿èªæ¸</div><div class="stat-value" style="font-size:22px;color:var(--green);" id="t-approved-count">0</div></div>
+      <div class="stat-card" style="padding:14px;"><div class="stat-label">ä»æåè¨</div><div class="stat-value" style="font-size:16px;" id="t-month-total">Â¥0</div></div>
     </div>
-    <div class="section-title">申請履歴</div>
-    <div class="card" id="transport-list"><div class="empty"><div class="icon">🚃</div><h3>申請がありません</h3></div></div>
+    <div class="section-title">ç³è«å±¥æ­´</div>
+    <div class="card" id="transport-list"><div class="empty"><div class="icon">ð</div><h3>ç³è«ãããã¾ãã</h3></div></div>
   </div>
 
   <!-- ===== PAGE: SALARY ===== -->
   <div class="page" id="page-salary">
-    <div class="page-header"><h1>💰 報酬計算</h1><p>稼働日数・単価から報酬をシミュレーション</p></div>
+    <div class="page-header"><h1>ð° å ±é¬è¨ç®</h1><p>ç¨¼åæ¥æ°ã»åä¾¡ããå ±é¬ãã·ãã¥ã¬ã¼ã·ã§ã³</p></div>
     <div class="calc-display">
-      <div class="result-label">手取り予想額</div>
-      <div class="result-value">¥<span id="calc-net">0</span></div>
-      <div style="font-size:12px;color:var(--muted);margin-top:8px;" id="calc-gross-label">税引き前: ¥0</div>
+      <div class="result-label">æåãäºæ³é¡</div>
+      <div class="result-value">Â¥<span id="calc-net">0</span></div>
+      <div style="font-size:12px;color:var(--muted);margin-top:8px;" id="calc-gross-label">ç¨å¼ãå: Â¥0</div>
     </div>
     <div class="card">
       <div class="form-group">
-        <label class="form-label">単価（円/日）</label>
+        <label class="form-label">åä¾¡ï¼å/æ¥ï¼</label>
         <input type="number" class="form-input" id="calc-price" value="27000" min="0" step="1000" oninput="calcSalary()">
       </div>
       <div class="form-group">
-        <label class="form-label">稼働日数: <span id="calc-days-label">5</span>日</label>
+        <label class="form-label">ç¨¼åæ¥æ°: <span id="calc-days-label">5</span>æ¥</label>
         <input type="range" id="calc-days" min="1" max="31" value="5" oninput="calcSalary();document.getElementById('calc-days-label').textContent=this.value">
       </div>
       <div class="form-group">
-        <label class="form-label">交通費（円）</label>
+        <label class="form-label">äº¤éè²»ï¼åï¼</label>
         <input type="number" class="form-input" id="calc-transport" value="0" min="0" step="500" oninput="calcSalary()">
       </div>
       <div class="toggle-row">
-        <div class="toggle-label">源泉徴収を引く（10.21%）</div>
+        <div class="toggle-label">æºæ³å¾´åãå¼ãï¼10.21%ï¼</div>
         <label class="toggle"><input type="checkbox" id="calc-tax" onchange="calcSalary()"><span class="toggle-track"></span></label>
       </div>
       <div class="toggle-row">
-        <div class="toggle-label">交通費を含める</div>
+        <div class="toggle-label">äº¤éè²»ãå«ãã</div>
         <label class="toggle"><input type="checkbox" id="calc-inc-transport" checked onchange="calcSalary()"><span class="toggle-track"></span></label>
       </div>
     </div>
     <div class="card"><div id="calc-breakdown"></div></div>
-    <div class="section-title">📊 稼働履歴</div>
-    <div class="card" id="history-list"><div class="empty"><div class="icon">📅</div><h3>稼働履歴がありません</h3></div></div>
+    <div class="section-title">ð ç¨¼åå±¥æ­´</div>
+    <div class="card" id="history-list"><div class="empty"><div class="icon">ð</div><h3>ç¨¼åå±¥æ­´ãããã¾ãã</h3></div></div>
   </div>
 
   <!-- ===== PAGE: ADMIN ===== -->
   <div class="page" id="page-admin">
-    <div class="page-header"><h1>⚙️ 管理者画面</h1><p>スタッフ管理・案件管理</p></div>
+    <div class="page-header"><h1>âï¸ ç®¡çèç»é¢</h1><p>ã¹ã¿ããç®¡çã»æ¡ä»¶ç®¡ç</p></div>
     <div class="admin-tab-bar">
-      <button class="admin-tab active" onclick="switchAdminTab('tab-users',this)">👥 スタッフ</button>
-      <button class="admin-tab" onclick="switchAdminTab('tab-jobs-admin',this)">📋 案件管理</button>
-      <button class="admin-tab" onclick="switchAdminTab('tab-transport-admin',this)">🚗 交通費承認</button>
+      <button class="admin-tab active" onclick="switchAdminTab('tab-users',this)">ð¥ ã¹ã¿ãã</button>
+      <button class="admin-tab" onclick="switchAdminTab('tab-jobs-admin',this)">ð æ¡ä»¶ç®¡ç</button>
+      <button class="admin-tab" onclick="switchAdminTab('tab-transport-admin',this)">ð äº¤éè²»æ¿èª</button>
     </div>
 
-    <!-- スタッフ管理 -->
+    <!-- ã¹ã¿ããç®¡ç -->
     <div class="admin-section active" id="tab-users">
       <div class="flex-between" style="margin-bottom:16px;">
-        <div style="font-size:13px;color:var(--muted);" id="user-count-label">—</div>
-        <button class="btn btn-primary btn-sm" onclick="openInviteModal()">＋ スタッフ招待</button>
+        <div style="font-size:13px;color:var(--muted);" id="user-count-label">â</div>
+        <button class="btn btn-primary btn-sm" onclick="openInviteModal()">ï¼ ã¹ã¿ããæå¾</button>
       </div>
-      <div class="card" id="user-list"><div class="empty"><div class="icon">👥</div><h3>スタッフがいません</h3></div></div>
+      <div class="card" id="user-list"><div class="empty"><div class="icon">ð¥</div><h3>ã¹ã¿ããããã¾ãã</h3></div></div>
     </div>
 
-    <!-- 案件管理 -->
+    <!-- æ¡ä»¶ç®¡ç -->
     <div class="admin-section" id="tab-jobs-admin">
       <div class="flex-between" style="margin-bottom:16px;">
-        <div style="font-size:13px;color:var(--muted);">掲載中の案件</div>
-        <button class="btn btn-primary btn-sm" onclick="openAddJobModal()">＋ 案件追加</button>
+        <div style="font-size:13px;color:var(--muted);">æ²è¼ä¸­ã®æ¡ä»¶</div>
+        <button class="btn btn-primary btn-sm" onclick="openAddJobModal()">ï¼ æ¡ä»¶è¿½å </button>
       </div>
       <div id="admin-jobs-list"></div>
     </div>
 
-    <!-- 交通費承認 -->
+    <!-- äº¤éè²»æ¿èª -->
     <div class="admin-section" id="tab-transport-admin">
-      <div style="font-size:13px;color:var(--muted);margin-bottom:16px;">申請中の交通費</div>
-      <div class="card" id="admin-transport-list"><div class="empty"><div class="icon">🚗</div><h3>申請がありません</h3></div></div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:16px;">ç³è«ä¸­ã®äº¤éè²»</div>
+      <div class="card" id="admin-transport-list"><div class="empty"><div class="icon">ð</div><h3>ç³è«ãããã¾ãã</h3></div></div>
     </div>
   </div>
 
   <!-- ===== BOTTOM NAV ===== -->
   <nav class="bottom-nav" id="bottom-nav">
-    <div class="nav-item active" id="nav-home" onclick="switchPage('page-home',this)"><div class="nav-icon">🏠</div><div>ホーム</div></div>
-    <div class="nav-item" id="nav-jobs" onclick="switchPage('page-jobs',this)"><div class="nav-icon">📋</div><div>案件</div><div class="nav-dot" id="jobs-dot"></div></div>
-    <div class="nav-item" id="nav-mypage" onclick="switchPage('page-mypage',this)"><div class="nav-icon">✅</div><div>応募管理</div></div>
-    <div class="nav-item" id="nav-transport" onclick="switchPage('page-transport',this)"><div class="nav-icon">🚗</div><div>交通費</div></div>
-    <div class="nav-item" id="nav-salary" onclick="switchPage('page-salary',this)"><div class="nav-icon">💰</div><div>報酬</div></div>
-    <div class="nav-item" id="nav-admin" onclick="switchPage('page-admin',this)" style="display:none;"><div class="nav-icon">⚙️</div><div>管理</div></div>
+    <div class="nav-item active" id="nav-home" onclick="switchPage('page-home',this)"><div class="nav-icon">ð </div><div>ãã¼ã </div></div>
+    <div class="nav-item" id="nav-jobs" onclick="switchPage('page-jobs',this)"><div class="nav-icon">ð</div><div>æ¡ä»¶</div><div class="nav-dot" id="jobs-dot"></div></div>
+    <div class="nav-item" id="nav-mypage" onclick="switchPage('page-mypage',this)"><div class="nav-icon">â</div><div>å¿åç®¡ç</div></div>
+    <div class="nav-item" id="nav-transport" onclick="switchPage('page-transport',this)"><div class="nav-icon">ð</div><div>äº¤éè²»</div></div>
+    <div class="nav-item" id="nav-salary" onclick="switchPage('page-salary',this)"><div class="nav-icon">ð°</div><div>å ±é¬</div></div>
+    <div class="nav-item" id="nav-admin" onclick="switchPage('page-admin',this)" style="display:none;"><div class="nav-icon">âï¸</div><div>ç®¡ç</div></div>
   </nav>
 </div>
 
@@ -550,17 +550,17 @@
 <div class="modal-overlay" id="transport-modal" onclick="if(event.target===this)this.classList.remove('open')">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
-    <h2 style="font-size:18px;font-weight:900;margin-bottom:20px;">🚗 交通費申請</h2>
-    <div class="form-group"><label class="form-label">案件名 / 店舗名</label><input type="text" class="form-input" id="t-job-name" placeholder="例：新潟亀田駅（docomo）"></div>
+    <h2 style="font-size:18px;font-weight:900;margin-bottom:20px;">ð äº¤éè²»ç³è«</h2>
+    <div class="form-group"><label class="form-label">æ¡ä»¶å / åºèå</label><input type="text" class="form-input" id="t-job-name" placeholder="ä¾ï¼æ°æ½äºç°é§ï¼docomoï¼"></div>
     <div class="input-row">
-      <div class="form-group"><label class="form-label">稼働日</label><input type="date" class="form-input" id="t-date"></div>
-      <div class="form-group"><label class="form-label">金額（円）</label><input type="number" class="form-input" id="t-amount" placeholder="3200" min="0"></div>
+      <div class="form-group"><label class="form-label">ç¨¼åæ¥</label><input type="date" class="form-input" id="t-date"></div>
+      <div class="form-group"><label class="form-label">éé¡ï¼åï¼</label><input type="number" class="form-input" id="t-amount" placeholder="3200" min="0"></div>
     </div>
-    <div class="form-group"><label class="form-label">交通手段</label><select class="form-input" id="t-method"><option>新幹線</option><option>電車</option><option>バス</option><option>タクシー</option><option>自家用車</option><option>高速代</option><option>その他</option></select></div>
-    <div class="form-group"><label class="form-label">区間（任意）</label><input type="text" class="form-input" id="t-route" placeholder="例：渋谷→新潟"></div>
-    <div class="form-group"><label class="form-label">備考（任意）</label><input type="text" class="form-input" id="t-note"></div>
-    <button class="btn btn-primary btn-block" onclick="submitTransport()">申請する</button>
-    <button class="btn btn-secondary btn-block" style="margin-top:8px;" onclick="document.getElementById('transport-modal').classList.remove('open')">キャンセル</button>
+    <div class="form-group"><label class="form-label">äº¤éææ®µ</label><select class="form-input" id="t-method"><option>æ°å¹¹ç·</option><option>é»è»</option><option>ãã¹</option><option>ã¿ã¯ã·ã¼</option><option>èªå®¶ç¨è»</option><option>é«éä»£</option><option>ãã®ä»</option></select></div>
+    <div class="form-group"><label class="form-label">åºéï¼ä»»æï¼</label><input type="text" class="form-input" id="t-route" placeholder="ä¾ï¼æ¸è°·âæ°æ½"></div>
+    <div class="form-group"><label class="form-label">åèï¼ä»»æï¼</label><input type="text" class="form-input" id="t-note"></div>
+    <button class="btn btn-primary btn-block" onclick="submitTransport()">ç³è«ãã</button>
+    <button class="btn btn-secondary btn-block" style="margin-top:8px;" onclick="document.getElementById('transport-modal').classList.remove('open')">ã­ã£ã³ã»ã«</button>
   </div>
 </div>
 
@@ -568,51 +568,51 @@
 <div class="modal-overlay" id="invite-modal" onclick="if(event.target===this)this.classList.remove('open')">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
-    <h2 style="font-size:18px;font-weight:900;margin-bottom:8px;">👥 スタッフ招待</h2>
-    <p style="font-size:13px;color:var(--muted);margin-bottom:20px;">メールアドレスに招待リンクを送ります</p>
-    <div class="form-group"><label class="form-label">メールアドレス</label><input type="email" class="form-input" id="invite-email" placeholder="staff@example.com"></div>
-    <div class="form-group"><label class="form-label">表示名</label><input type="text" class="form-input" id="invite-name" placeholder="山田 太郎"></div>
+    <h2 style="font-size:18px;font-weight:900;margin-bottom:8px;">ð¥ ã¹ã¿ããæå¾</h2>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:20px;">ã¡ã¼ã«ã¢ãã¬ã¹ã«æå¾ãªã³ã¯ãéãã¾ã</p>
+    <div class="form-group"><label class="form-label">ã¡ã¼ã«ã¢ãã¬ã¹</label><input type="email" class="form-input" id="invite-email" placeholder="staff@example.com"></div>
+    <div class="form-group"><label class="form-label">è¡¨ç¤ºå</label><input type="text" class="form-input" id="invite-name" placeholder="å±±ç° å¤ªé"></div>
     <div class="form-group">
-      <label class="form-label">権限</label>
+      <label class="form-label">æ¨©é</label>
       <select class="form-input" id="invite-role">
-        <option value="staff">スタッフ</option>
-        <option value="admin">管理者</option>
+        <option value="staff">ã¹ã¿ãã</option>
+        <option value="admin">ç®¡çè</option>
       </select>
     </div>
     <div class="form-group">
-      <label class="form-label">表示キャリア（任意・未選択=全表示）</label>
+      <label class="form-label">è¡¨ç¤ºã­ã£ãªã¢ï¼ä»»æã»æªé¸æ=å¨è¡¨ç¤ºï¼</label>
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;" id="invite-carriers">
-        <label style="display:flex;align-items:center;gap:6px;font-size:13px;"><input type="checkbox" value="docomo"> 🍄 docomo</label>
-        <label style="display:flex;align-items:center;gap:6px;font-size:13px;"><input type="checkbox" value="au"> 🍊 au</label>
-        <label style="display:flex;align-items:center;gap:6px;font-size:13px;"><input type="checkbox" value="softbank"> ⚪ SoftBank</label>
-        <label style="display:flex;align-items:center;gap:6px;font-size:13px;"><input type="checkbox" value="uq"> ♕ UQ</label>
-        <label style="display:flex;align-items:center;gap:6px;font-size:13px;"><input type="checkbox" value="ymobile"> 🐱 Y!mobile</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px;"><input type="checkbox" value="docomo"> ð docomo</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px;"><input type="checkbox" value="au"> ð au</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px;"><input type="checkbox" value="softbank"> âª SoftBank</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px;"><input type="checkbox" value="uq"> â UQ</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px;"><input type="checkbox" value="ymobile"> ð± Y!mobile</label>
       </div>
     </div>
-    <button class="btn btn-primary btn-block" onclick="sendInvite()">招待メールを送る</button>
-    <button class="btn btn-secondary btn-block" style="margin-top:8px;" onclick="document.getElementById('invite-modal').classList.remove('open')">キャンセル</button>
+    <button class="btn btn-primary btn-block" onclick="sendInvite()">æå¾ã¡ã¼ã«ãéã</button>
+    <button class="btn btn-secondary btn-block" style="margin-top:8px;" onclick="document.getElementById('invite-modal').classList.remove('open')">ã­ã£ã³ã»ã«</button>
   </div>
 </div>
 
 <script>
 // ========================================
-// ★★★ SUPABASE 設定 ★★★
-// Supabaseダッシュボードから取得してここに貼る
+// âââ SUPABASE è¨­å® âââ
+// Supabaseããã·ã¥ãã¼ãããåå¾ãã¦ããã«è²¼ã
 // ========================================
 const SUPABASE_URL = 'https://wyeodzyywcvsaywocbgk.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5ZW9kenl5d2N2c2F5d29jYmdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzMDMzMjYsImV4cCI6MjA5MDg3OTMyNn0.0jRfnWsyQABP2V5wLcz1nClIW5-lp5ZSjNf-fdPmaF8';
 
-const LINE_ID = "@597ckygq"; // 自分の公式LINEのIDに書き換える
+const LINE_ID = "@597ckygq"; // èªåã®å¬å¼LINEã®IDã«æ¸ãæãã
 
 // ========================================
 // CARRIER CONFIG
 // ========================================
 const CARRIER = {
-  docomo:   { color:"#e53935", emoji:"🍄", label:"docomo" },
-  au:       { color:"#f57c00", emoji:"🍊", label:"au" },
-  softbank: { color:"#1565c0", emoji:"⚪", label:"SoftBank" },
-  uq:       { color:"#2e7d32", emoji:"♕", label:"UQ" },
-  ymobile:  { color:"#7b1fa2", emoji:"🐱", label:"Y!mobile" }
+  docomo:   { color:"#e53935", emoji:"ð", label:"docomo" },
+  au:       { color:"#f57c00", emoji:"ð", label:"au" },
+  softbank: { color:"#1565c0", emoji:"âª", label:"SoftBank" },
+  uq:       { color:"#2e7d32", emoji:"â", label:"UQ" },
+  ymobile:  { color:"#7b1fa2", emoji:"ð±", label:"Y!mobile" }
 };
 
 // ========================================
@@ -631,21 +631,21 @@ let currentFilter = "all";
 // INIT
 // ========================================
 document.addEventListener('DOMContentLoaded', async () => {
-  // まず確実にloadingを非表示・ログイン画面を表示
+  // ã¾ãç¢ºå®ã«loadingãéè¡¨ç¤ºã»ã­ã°ã¤ã³ç»é¢ãè¡¨ç¤º
   document.getElementById('loading').style.display = 'none';
   document.getElementById('login-screen').style.display = 'flex';
   document.getElementById('app').style.display = 'none';
 
-  // Supabase未設定の場合はデモモード
+  // Supabaseæªè¨­å®ã®å ´åã¯ãã¢ã¢ã¼ã
   if (SUPABASE_URL === 'YOUR_SUPABASE_URL') {
     showDemoMode();
     return;
   }
 
-  // Supabase初期化
+  // Supabaseåæå
   sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  // 認証状態の変化を監視（ログイン・ログアウト）
+  // èªè¨¼ç¶æã®å¤åãç£è¦ï¼ã­ã°ã¤ã³ã»ã­ã°ã¢ã¦ãï¼
   sbClient.auth.onAuthStateChange(async (event, session) => {
     if (event === 'SIGNED_IN' && session) {
       await onLogin(session.user);
@@ -656,25 +656,25 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 // ========================================
-// DEMO MODE（Supabase未設定時）
+// DEMO MODEï¼Supabaseæªè¨­å®æï¼
 // ========================================
 function showDemoMode() {
-  currentProfile = { name:"デモユーザー", role:"staff", allowed_carriers:[] };
+  currentProfile = { name:"ãã¢ã¦ã¼ã¶ã¼", role:"staff", allowed_carriers:[] };
   JOBS = getDemoJobs();
   document.getElementById('loading').style.display = 'none';
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app').style.display = 'block';
   initApp();
-  showToast("⚠️ デモモード（Supabase未接続）");
+  showToast("â ï¸ ãã¢ã¢ã¼ãï¼Supabaseæªæ¥ç¶ï¼");
 }
 
 function getDemoJobs() {
   return [
-    { id:1, carrier:"docomo", station:"新潟亀田駅", store:"ドコモショップ亀田店", price:30000, dates:"4/19(土)〜4/20(日)", transport:"交通費別途支給", lodging:"宿泊費支給あり", position:"クローザー", count:1, status:"open" },
-    { id:2, carrier:"au", station:"藤沢駅", store:"auショップ藤沢店", price:27000, dates:"4/25(金)〜4/27(日)", transport:"交通費込み", lodging:"", position:"クローザー", count:2, status:"open" },
-    { id:3, carrier:"softbank", station:"渋谷駅", store:"SoftBank渋谷", price:28000, dates:"4/26(土)〜4/27(日)", transport:"交通費別途支給", lodging:"", position:"オープナー", count:1, status:"full" },
-    { id:4, carrier:"uq", station:"梅田駅", store:"UQmobile梅田店", price:26000, dates:"5/3(土)〜5/6(火)", transport:"交通費込み", lodging:"宿泊費支給あり", position:"クローザー", count:3, status:"open" },
-    { id:5, carrier:"ymobile", station:"名古屋駅", store:"Y!mobile名古屋", price:25000, dates:"5/10(土)〜5/11(日)", transport:"交通費別途支給", lodging:"", position:"クローザー", count:1, status:"open" }
+    { id:1, carrier:"docomo", station:"æ°æ½äºç°é§", store:"ãã³ã¢ã·ã§ããäºç°åº", price:30000, dates:"4/19(å)ã4/20(æ¥)", transport:"äº¤éè²»å¥éæ¯çµ¦", lodging:"å®¿æ³è²»æ¯çµ¦ãã", position:"ã¯ã­ã¼ã¶ã¼", count:1, status:"open" },
+    { id:2, carrier:"au", station:"è¤æ²¢é§", store:"auã·ã§ããè¤æ²¢åº", price:27000, dates:"4/25(é)ã4/27(æ¥)", transport:"äº¤éè²»è¾¼ã¿", lodging:"", position:"ã¯ã­ã¼ã¶ã¼", count:2, status:"open" },
+    { id:3, carrier:"softbank", station:"æ¸è°·é§", store:"SoftBankæ¸è°·", price:28000, dates:"4/26(å)ã4/27(æ¥)", transport:"äº¤éè²»å¥éæ¯çµ¦", lodging:"", position:"ãªã¼ããã¼", count:1, status:"full" },
+    { id:4, carrier:"uq", station:"æ¢ç°é§", store:"UQmobileæ¢ç°åº", price:26000, dates:"5/3(å)ã5/6(ç«)", transport:"äº¤éè²»è¾¼ã¿", lodging:"å®¿æ³è²»æ¯çµ¦ãã", position:"ã¯ã­ã¼ã¶ã¼", count:3, status:"open" },
+    { id:5, carrier:"ymobile", station:"åå¤å±é§", store:"Y!mobileåå¤å±", price:25000, dates:"5/10(å)ã5/11(æ¥)", transport:"äº¤éè²»å¥éæ¯çµ¦", lodging:"", position:"ã¯ã­ã¼ã¶ã¼", count:1, status:"open" }
   ];
 }
 
@@ -686,18 +686,18 @@ async function doLogin() {
   const password = document.getElementById('login-password').value;
   const btn = document.getElementById('btn-login');
   const errEl = document.getElementById('login-error');
-  if (!email || !password) { showLoginError('メールアドレスとパスワードを入力してください'); return; }
-  btn.disabled = true; btn.textContent = 'ログイン中...';
+  if (!email || !password) { showLoginError('ã¡ã¼ã«ã¢ãã¬ã¹ã¨ãã¹ã¯ã¼ããå¥åãã¦ãã ãã'); return; }
+  btn.disabled = true; btn.textContent = 'ã­ã°ã¤ã³ä¸­...';
   try {
-    const { error } = await sbClient.auth.signInWithPassword({ email, password });
+    const { data, error } = await sbClient.auth.signInWithPassword({ email, password });
     if (error) {
-      showLoginError('メールアドレスまたはパスワードが違います: ' + error.message);
-      btn.disabled = false; btn.textContent = 'ログイン';
+      showLoginError('ã¡ã¼ã«ã¢ãã¬ã¹ã¾ãã¯ãã¹ã¯ã¼ããéãã¾ã: ' + error.message);
+      btn.disabled = false; btn.textContent = 'ã­ã°ã¤ã³';
     }
   } catch(e) {
-    showLoginError('接続エラーが発生しました。しばらく待ってから再試行してください。');
-    btn.disabled = false; btn.textContent = 'ログイン';
-    // loadingが残っていたら消す
+    showLoginError('æ¥ç¶ã¨ã©ã¼ãçºçãã¾ããããã°ããå¾ã£ã¦ããåè©¦è¡ãã¦ãã ããã');
+    btn.disabled = false; btn.textContent = 'ã­ã°ã¤ã³';
+    // loadingãæ®ã£ã¦ãããæ¶ã
     document.getElementById('loading').style.display = 'none';
   }
 }
@@ -724,7 +724,7 @@ function showLogin() {
 }
 
 function onLogout() {
-  // 状態リセット
+  // ç¶æãªã»ãã
   currentUser = null;
   currentProfile = null;
   JOBS = [];
@@ -733,19 +733,19 @@ function onLogout() {
   history = [];
   currentFilter = 'all';
 
-  // 画面切り替え
+  // ç»é¢åãæ¿ã
   document.getElementById('app').style.display = 'none';
   document.getElementById('loading').style.display = 'none';
   document.getElementById('login-screen').style.display = 'flex';
 
-  // フォームリセット
+  // ãã©ã¼ã ãªã»ãã
   document.getElementById('login-error').style.display = 'none';
   document.getElementById('login-email').value = '';
   document.getElementById('login-password').value = '';
   document.getElementById('btn-login').disabled = false;
-  document.getElementById('btn-login').textContent = 'ログイン';
+  document.getElementById('btn-login').textContent = 'ã­ã°ã¤ã³';
 
-  // ナビをホームに戻す
+  // ããããã¼ã ã«æ»ã
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-home').classList.add('active');
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -755,11 +755,11 @@ function onLogout() {
 
 async function onLogin(user) {
   currentUser = user;
-  // ログイン中はボタンをdisabledのまま・login-screenを残す
-  // loadingは表示しない（エラー時に消えなくなるため）
+  // ã­ã°ã¤ã³ä¸­ã¯ãã¿ã³ãdisabledã®ã¾ã¾ã»login-screenãæ®ã
+  // loadingã¯è¡¨ç¤ºããªãï¼ã¨ã©ã¼æã«æ¶ããªããªãããï¼
 
   try {
-    // プロフィール取得
+    // ãã­ãã£ã¼ã«åå¾
     const { data: profile } = await sbClient
       .from('profiles')
       .select('*')
@@ -781,7 +781,7 @@ async function onLogin(user) {
 
   } catch(e) {
     console.error('onLogin error:', e);
-    showToast('⚠️ データ取得に失敗しました');
+    showToast('â ï¸ ãã¼ã¿åå¾ã«å¤±æãã¾ãã');
   } finally {
     document.getElementById('loading').style.display = 'none';
     document.getElementById('login-screen').style.display = 'none';
@@ -798,7 +798,7 @@ async function loadJobs() {
   const { data } = await sbClient.from('jobs').select('*').order('created_at', { ascending:false });
   JOBS = data || getDemoJobs();
 
-  // キャリア制限フィルター（スタッフの場合）
+  // ã­ã£ãªã¢å¶éãã£ã«ã¿ã¼ï¼ã¹ã¿ããã®å ´åï¼
   if (currentProfile?.role !== 'admin' && currentProfile?.allowed_carriers?.length > 0) {
     JOBS = JOBS.filter(j => currentProfile.allowed_carriers.includes(j.carrier));
   }
@@ -830,26 +830,26 @@ async function loadApplied() {
 // INIT APP
 // ========================================
 function initApp() {
-  // ヘッダー
-  const name = currentProfile?.name || '—';
+  // ãããã¼
+  const name = currentProfile?.name || 'â';
   const role = currentProfile?.role || 'staff';
   const initials = name.charAt(0);
   document.getElementById('header-avatar').textContent = initials;
   document.getElementById('header-name').textContent = name;
   document.getElementById('user-name').textContent = name;
-  document.getElementById('header-role-badge').textContent = role === 'admin' ? '管理者' : 'スタッフ';
+  document.getElementById('header-role-badge').textContent = role === 'admin' ? 'ç®¡çè' : 'ã¹ã¿ãã';
   document.getElementById('header-role-badge').className = `role-badge ${role === 'admin' ? 'role-admin' : 'role-staff'}`;
   document.getElementById('today-date').textContent = new Date().toLocaleDateString('ja-JP', { year:'numeric', month:'long', day:'numeric', weekday:'long' });
 
-  // 管理者メニュー表示
+  // ç®¡çèã¡ãã¥ã¼è¡¨ç¤º
   if (role === 'admin') {
     document.getElementById('nav-admin').style.display = 'flex';
     loadAdminData();
   }
 
-  // 案件バッジ
+  // æ¡ä»¶ããã¸
   const opens = JOBS.filter(j => j.status === 'open').length;
-  document.getElementById('jobs-count-badge').textContent = `募集中 ${opens}件`;
+  document.getElementById('jobs-count-badge').textContent = `åéä¸­ ${opens}ä»¶`;
   if (opens > 0) document.getElementById('jobs-dot').style.display = 'block';
 
   renderJobs();
@@ -884,7 +884,7 @@ function switchAdminTab(tabId, btn) {
 // JOB RENDERING
 // ========================================
 function jobCardHTML(job, compact=false) {
-  const c = CARRIER[job.carrier] || { color:'#888', emoji:'📋', label:job.carrier };
+  const c = CARRIER[job.carrier] || { color:'#888', emoji:'ð', label:job.carrier };
   const isFull = job.status === 'full';
   const isApplied = appliedJobs.includes(job.id);
   return `
@@ -892,15 +892,15 @@ function jobCardHTML(job, compact=false) {
       <div class="carrier-bar" style="background:${c.color};margin-top:-22px;margin-left:-18px;width:calc(100% + 36px);border-radius:14px 14px 0 0;"></div>
       <div class="job-meta">
         <span class="carrier-tag">${c.emoji} ${c.label}</span>
-        ${isApplied ? '<span class="badge badge-accent">応募済</span>' : ''}
-        ${isFull ? '<span class="badge badge-muted">満員</span>' : '<span class="badge badge-green">募集中</span>'}
+        ${isApplied ? '<span class="badge badge-accent">å¿åæ¸</span>' : ''}
+        ${isFull ? '<span class="badge badge-muted">æºå¡</span>' : '<span class="badge badge-green">åéä¸­</span>'}
       </div>
       <div class="job-station">${job.station}</div>
       <div class="job-store">${job.store}</div>
       <div class="job-info-row">
-        <div class="job-info-item"><span>単価</span><div class="job-price">¥${job.price.toLocaleString()}<span style="font-size:13px;color:var(--muted)">/日</span></div></div>
-        <div class="job-info-item"><span>日程</span>${job.dates}</div>
-        <div class="job-info-item"><span>ポジション</span>${job.position} ${job.count}名</div>
+        <div class="job-info-item"><span>åä¾¡</span><div class="job-price">Â¥${job.price.toLocaleString()}<span style="font-size:13px;color:var(--muted)">/æ¥</span></div></div>
+        <div class="job-info-item"><span>æ¥ç¨</span>${job.dates}</div>
+        <div class="job-info-item"><span>ãã¸ã·ã§ã³</span>${job.position} ${job.count}å</div>
       </div>
       ${!compact ? `<div style="font-size:12px;color:var(--muted);">${job.transport}${job.lodging?' / '+job.lodging:''}</div>` : ''}
     </div>`;
@@ -909,7 +909,7 @@ function jobCardHTML(job, compact=false) {
 function renderJobs() {
   const container = document.getElementById('jobs-container');
   const filtered = currentFilter === 'all' ? JOBS : JOBS.filter(j => j.carrier === currentFilter);
-  if (!filtered.length) { container.innerHTML = '<div class="empty"><div class="icon">📋</div><h3>案件がありません</h3><p>フィルターを変えてみてください</p></div>'; return; }
+  if (!filtered.length) { container.innerHTML = '<div class="empty"><div class="icon">ð</div><h3>æ¡ä»¶ãããã¾ãã</h3><p>ãã£ã«ã¿ã¼ãå¤ãã¦ã¿ã¦ãã ãã</p></div>'; return; }
   container.innerHTML = filtered.map(j => jobCardHTML(j)).join('');
 }
 
@@ -927,28 +927,28 @@ function renderHome() {
   const opens = JOBS.filter(j => j.status === 'open').slice(0, 2);
   document.getElementById('home-jobs-preview').innerHTML = opens.length
     ? opens.map(j => jobCardHTML(j, true)).join('')
-    : '<div style="padding:12px 0;color:var(--muted);font-size:13px;text-align:center;">新着案件はありません</div>';
+    : '<div style="padding:12px 0;color:var(--muted);font-size:13px;text-align:center;">æ°çæ¡ä»¶ã¯ããã¾ãã</div>';
 
   const applied = JOBS.filter(j => appliedJobs.includes(j.id)).slice(0, 2);
   document.getElementById('home-applied-preview').innerHTML = applied.length
     ? applied.map(j => `<div class="card" style="display:flex;gap:12px;align-items:center;cursor:pointer;" onclick="switchPage('page-mypage')">
         <div style="width:8px;height:48px;border-radius:4px;background:${CARRIER[j.carrier]?.color||'#888'};flex-shrink:0;"></div>
-        <div style="flex:1;min-width:0;"><div style="font-size:15px;font-weight:700;">${j.station}</div><div style="font-size:12px;color:var(--muted);">${j.dates} · ${j.position}</div></div>
-        <span class="badge badge-accent">応募済</span>
+        <div style="flex:1;min-width:0;"><div style="font-size:15px;font-weight:700;">${j.station}</div><div style="font-size:12px;color:var(--muted);">${j.dates} Â· ${j.position}</div></div>
+        <span class="badge badge-accent">å¿åæ¸</span>
       </div>`).join('')
-    : '<div style="padding:12px 0;color:var(--muted);font-size:13px;text-align:center;">まだ応募していません</div>';
+    : '<div style="padding:12px 0;color:var(--muted);font-size:13px;text-align:center;">ã¾ã å¿åãã¦ãã¾ãã</div>';
 
   const thisMonth = new Date().getMonth();
   const monthT = transports.filter(t => new Date(t.date).getMonth() === thisMonth);
   const tTotal = monthT.reduce((s, t) => s + (t.amount || 0), 0);
-  document.getElementById('home-transport').textContent = `¥${tTotal.toLocaleString()}`;
+  document.getElementById('home-transport').textContent = `Â¥${tTotal.toLocaleString()}`;
 
   const monthH = history.filter(h => new Date(h.date).getMonth() === thisMonth);
   const days = monthH.reduce((s, h) => s + (h.days || 0), 0);
   const gross = monthH.reduce((s, h) => s + ((h.price || 0) * (h.days || 0)), 0);
-  document.getElementById('home-days').innerHTML = `${days}<small> 日</small>`;
-  document.getElementById('home-monthly-salary').innerHTML = `¥${gross.toLocaleString()}`;
-  document.getElementById('home-salary-sub').textContent = days > 0 ? `${monthH.length}案件 合計${days}日稼働` : '稼働データを入力してください';
+  document.getElementById('home-days').innerHTML = `${days}<small> æ¥</small>`;
+  document.getElementById('home-monthly-salary').innerHTML = `Â¥${gross.toLocaleString()}`;
+  document.getElementById('home-salary-sub').textContent = days > 0 ? `${monthH.length}æ¡ä»¶ åè¨${days}æ¥ç¨¼å` : 'ç¨¼åãã¼ã¿ãå¥åãã¦ãã ãã';
 }
 
 // ========================================
@@ -957,26 +957,26 @@ function renderHome() {
 function openJobModal(id) {
   const job = JOBS.find(j => j.id === id);
   if (!job) return;
-  const c = CARRIER[job.carrier] || { color:'#888', emoji:'📋', label:job.carrier };
+  const c = CARRIER[job.carrier] || { color:'#888', emoji:'ð', label:job.carrier };
   const isApplied = appliedJobs.includes(id);
   document.getElementById('modal-bar').style.background = c.color;
   document.getElementById('modal-station').textContent = job.station;
   document.getElementById('modal-store').textContent = job.store;
   document.getElementById('modal-tags').innerHTML = `<span class="carrier-tag">${c.emoji} ${c.label}</span>`;
-  document.getElementById('modal-price').innerHTML = `¥${job.price.toLocaleString()}<span>/日〜</span>`;
+  document.getElementById('modal-price').innerHTML = `Â¥${job.price.toLocaleString()}<span>/æ¥ã</span>`;
   document.getElementById('modal-grid').innerHTML = `
-    <div class="modal-item"><label>日程</label><div class="value">${job.dates}</div></div>
-    <div class="modal-item"><label>ポジション</label><div class="value">${job.position} ${job.count}名</div></div>
-    <div class="modal-item"><label>交通費</label><div class="value">${job.transport}</div></div>
-    <div class="modal-item"><label>宿泊費</label><div class="value">${job.lodging || 'なし'}</div></div>`;
-  const msg = encodeURIComponent(`【案件応募】\n📍 ${job.store}（${job.station}）\n📅 ${job.dates}\n👤 ${job.position}\n💰 ${job.price.toLocaleString()}円/日〜\n${job.transport}${job.lodging ? ' / ' + job.lodging : ''}\n\n上記案件に応募します。`);
+    <div class="modal-item"><label>æ¥ç¨</label><div class="value">${job.dates}</div></div>
+    <div class="modal-item"><label>ãã¸ã·ã§ã³</label><div class="value">${job.position} ${job.count}å</div></div>
+    <div class="modal-item"><label>äº¤éè²»</label><div class="value">${job.transport}</div></div>
+    <div class="modal-item"><label>å®¿æ³è²»</label><div class="value">${job.lodging || 'ãªã'}</div></div>`;
+  const msg = encodeURIComponent(`ãæ¡ä»¶å¿åã\nð ${job.store}ï¼${job.station}ï¼\nð ${job.dates}\nð¤ ${job.position}\nð° ${job.price.toLocaleString()}å/æ¥ã\n${job.transport}${job.lodging ? ' / ' + job.lodging : ''}\n\nä¸è¨æ¡ä»¶ã«å¿åãã¾ãã`);
   const lineUrl = `https://line.me/R/msg/text/?${msg}`;
   document.getElementById('modal-actions').innerHTML = `
     ${isApplied
-      ? `<button class="btn btn-secondary btn-block" onclick="cancelApply(${id})" style="color:var(--muted)">応募を取り消す</button>`
-      : `<a href="${lineUrl}" target="_blank" class="btn btn-line btn-block" onclick="markApplied(${id})">LINEで応募する 🟢</a>`}
-    <button class="btn btn-secondary btn-block" onclick="addToCalc(${id})">この案件の報酬を計算する ⌗</button>
-    <button class="btn btn-secondary btn-block" style="font-size:12px;padding:10px;" onclick="closeModal()">閉じる</button>`;
+      ? `<button class="btn btn-secondary btn-block" onclick="cancelApply(${id})" style="color:var(--muted)">å¿åãåãæ¶ã</button>`
+      : `<a href="${lineUrl}" target="_blank" class="btn btn-line btn-block" onclick="markApplied(${id})">LINEã§å¿åãã ð¢</a>`}
+    <button class="btn btn-secondary btn-block" onclick="addToCalc(${id})">ãã®æ¡ä»¶ã®å ±é¬ãè¨ç®ãã â</button>
+    <button class="btn btn-secondary btn-block" style="font-size:12px;padding:10px;" onclick="closeModal()">éãã</button>`;
   document.getElementById('job-modal').classList.add('open');
 }
 
@@ -991,7 +991,7 @@ async function markApplied(id) {
   }
   appliedJobs.push(id);
   renderApplied(); renderHome(); renderJobs();
-  setTimeout(() => { document.getElementById('job-modal').classList.remove('open'); showToast('✅ 応募済みとしてマークしました'); }, 300);
+  setTimeout(() => { document.getElementById('job-modal').classList.remove('open'); showToast('â å¿åæ¸ã¿ã¨ãã¦ãã¼ã¯ãã¾ãã'); }, 300);
 }
 
 async function cancelApply(id) {
@@ -1001,7 +1001,7 @@ async function cancelApply(id) {
   appliedJobs = appliedJobs.filter(i => i !== id);
   renderApplied(); renderHome(); renderJobs();
   document.getElementById('job-modal').classList.remove('open');
-  showToast('応募を取り消しました');
+  showToast('å¿åãåãæ¶ãã¾ãã');
 }
 
 function addToCalc(id) {
@@ -1011,7 +1011,7 @@ function addToCalc(id) {
   calcSalary();
   document.getElementById('job-modal').classList.remove('open');
   switchPage('page-salary');
-  showToast(`💰 ${job.station}の単価をセットしました`);
+  showToast(`ð° ${job.station}ã®åä¾¡ãã»ãããã¾ãã`);
 }
 
 // ========================================
@@ -1020,16 +1020,16 @@ function addToCalc(id) {
 function renderApplied() {
   const list = document.getElementById('applied-list');
   const applied = JOBS.filter(j => appliedJobs.includes(j.id));
-  if (!applied.length) { list.innerHTML = '<div class="empty"><div class="icon">✅</div><h3>応募中の案件はありません</h3><p>案件一覧からLINEで応募してください</p></div>'; return; }
+  if (!applied.length) { list.innerHTML = '<div class="empty"><div class="icon">â</div><h3>å¿åä¸­ã®æ¡ä»¶ã¯ããã¾ãã</h3><p>æ¡ä»¶ä¸è¦§ããLINEã§å¿åãã¦ãã ãã</p></div>'; return; }
   list.innerHTML = applied.map(j => {
-    const c = CARRIER[j.carrier] || { color:'#888', emoji:'📋' };
+    const c = CARRIER[j.carrier] || { color:'#888', emoji:'ð' };
     return `<div class="card" style="cursor:pointer;" onclick="openJobModal(${j.id})">
       <div style="display:flex;gap:14px;align-items:center;">
         <div style="width:44px;height:44px;border-radius:12px;background:${c.color}22;color:${c.color};font-size:22px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${c.emoji}</div>
-        <div style="flex:1;min-width:0;"><h3 style="font-size:15px;font-weight:700;">${j.station} <span style="font-size:13px;color:var(--muted);">${j.store}</span></h3><p style="font-size:12px;color:var(--muted);">${j.dates} · ${j.position} · ¥${j.price.toLocaleString()}/日</p></div>
+        <div style="flex:1;min-width:0;"><h3 style="font-size:15px;font-weight:700;">${j.station} <span style="font-size:13px;color:var(--muted);">${j.store}</span></h3><p style="font-size:12px;color:var(--muted);">${j.dates} Â· ${j.position} Â· Â¥${j.price.toLocaleString()}/æ¥</p></div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0;">
-          <span class="badge badge-accent">応募済</span>
-          <button class="btn btn-sm btn-secondary" onclick="event.stopPropagation();addToHistory(${j.id})">稼働確定 →</button>
+          <span class="badge badge-accent">å¿åæ¸</span>
+          <button class="btn btn-sm btn-secondary" onclick="event.stopPropagation();addToHistory(${j.id})">ç¨¼åç¢ºå® â</button>
         </div>
       </div>
     </div>`;
@@ -1039,7 +1039,7 @@ function renderApplied() {
 async function addToHistory(id) {
   const job = JOBS.find(j => j.id === id);
   if (!job) return;
-  const days = parseInt(prompt(`「${job.station}」の稼働日数を入力:`, '2') || '0');
+  const days = parseInt(prompt(`ã${job.station}ãã®ç¨¼åæ¥æ°ãå¥å:`, '2') || '0');
   if (!days || days <= 0) return;
   const entry = { user_id: currentUser?.id, job_id: id, station: job.station, carrier: job.carrier, price: job.price, days, date: new Date().toISOString().split('T')[0] };
   if (sbClient && currentUser) {
@@ -1048,7 +1048,7 @@ async function addToHistory(id) {
   history.push(entry);
   await cancelApply(id);
   renderHistory(); renderHome();
-  showToast(`📊 稼働履歴に追加しました（${days}日）`);
+  showToast(`ð ç¨¼åå±¥æ­´ã«è¿½å ãã¾ããï¼${days}æ¥ï¼`);
 }
 
 // ========================================
@@ -1066,7 +1066,7 @@ async function submitTransport() {
   const method = document.getElementById('t-method').value;
   const route = document.getElementById('t-route').value.trim();
   const note = document.getElementById('t-note').value.trim();
-  if (!name || !date || !amount) { alert('案件名、日付、金額は必須です'); return; }
+  if (!name || !date || !amount) { alert('æ¡ä»¶åãæ¥ä»ãéé¡ã¯å¿é ã§ã'); return; }
   const entry = { user_id: currentUser?.id, name, date, amount, method, route, note, status:'pending' };
   if (sbClient && currentUser) {
     const { data } = await sbClient.from('transports').insert(entry).select().single();
@@ -1076,18 +1076,18 @@ async function submitTransport() {
   }
   document.getElementById('transport-modal').classList.remove('open');
   renderTransportList(); renderHome();
-  showToast('🚗 交通費申請を提出しました');
+  showToast('ð äº¤éè²»ç³è«ãæåºãã¾ãã');
 }
 
 function renderTransportList() {
   const list = document.getElementById('transport-list');
-  if (!transports.length) { list.innerHTML = '<div class="empty"><div class="icon">🚃</div><h3>申請がありません</h3><p>「＋ 新規申請」から交通費を申請してください</p></div>'; updateTransportStats(); return; }
+  if (!transports.length) { list.innerHTML = '<div class="empty"><div class="icon">ð</div><h3>ç³è«ãããã¾ãã</h3><p>ãï¼ æ°è¦ç³è«ãããäº¤éè²»ãç³è«ãã¦ãã ãã</p></div>'; updateTransportStats(); return; }
   list.innerHTML = transports.map(t => `
     <div class="transport-item">
-      <div class="transport-info"><h4>${t.name}</h4><p>${t.date} · ${t.method}${t.route ? ' · ' + t.route : ''}</p></div>
+      <div class="transport-info"><h4>${t.name}</h4><p>${t.date} Â· ${t.method}${t.route ? ' Â· ' + t.route : ''}</p></div>
       <div class="transport-status">
-        <div class="transport-amount">¥${(t.amount || 0).toLocaleString()}</div>
-        <span class="badge ${t.status==='approved'?'badge-green':t.status==='rejected'?'badge-red':'badge-yellow'}">${t.status==='approved'?'承認済':t.status==='rejected'?'却下':'申請中'}</span>
+        <div class="transport-amount">Â¥${(t.amount || 0).toLocaleString()}</div>
+        <span class="badge ${t.status==='approved'?'badge-green':t.status==='rejected'?'badge-red':'badge-yellow'}">${t.status==='approved'?'æ¿èªæ¸':t.status==='rejected'?'å´ä¸':'ç³è«ä¸­'}</span>
       </div>
     </div>`).join('');
   updateTransportStats();
@@ -1097,7 +1097,7 @@ function updateTransportStats() {
   const thisMonth = new Date().getMonth();
   document.getElementById('t-pending-count').textContent = transports.filter(t => t.status === 'pending').length;
   document.getElementById('t-approved-count').textContent = transports.filter(t => t.status === 'approved').length;
-  document.getElementById('t-month-total').textContent = `¥${transports.filter(t => new Date(t.date).getMonth() === thisMonth).reduce((s,t) => s + (t.amount||0), 0).toLocaleString()}`;
+  document.getElementById('t-month-total').textContent = `Â¥${transports.filter(t => new Date(t.date).getMonth() === thisMonth).reduce((s,t) => s + (t.amount||0), 0).toLocaleString()}`;
 }
 
 // ========================================
@@ -1113,14 +1113,14 @@ function calcSalary() {
   const tax = taxOn ? Math.floor(gross * 0.1021) : 0;
   const net = gross - tax + (incTransport ? transport : 0);
   document.getElementById('calc-net').textContent = net.toLocaleString();
-  document.getElementById('calc-gross-label').textContent = taxOn ? `税引き前: ¥${gross.toLocaleString()} (源泉 -¥${tax.toLocaleString()})` : '源泉徴収なし';
+  document.getElementById('calc-gross-label').textContent = taxOn ? `ç¨å¼ãå: Â¥${gross.toLocaleString()} (æºæ³ -Â¥${tax.toLocaleString()})` : 'æºæ³å¾´åãªã';
   document.getElementById('calc-breakdown').innerHTML = `
-    <div class="calc-row"><span class="label">単価</span><span class="amount">¥${price.toLocaleString()}</span></div>
-    <div class="calc-row"><span class="label">稼働日数</span><span class="amount">${days}日</span></div>
-    <div class="calc-row"><span class="label">稼働報酬（計）</span><span class="amount">¥${gross.toLocaleString()}</span></div>
-    ${taxOn ? `<div class="calc-row"><span class="label">源泉徴収</span><span class="amount" style="color:var(--accent2)">-¥${tax.toLocaleString()}</span></div>` : ''}
-    ${transport ? `<div class="calc-row"><span class="label">交通費</span><span class="amount" style="color:var(--green)">+¥${transport.toLocaleString()}</span></div>` : ''}
-    <div class="calc-row total"><span class="label">手取り予想</span><span class="amount">¥${net.toLocaleString()}</span></div>`;
+    <div class="calc-row"><span class="label">åä¾¡</span><span class="amount">Â¥${price.toLocaleString()}</span></div>
+    <div class="calc-row"><span class="label">ç¨¼åæ¥æ°</span><span class="amount">${days}æ¥</span></div>
+    <div class="calc-row"><span class="label">ç¨¼åå ±é¬ï¼è¨ï¼</span><span class="amount">Â¥${gross.toLocaleString()}</span></div>
+    ${taxOn ? `<div class="calc-row"><span class="label">æºæ³å¾´å</span><span class="amount" style="color:var(--accent2)">-Â¥${tax.toLocaleString()}</span></div>` : ''}
+    ${transport ? `<div class="calc-row"><span class="label">äº¤éè²»</span><span class="amount" style="color:var(--green)">+Â¥${transport.toLocaleString()}</span></div>` : ''}
+    <div class="calc-row total"><span class="label">æåãäºæ³</span><span class="amount">Â¥${net.toLocaleString()}</span></div>`;
 }
 
 // ========================================
@@ -1128,10 +1128,10 @@ function calcSalary() {
 // ========================================
 function renderHistory() {
   const list = document.getElementById('history-list');
-  if (!history.length) { list.innerHTML = '<div class="empty"><div class="icon">📅</div><h3>稼働履歴がありません</h3></div>'; return; }
+  if (!history.length) { list.innerHTML = '<div class="empty"><div class="icon">ð</div><h3>ç¨¼åå±¥æ­´ãããã¾ãã</h3></div>'; return; }
   const sorted = [...history].sort((a,b) => new Date(b.date) - new Date(a.date));
   const grouped = {};
-  sorted.forEach(h => { const d = new Date(h.date); const key = `${d.getFullYear()}年${d.getMonth()+1}月`; (grouped[key] = grouped[key] || []).push(h); });
+  sorted.forEach(h => { const d = new Date(h.date); const key = `${d.getFullYear()}å¹´${d.getMonth()+1}æ`; (grouped[key] = grouped[key] || []).push(h); });
   list.innerHTML = Object.entries(grouped).map(([month, items]) => `
     <div class="history-month-label">${month}</div>
     ${items.map(h => {
@@ -1139,9 +1139,9 @@ function renderHistory() {
       return `<div class="history-item">
         <div style="display:flex;gap:12px;align-items:center;">
           <div style="width:6px;height:40px;border-radius:3px;background:${c.color};flex-shrink:0;"></div>
-          <div class="history-info"><h4>${h.station}</h4><p>${h.date} · ${h.days}日稼働 · ¥${(h.price||0).toLocaleString()}/日</p></div>
+          <div class="history-info"><h4>${h.station}</h4><p>${h.date} Â· ${h.days}æ¥ç¨¼å Â· Â¥${(h.price||0).toLocaleString()}/æ¥</p></div>
         </div>
-        <div class="history-amount"><div class="amount">¥${((h.price||0)*(h.days||0)).toLocaleString()}</div><div class="days">${h.days}日</div></div>
+        <div class="history-amount"><div class="amount">Â¥${((h.price||0)*(h.days||0)).toLocaleString()}</div><div class="days">${h.days}æ¥</div></div>
       </div>`;
     }).join('')}`).join('');
 }
@@ -1152,49 +1152,49 @@ function renderHistory() {
 async function loadAdminData() {
   if (!sbClient) return;
 
-  // スタッフ一覧
+  // ã¹ã¿ããä¸è¦§
   const { data: users } = await sbClient.from('profiles').select('*').order('created_at');
   if (users) {
-    document.getElementById('user-count-label').textContent = `全${users.length}名のスタッフ`;
+    document.getElementById('user-count-label').textContent = `å¨${users.length}åã®ã¹ã¿ãã`;
     document.getElementById('user-list').innerHTML = users.map(u => `
       <div class="user-row">
         <div class="user-row-avatar">${(u.name||'?').charAt(0)}</div>
         <div class="user-row-info">
-          <h4>${u.name || '未設定'}</h4>
-          <p>${u.email} · ${u.role === 'admin' ? '管理者' : 'スタッフ'}</p>
-          ${u.allowed_carriers?.length ? `<p style="margin-top:2px;">対象: ${u.allowed_carriers.join(', ')}</p>` : '<p style="margin-top:2px;color:var(--green);">全キャリア表示</p>'}
+          <h4>${u.name || 'æªè¨­å®'}</h4>
+          <p>${u.email} Â· ${u.role === 'admin' ? 'ç®¡çè' : 'ã¹ã¿ãã'}</p>
+          ${u.allowed_carriers?.length ? `<p style="margin-top:2px;">å¯¾è±¡: ${u.allowed_carriers.join(', ')}</p>` : '<p style="margin-top:2px;color:var(--green);">å¨ã­ã£ãªã¢è¡¨ç¤º</p>'}
         </div>
         <div class="user-row-actions">
-          <span class="role-badge ${u.role==='admin'?'role-admin':'role-staff'}">${u.role==='admin'?'管理者':'スタッフ'}</span>
+          <span class="role-badge ${u.role==='admin'?'role-admin':'role-staff'}">${u.role==='admin'?'ç®¡çè':'ã¹ã¿ãã'}</span>
         </div>
       </div>`).join('');
   }
 
-  // 案件一覧（管理者）
+  // æ¡ä»¶ä¸è¦§ï¼ç®¡çèï¼
   document.getElementById('admin-jobs-list').innerHTML = JOBS.map(j => {
-    const c = CARRIER[j.carrier] || { color:'#888', emoji:'📋', label:j.carrier };
+    const c = CARRIER[j.carrier] || { color:'#888', emoji:'ð', label:j.carrier };
     return `<div class="card" style="display:flex;gap:12px;align-items:center;">
       <div style="width:6px;height:48px;border-radius:3px;background:${c.color};flex-shrink:0;"></div>
       <div style="flex:1;min-width:0;">
         <div style="font-size:14px;font-weight:700;">${c.emoji} ${j.station}</div>
-        <div style="font-size:12px;color:var(--muted);">${j.dates} · ¥${j.price.toLocaleString()}/日</div>
+        <div style="font-size:12px;color:var(--muted);">${j.dates} Â· Â¥${j.price.toLocaleString()}/æ¥</div>
       </div>
-      <span class="badge ${j.status==='full'?'badge-muted':'badge-green'}">${j.status==='full'?'満員':'募集中'}</span>
+      <span class="badge ${j.status==='full'?'badge-muted':'badge-green'}">${j.status==='full'?'æºå¡':'åéä¸­'}</span>
     </div>`;
-  }).join('') || '<div class="empty"><div class="icon">📋</div><h3>案件がありません</h3></div>';
+  }).join('') || '<div class="empty"><div class="icon">ð</div><h3>æ¡ä»¶ãããã¾ãã</h3></div>';
 
-  // 交通費承認一覧
+  // äº¤éè²»æ¿èªä¸è¦§
   const { data: allTransports } = await sbClient.from('transports').select('*, profiles(name)').eq('status','pending').order('date');
   if (allTransports?.length) {
     document.getElementById('admin-transport-list').innerHTML = allTransports.map(t => `
       <div class="transport-item">
         <div class="transport-info">
-          <h4>${t.name} <span style="font-size:11px;color:var(--muted);">${t.profiles?.name||'—'}</span></h4>
-          <p>${t.date} · ${t.method} · ¥${(t.amount||0).toLocaleString()}</p>
+          <h4>${t.name} <span style="font-size:11px;color:var(--muted);">${t.profiles?.name||'â'}</span></h4>
+          <p>${t.date} Â· ${t.method} Â· Â¥${(t.amount||0).toLocaleString()}</p>
         </div>
         <div class="transport-status">
-          <button class="btn btn-sm" style="background:rgba(0,168,107,.1);color:var(--green);border:none;cursor:pointer;border-radius:8px;font-weight:700;font-size:12px;padding:6px 10px;" onclick="approveTransport('${t.id}')">承認</button>
-          <button class="btn btn-sm btn-danger" style="font-size:11px;padding:5px 8px;" onclick="rejectTransport('${t.id}')">却下</button>
+          <button class="btn btn-sm" style="background:rgba(0,168,107,.1);color:var(--green);border:none;cursor:pointer;border-radius:8px;font-weight:700;font-size:12px;padding:6px 10px;" onclick="approveTransport('${t.id}')">æ¿èª</button>
+          <button class="btn btn-sm btn-danger" style="font-size:11px;padding:5px 8px;" onclick="rejectTransport('${t.id}')">å´ä¸</button>
         </div>
       </div>`).join('');
   }
@@ -1203,14 +1203,14 @@ async function loadAdminData() {
 async function approveTransport(id) {
   if (!sbClient) return;
   await sbClient.from('transports').update({ status:'approved' }).eq('id', id);
-  showToast('✅ 交通費を承認しました');
+  showToast('â äº¤éè²»ãæ¿èªãã¾ãã');
   loadAdminData();
 }
 
 async function rejectTransport(id) {
   if (!sbClient) return;
   await sbClient.from('transports').update({ status:'rejected' }).eq('id', id);
-  showToast('交通費を却下しました');
+  showToast('äº¤éè²»ãå´ä¸ãã¾ãã');
   loadAdminData();
 }
 
@@ -1219,7 +1219,7 @@ function openInviteModal() {
 }
 
 function openAddJobModal() {
-  showToast('案件追加機能は準備中です');
+  showToast('æ¡ä»¶è¿½å æ©è½ã¯æºåä¸­ã§ã');
 }
 
 async function sendInvite() {
@@ -1227,10 +1227,10 @@ async function sendInvite() {
   const name = document.getElementById('invite-name').value.trim();
   const role = document.getElementById('invite-role').value;
   const carriers = [...document.querySelectorAll('#invite-carriers input:checked')].map(c => c.value);
-  if (!email || !name) { alert('メールアドレスと表示名を入力してください'); return; }
-  if (!sbClient) { showToast('Supabase未接続のためデモ中'); document.getElementById('invite-modal').classList.remove('open'); return; }
-  // Supabase Admin APIで招待（実際にはEdge Function推奨）
-  showToast(`📧 ${email} に招待メールを送りました`);
+  if (!email || !name) { alert('ã¡ã¼ã«ã¢ãã¬ã¹ã¨è¡¨ç¤ºåãå¥åãã¦ãã ãã'); return; }
+  if (!sbClient) { showToast('Supabaseæªæ¥ç¶ã®ãããã¢ä¸­'); document.getElementById('invite-modal').classList.remove('open'); return; }
+  // Supabase Admin APIã§æå¾ï¼å®éã«ã¯Edge Functionæ¨å¥¨ï¼
+  showToast(`ð§ ${email} ã«æå¾ã¡ã¼ã«ãéãã¾ãã`);
   document.getElementById('invite-modal').classList.remove('open');
 }
 
