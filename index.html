@@ -1292,7 +1292,7 @@ function openModal(id) {
     `【案件応募】\n${j.store}（${j.station}）\n${j.dates}\n${j.position}\n${priceLabel}${transportLine}\n\n上記案件に応募します。`
   );
   document.getElementById('modal-line-btn').href =
-    `https://line.me/R/oaMessage/${LINE_ID.replace('@','')}/?text=${msg}`;
+    `https://line.me/R/oaMessage/%40597ckygq/?${msg}`;
 
   document.getElementById('modal').classList.add('open');
   document.body.style.overflow = 'hidden';
