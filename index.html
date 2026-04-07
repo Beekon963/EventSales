@@ -1,4 +1,1283 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>案件一覧 | SALES EVENT PORTAL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f4f2;
+    --surface: #ffffff;
+    --border: rgba(0,0,0,0.08);
+    --text: #1a1a1a;
+    --muted: #9a9a9a;
+    --accent: #c0191a;
+    --docomo: #e53935;
+    --au: #f57c00;
+    --softbank: #1565c0;
+    --uq: #2e7d32;
+    --ymobile: #7b1fa2;
+    --green: #06C755;
+    --radius: 16px;
+    --nav-h: 60px;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { height:100%; }
+  body {
+    font-family:'Noto Sans JP',sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+
+  /* ===== HEADER ===== */
+  .header {
+    position:sticky; top:0; z-index:100;
+    background:rgba(255,255,255,0.95);
+    backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--border);
+    padding:14px 16px 10px;
+  }
+  .header-top {
+    display:flex; align-items:center; gap:10px; margin-bottom:12px;
+  }
+  .logo-mark {
+    width:36px; height:36px; border-radius:10px;
+    background:var(--accent); display:flex; align-items:center;
+    justify-content:center; font-size:18px; flex-shrink:0;
+    box-shadow:0 4px 12px rgba(192,25,26,0.25);
+  }
+  .header-title { font-size:16px; font-weight:900; letter-spacing:-.01em; }
+  .header-sub { font-size:10px; color:var(--muted); letter-spacing:.08em; }
+  .job-count-badge {
+    margin-left:auto; background:rgba(192,25,26,.1); color:var(--accent);
+    font-size:11px; font-weight:700; padding:3px 10px; border-radius:100px;
+  }
+
+  /* ===== FILTER BAR ===== */
+  .filter-bar {
+    display:flex; gap:7px; overflow-x:auto;
+    scrollbar-width:none; padding-bottom:2px;
+  }
+  .filter-bar::-webkit-scrollbar { display:none; }
+  .filter-btn {
+    flex-shrink:0; padding:6px 14px; border-radius:100px;
+    font-family:inherit; font-size:12px; font-weight:700;
+    cursor:pointer; border:1.5px solid var(--border);
+    background:var(--surface); color:var(--muted);
+    transition:all .2s; white-space:nowrap;
+  }
+  .filter-btn.active {
+    background:var(--accent); color:#fff; border-color:var(--accent);
+    box-shadow:0 2px 8px rgba(192,25,26,.25);
+  }
+  .filter-btn[data-carrier="docomo"].active { background:var(--docomo); border-color:var(--docomo); }
+  .filter-btn[data-carrier="au"].active { background:var(--au); border-color:var(--au); }
+  .filter-btn[data-carrier="softbank"].active { background:var(--softbank); border-color:var(--softbank); }
+  .filter-btn[data-carrier="uq"].active { background:var(--uq); border-color:var(--uq); }
+  .filter-btn[data-carrier="ymobile"].active { background:var(--ymobile); border-color:var(--ymobile); }
+
+  /* ===== JOB LIST ===== */
+  .job-list {
+    padding:16px 16px 80px; max-width:600px; margin:0 auto;
+  }
+  .job-card {
+    background:var(--surface); border-radius:var(--radius);
+    margin-bottom:12px; overflow:hidden;
+    border:1px solid var(--border);
+    box-shadow:0 2px 8px rgba(0,0,0,0.06);
+    cursor:pointer; transition:all .2s;
+    animation:fadeUp .35s ease both;
+  }
+  .job-card:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(0,0,0,0.1); }
+  .job-card.full { opacity:.4; pointer-events:none; }
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(12px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+  .job-card:nth-child(1) { animation-delay:.04s; }
+  .job-card:nth-child(2) { animation-delay:.08s; }
+  .job-card:nth-child(3) { animation-delay:.12s; }
+  .job-card:nth-child(4) { animation-delay:.16s; }
+  .job-card:nth-child(5) { animation-delay:.20s; }
+
+  .carrier-bar { height:4px; }
+  .job-body { padding:16px; }
+  .job-meta { display:flex; align-items:center; gap:6px; margin-bottom:10px; }
+  .carrier-tag {
+    display:inline-flex; align-items:center; gap:4px;
+    padding:3px 8px; border-radius:6px;
+    font-size:11px; font-weight:700;
+    background:rgba(0,0,0,.05);
+  }
+  .full-badge {
+    margin-left:auto; font-size:11px; font-weight:700;
+    color:var(--muted); background:rgba(0,0,0,.07);
+    padding:2px 8px; border-radius:100px;
+  }
+  .job-station { font-size:20px; font-weight:900; margin-bottom:3px; }
+  .job-store { font-size:12px; color:var(--muted); margin-bottom:12px; }
+  .job-row {
+    display:flex; gap:16px; flex-wrap:wrap; margin-bottom:12px;
+  }
+  .job-item span { font-size:10px; color:var(--muted); display:block; margin-bottom:2px; }
+  .job-item .val { font-size:13px; font-weight:500; }
+  .job-price {
+    font-family:'Space Mono',monospace;
+    font-size:18px; font-weight:700;
+    color:var(--accent);
+  }
+
+  /* ===== MODAL ===== */
+  .modal-overlay {
+    display:none; position:fixed; inset:0;
+    background:rgba(0,0,0,.5); backdrop-filter:blur(8px);
+    z-index:200; align-items:flex-end; justify-content:center;
+  }
+  .modal-overlay.open { display:flex; }
+  .modal-sheet {
+    background:#fff; border-radius:24px 24px 0 0;
+    padding:24px 20px 40px; width:100%; max-width:600px;
+    animation:slideUp .25s ease;
+    max-height:90vh; overflow-y:auto;
+  }
+  @keyframes slideUp {
+    from { transform:translateY(100%); }
+    to   { transform:translateY(0); }
+  }
+  .modal-handle {
+    width:40px; height:4px; border-radius:4px;
+    background:var(--border); margin:0 auto 20px;
+  }
+  .modal-carrier-bar { height:3px; border-radius:3px; margin-bottom:16px; }
+  .modal-station { font-size:24px; font-weight:900; margin-bottom:4px; }
+  .modal-store { font-size:13px; color:var(--muted); margin-bottom:16px; }
+  .modal-price {
+    font-family:'Space Mono',monospace;
+    font-size:34px; font-weight:700; color:var(--accent);
+    margin-bottom:4px;
+  }
+  .modal-price span { font-size:14px; color:var(--muted); font-weight:400; font-family:'Noto Sans JP',sans-serif; }
+  .modal-grid {
+    display:grid; grid-template-columns:1fr 1fr; gap:12px;
+    margin:20px 0;
+  }
+  .modal-item label { font-size:11px; color:var(--muted); display:block; margin-bottom:3px; }
+  .modal-item .val { font-size:14px; font-weight:500; }
+
+  .btn-line {
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    width:100%; padding:16px; border-radius:14px;
+    background:var(--green); color:#fff;
+    font-family:inherit; font-size:16px; font-weight:900;
+    border:none; cursor:pointer; transition:all .2s;
+    text-decoration:none; letter-spacing:.02em;
+    box-shadow:0 4px 16px rgba(6,199,85,.3);
+  }
+  .btn-line:hover { background:#04a844; transform:translateY(-1px); }
+  .btn-close {
+    display:flex; align-items:center; justify-content:center;
+    width:100%; padding:13px; border-radius:12px;
+    background:var(--bg); color:var(--muted);
+    font-family:inherit; font-size:14px; font-weight:700;
+    border:none; cursor:pointer; margin-top:10px;
+  }
+
+  /* ===== EMPTY ===== */
+  .empty { text-align:center; padding:60px 0; }
+  .empty .icon { font-size:48px; margin-bottom:16px; opacity:.3; }
+  .empty p { font-size:14px; color:var(--muted); }
+
+  /* ===== TAB NAV ===== */
+  .tab-nav {
+    display:flex; border-bottom:2px solid var(--border);
+    padding:0 16px; background:rgba(255,255,255,0.95);
+  }
+  .tab-nav-btn {
+    flex:1; padding:10px 0; font-family:inherit; font-size:13px;
+    font-weight:700; color:var(--muted); background:none; border:none;
+    cursor:pointer; border-bottom:2px solid transparent;
+    margin-bottom:-2px; transition:all .2s;
+  }
+  .tab-nav-btn.active { color:var(--accent); border-bottom-color:var(--accent); }
+
+  /* ===== PARTNER PAGE ===== */
+  .partner-page { display:none; padding:16px 16px 100px; max-width:600px; margin:0 auto; }
+  .partner-page.active { display:block; }
+  .urgent-banner {
+    background:linear-gradient(135deg,#c0191a,#e53935);
+    color:#fff; border-radius:var(--radius); padding:18px;
+    margin-bottom:16px; text-align:center;
+    box-shadow:0 4px 20px rgba(192,25,26,.3);
+    animation:fadeUp .3s ease both;
+  }
+  .urgent-banner .badge {
+    display:inline-block; background:rgba(255,255,255,.25);
+    font-size:11px; font-weight:700; padding:3px 10px;
+    border-radius:100px; margin-bottom:8px; letter-spacing:.05em;
+  }
+  .urgent-banner h2 { font-size:18px; font-weight:900; margin-bottom:4px; }
+  .urgent-banner p { font-size:12px; opacity:.85; }
+  .partner-section {
+    background:#fff; border-radius:var(--radius); padding:18px;
+    margin-bottom:12px; border:1px solid var(--border);
+    box-shadow:0 2px 8px rgba(0,0,0,.06);
+    animation:fadeUp .35s ease both;
+  }
+  .partner-section-title {
+    font-size:12px; font-weight:700; color:var(--muted);
+    letter-spacing:.08em; text-transform:uppercase;
+    margin-bottom:12px; display:flex; align-items:center; gap:6px;
+  }
+  .partner-section-title::after {
+    content:''; flex:1; height:1px; background:var(--border);
+  }
+  .partner-row {
+    display:flex; justify-content:space-between; align-items:flex-start;
+    padding:9px 0; border-bottom:1px solid var(--border); font-size:13px;
+  }
+  .partner-row:last-child { border-bottom:none; }
+  .partner-row .label { color:var(--muted); font-size:12px; flex-shrink:0; margin-right:12px; min-width:80px; }
+  .partner-row .val { font-weight:500; text-align:right; line-height:1.6; }
+  .price-big {
+    font-family:'Space Mono',monospace; font-size:18px;
+    font-weight:700; color:var(--accent);
+  }
+  .tag-urgent {
+    display:inline-flex; align-items:center; gap:4px;
+    background:rgba(192,25,26,.1); color:var(--accent);
+    font-size:11px; font-weight:700; padding:3px 8px; border-radius:6px;
+  }
+  .pattern-box {
+    background:var(--bg); border-radius:10px; padding:12px;
+    margin-top:8px;
+  }
+  .pattern-box h4 { font-size:12px; font-weight:700; margin-bottom:6px; }
+  .pattern-box p { font-size:12px; color:var(--muted); line-height:1.7; }
+  .req-list { list-style:none; }
+  .req-list li { font-size:13px; padding:6px 0; border-bottom:1px solid var(--border); display:flex; gap:8px; }
+  .req-list li:last-child { border-bottom:none; }
+  .req-list li::before { content:'✓'; color:var(--accent); font-weight:700; flex-shrink:0; }
+  .notice-box {
+    background:#fffbf0; border:1px solid #f0d080; border-radius:10px;
+    padding:12px 14px; font-size:12px; color:#806000; line-height:1.7;
+  }
+
+  /* ===== RANK PAGE ===== */
+  .rank-page { display:none; padding:20px 16px 100px; max-width:600px; margin:0 auto; }
+  .rank-page.active { display:block; }
+  .rank-intro {
+    background:#fff; border-radius:var(--radius); padding:18px;
+    margin-bottom:16px; border:1px solid var(--border);
+    box-shadow:0 2px 8px rgba(0,0,0,.06);
+  }
+  .rank-intro h2 { font-size:16px; font-weight:900; margin-bottom:8px; }
+  .rank-intro p { font-size:13px; color:var(--muted); line-height:1.7; }
+  .rank-card {
+    border-radius:var(--radius); padding:18px; margin-bottom:12px;
+    border:1px solid var(--border); box-shadow:0 2px 8px rgba(0,0,0,.06);
+    animation:fadeUp .35s ease both;
+  }
+  .rank-header { display:flex; align-items:center; gap:12px; margin-bottom:14px; }
+  .rank-icon { font-size:28px; line-height:1; }
+  .rank-name { font-size:16px; font-weight:900; }
+  .rank-condition { font-size:11px; color:var(--muted); margin-top:2px; }
+  .rank-bar-bg {
+    height:8px; border-radius:100px; background:rgba(0,0,0,.07);
+    margin-bottom:12px; overflow:hidden;
+  }
+  .rank-bar-fill { height:100%; border-radius:100px; }
+  .rank-split { display:flex; gap:8px; }
+  .rank-split-item {
+    flex:1; border-radius:10px; padding:10px 12px; text-align:center;
+  }
+  .rank-split-label { font-size:10px; color:var(--muted); margin-bottom:4px; }
+  .rank-split-val {
+    font-family:'Space Mono',monospace; font-size:20px; font-weight:700;
+  }
+
+  /* ===== GUIDE PAGE ===== */
+  .guide-page { display:none; padding:16px 16px 100px; max-width:600px; margin:0 auto; }
+  .guide-page.active { display:block; }
+  .guide-hero {
+    background:linear-gradient(135deg,#1a1a2e,#16213e);
+    color:#fff; border-radius:var(--radius); padding:24px 20px;
+    margin-bottom:16px; text-align:center;
+    animation:fadeUp .3s ease both;
+  }
+  .guide-hero .emoji { font-size:36px; margin-bottom:10px; }
+  .guide-hero h2 { font-size:20px; font-weight:900; margin-bottom:8px; }
+  .guide-hero p { font-size:13px; opacity:.75; line-height:1.7; }
+  .guide-section {
+    background:#fff; border-radius:var(--radius); padding:18px;
+    margin-bottom:12px; border:1px solid var(--border);
+    box-shadow:0 2px 8px rgba(0,0,0,.06);
+    animation:fadeUp .35s ease both;
+  }
+  .guide-section-title {
+    display:flex; align-items:center; gap:8px;
+    font-size:15px; font-weight:900; margin-bottom:14px;
+    padding-bottom:10px; border-bottom:2px solid var(--bg);
+  }
+  .guide-section-title .icon { font-size:20px; }
+  .guide-do { background:rgba(0,168,107,.06); border-radius:10px; padding:12px 14px; margin-bottom:10px; }
+  .guide-do-title { font-size:11px; font-weight:700; color:var(--green); margin-bottom:6px; letter-spacing:.05em; }
+  .guide-ng { background:rgba(192,25,26,.06); border-radius:10px; padding:12px 14px; margin-bottom:10px; }
+  .guide-ng-title { font-size:11px; font-weight:700; color:var(--accent); margin-bottom:6px; letter-spacing:.05em; }
+  .guide-list { list-style:none; }
+  .guide-list li { font-size:13px; padding:5px 0; display:flex; gap:8px; line-height:1.6; }
+  .guide-list li::before { content:'✓'; color:var(--green); font-weight:700; flex-shrink:0; }
+  .guide-ng-list { list-style:none; }
+  .guide-ng-list li { font-size:13px; padding:5px 0; display:flex; gap:8px; line-height:1.6; }
+  .guide-ng-list li::before { content:'✕'; color:var(--accent); font-weight:700; flex-shrink:0; }
+  .guide-note {
+    background:#fffbf0; border-left:3px solid #f0c040;
+    border-radius:0 8px 8px 0; padding:10px 14px;
+    font-size:12px; color:#806000; line-height:1.7; margin-top:10px;
+  }
+  .guide-table { width:100%; border-collapse:collapse; font-size:13px; margin-top:8px; }
+  .guide-table th { background:var(--bg); padding:8px 10px; text-align:left; font-size:11px; color:var(--muted); font-weight:700; }
+  .guide-table td { padding:10px; border-bottom:1px solid var(--border); line-height:1.6; }
+  .guide-table tr:last-child td { border-bottom:none; }
+  .tossup-item {
+    display:flex; gap:12px; padding:10px 0;
+    border-bottom:1px solid var(--border); align-items:flex-start;
+  }
+  .tossup-item:last-child { border-bottom:none; }
+  .tossup-num {
+    width:24px; height:24px; border-radius:50%; background:var(--accent);
+    color:#fff; font-size:11px; font-weight:700; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .tossup-content h4 { font-size:13px; font-weight:700; margin-bottom:2px; }
+  .tossup-content p { font-size:12px; color:var(--muted); line-height:1.6; }
+  .tossup-example {
+    background:#f0f4ff; border-radius:10px; padding:14px;
+    font-size:13px; line-height:1.8; margin-top:8px;
+    border-left:3px solid #1565c0;
+  }
+  .tossup-example strong { color:#1565c0; }
+  .badge-important {
+    display:inline-block; background:var(--accent); color:#fff;
+    font-size:10px; font-weight:700; padding:2px 8px;
+    border-radius:100px; margin-left:6px; vertical-align:middle;
+  }
+  .summary-card {
+    background:linear-gradient(135deg,#1a1a2e,#16213e);
+    color:#fff; border-radius:var(--radius); padding:20px;
+    margin-bottom:12px;
+  }
+  .summary-card h3 { font-size:16px; font-weight:900; margin-bottom:14px; text-align:center; }
+  .summary-item {
+    display:flex; gap:10px; padding:8px 0;
+    border-bottom:1px solid rgba(255,255,255,.1); align-items:flex-start;
+  }
+  .summary-item:last-child { border-bottom:none; }
+  .summary-num {
+    width:22px; height:22px; border-radius:50%;
+    background:var(--accent); color:#fff; font-size:11px; font-weight:700;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .summary-item p { font-size:13px; line-height:1.5; }
+
+  /* ===== GUIDE TOC ===== */
+  .guide-toc-item {
+    display:flex; align-items:center; gap:8px;
+    background:var(--bg); border-radius:10px; padding:10px;
+    text-decoration:none; color:var(--text);
+    border:1px solid var(--border); transition:all .2s; cursor:pointer;
+  }
+  .guide-toc-item:active { transform:scale(.97); background:#efefef; }
+  .guide-toc-icon { font-size:20px; flex-shrink:0; }
+  .guide-toc-title { font-size:12px; font-weight:700; margin-bottom:2px; }
+  .guide-toc-sub { font-size:10px; color:var(--muted); line-height:1.4; }
+
+  /* ===== FOOTER ===== */
+  .footer {
+    position:fixed; bottom:0; left:0; right:0;
+    background:rgba(255,255,255,0.96); backdrop-filter:blur(20px);
+    border-top:1px solid var(--border);
+    padding:10px 16px 16px;
+    text-align:center;
+    box-shadow:0 -2px 12px rgba(0,0,0,0.06);
+  }
+  .footer p { font-size:11px; color:var(--muted); margin-bottom:8px; }
+  .btn-line-footer {
+    display:inline-flex; align-items:center; gap:8px;
+    padding:12px 28px; border-radius:100px;
+    background:var(--green); color:#fff;
+    font-family:inherit; font-size:14px; font-weight:900;
+    border:none; cursor:pointer; text-decoration:none;
+    box-shadow:0 4px 16px rgba(6,199,85,.3);
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<div class="header">
+  <div class="header-top">
+    <div class="logo-mark">📋</div>
+    <div>
+      <div class="header-title">SALES EVENT PORTAL</div>
+      <div class="header-sub">案件一覧</div>
+    </div>
+    <div class="job-count-badge" id="count-badge">—</div>
+  </div>
+  <div class="filter-bar" id="filter-bar">
+    <button class="filter-btn active" data-carrier="all" onclick="setFilter('all',this)">すべて</button>
+    <button class="filter-btn" data-carrier="docomo" onclick="setFilter('docomo',this)">🍄 docomo</button>
+    <button class="filter-btn" data-carrier="au" onclick="setFilter('au',this)">🍊 au</button>
+    <button class="filter-btn" data-carrier="softbank" onclick="setFilter('softbank',this)">⚪ SoftBank</button>
+    <button class="filter-btn" data-carrier="uq" onclick="setFilter('uq',this)">♕ UQ</button>
+    <button class="filter-btn" data-carrier="ymobile" onclick="setFilter('ymobile',this)">🐱 Y!mobile</button>
+  </div>
+  <!-- タブナビ -->
+  <div class="tab-nav">
+    <button class="tab-nav-btn active" onclick="switchTab('jobs',this)">📋 案件</button>
+    <button class="tab-nav-btn" onclick="switchTab('partner',this)">🏢 協力会社</button>
+    <button class="tab-nav-btn" onclick="switchTab('rank',this)">🏆 報酬制度</button>
+    <button class="tab-nav-btn" onclick="switchTab('guide',this)">📖 現場ガイド</button>
+  </div>
+</div>
+
+<!-- ===== JOB LIST ===== -->
+<div class="job-list" id="job-list"></div>
+
+<!-- ===== PARTNER PAGE ===== -->
+<div class="partner-page" id="partner-page">
+
+  <!-- 緊急バナー -->
+  <div class="urgent-banner">
+    <div class="badge">⚡ 残りわずか・急募</div>
+    <h2>🍄 docomo 協力会社様 募集</h2>
+    <p>5月スタート・首都圏エリア<br>ライン受け（①+②）できる会社様</p>
+  </div>
+
+  <!-- 概要 -->
+  <div class="partner-section" style="animation-delay:.04s;">
+    <div class="partner-section-title">📋 概要</div>
+    <div class="partner-row">
+      <span class="label">エリア</span>
+      <span class="val">東京・千葉・埼玉・神奈川・山梨<br>（量販店・屋号問わず）</span>
+    </div>
+    <div class="partner-row">
+      <span class="label">業務</span>
+      <span class="val">docomo商材の獲得販売<br>報告書作成・定例MTG（月1回）</span>
+    </div>
+    <div class="partner-row">
+      <span class="label">募集形態</span>
+      <span class="val">1ライン受け（①+②＝合計6名）〜<br>2ライン以上のご提案も可能</span>
+    </div>
+    <div class="partner-row">
+      <span class="label">拡大予定</span>
+      <span class="val">6月までに<strong>最大20ライン</strong>へ拡大</span>
+    </div>
+  </div>
+
+  <!-- 稼働パターン -->
+  <div class="partner-section" style="animation-delay:.08s;">
+    <div class="partner-section-title">📅 稼働パターン</div>
+    <div class="pattern-box" style="margin-bottom:10px;">
+      <h4>① 4パッケージ（木〜日）</h4>
+      <p>D（ディレクター）×1名 ／ CL（クローザー）×2名</p>
+    </div>
+    <div class="pattern-box">
+      <h4>② 2パッケージ（土日）</h4>
+      <p>D（ディレクター）×1名 ／ CL（クローザー）×2名<br>※祝日等で変動あり</p>
+    </div>
+  </div>
+
+  <!-- 単価 -->
+  <div class="partner-section" style="animation-delay:.12s;">
+    <div class="partner-section-title">💰 単価</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+      <div style="background:var(--bg);border-radius:10px;padding:12px;text-align:center;">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:6px;">4パケ / D</div>
+        <div class="price-big">54万</div>
+        <div style="font-size:11px;color:var(--muted);">/月</div>
+      </div>
+      <div style="background:var(--bg);border-radius:10px;padding:12px;text-align:center;">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:6px;">4パケ / CL</div>
+        <div class="price-big">50万</div>
+        <div style="font-size:11px;color:var(--muted);">/月</div>
+      </div>
+      <div style="background:var(--bg);border-radius:10px;padding:12px;text-align:center;">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:6px;">2パケ / D</div>
+        <div class="price-big">33,000</div>
+        <div style="font-size:11px;color:var(--muted);">円〜/日</div>
+      </div>
+      <div style="background:var(--bg);border-radius:10px;padding:12px;text-align:center;">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:6px;">2パケ / CL</div>
+        <div class="price-big">30,000</div>
+        <div style="font-size:11px;color:var(--muted);">円〜/日</div>
+      </div>
+    </div>
+    <div style="font-size:12px;color:var(--muted);line-height:1.7;">
+      ※ 交通費・宿泊費は全額請求可<br>
+      ※ Dはロケハン・報告・緊急MTG対応あり<br>
+      ※ ライン受けでない場合は単価が下がる可能性あり
+    </div>
+  </div>
+
+  <!-- スケジュール -->
+  <div class="partner-section" style="animation-delay:.16s;">
+    <div class="partner-section-title">🗓 スケジュール</div>
+    <div class="partner-row">
+      <span class="label">5月</span>
+      <span class="val">①最大4ライン ／ ②最大6ライン<br>（5/2・5/3含む）</span>
+    </div>
+    <div class="partner-row">
+      <span class="label">6月</span>
+      <span class="val">最大20ラインへ拡大予定</span>
+    </div>
+  </div>
+
+  <!-- 求める人材 -->
+  <div class="partner-section" style="animation-delay:.20s;">
+    <div class="partner-section-title">👤 求める人材</div>
+    <ul class="req-list">
+      <li>PI実績2件以上</li>
+      <li>docomo商材（イエナカ・Dカードなど）の訴求経験</li>
+      <li>量販店での稼働経験</li>
+      <li>docomo経験およびそれに準ずる知識・経験</li>
+      <li>業務指示に従える方</li>
+      <li>報告物の提出に滞らない方</li>
+    </ul>
+  </div>
+
+  <!-- 注意事項 -->
+  <div class="partner-section" style="animation-delay:.24s;">
+    <div class="notice-box">
+      ⚠️ 本案件内容のSNS等への投稿は禁止です。情報管理の徹底をお願いします。
+    </div>
+  </div>
+
+  <!-- 問い合わせ -->
+  <div style="text-align:center;padding:4px 0 0;">
+    <p style="font-size:12px;color:var(--muted);margin-bottom:12px;">お問い合わせ・お打ち合わせはLINEへ</p>
+    <a href="https://line.me/R/ti/p/@597ckygq" target="_blank" class="btn-line-footer" style="display:inline-flex;">
+      <svg width="18" height="18" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="10" fill="white"/><path d="M24 8C15.16 8 8 14.26 8 22c0 5.4 3.4 10.14 8.5 12.82-.36 1.34-1.28 4.86-1.46 5.6-.22.88.32.88.68.64.28-.18 4.38-2.98 6.16-4.18.68.1 1.38.14 2.12.14 8.84 0 16-6.26 16-14S32.84 8 24 8z" fill="#06C755"/></svg>
+      LINEで問い合わせる
+    </a>
+    <div style="margin-top:10px;font-size:11px;color:var(--muted);">担当：梶浦・木村・中村</div>
+  </div>
+
+</div>
+
+<!-- ===== RANK PAGE ===== -->
+<div class="rank-page" id="rank-page">
+  <div class="rank-intro">
+    <h2>🏆 ランク別報酬分配制度</h2>
+    <p>月間稼働日数・継続実績に応じてランクが上がり、あなたの取り分率がアップする仕組みです。稼働が多いほど、継続するほど条件が良くなります。</p>
+  </div>
+
+  <!-- Bronze -->
+  <div class="rank-card" style="background:#fff5f0;border-color:#f4c7a8;">
+    <div class="rank-header">
+      <div class="rank-icon">🥉</div>
+      <div>
+        <div class="rank-name" style="color:#cd7f32;">Bronze</div>
+        <div class="rank-condition">月間稼働目安：〜7日</div>
+      </div>
+    </div>
+    <div class="rank-bar-bg">
+      <div class="rank-bar-fill" style="width:70%;background:#cd7f32;"></div>
+    </div>
+    <div class="rank-split">
+      <div class="rank-split-item" style="background:rgba(205,127,50,.1);">
+        <div class="rank-split-label">あなたの取り分</div>
+        <div class="rank-split-val" style="color:#cd7f32;">70%</div>
+      </div>
+      <div class="rank-split-item" style="background:rgba(0,0,0,.04);">
+        <div class="rank-split-label">会社マージン</div>
+        <div class="rank-split-val" style="color:var(--muted);">30%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Silver -->
+  <div class="rank-card" style="background:#f8f8fc;border-color:#c0c0c0;">
+    <div class="rank-header">
+      <div class="rank-icon">🥈</div>
+      <div>
+        <div class="rank-name" style="color:#808080;">Silver</div>
+        <div class="rank-condition">月間稼働目安：8〜14日</div>
+      </div>
+    </div>
+    <div class="rank-bar-bg">
+      <div class="rank-bar-fill" style="width:75%;background:#808080;"></div>
+    </div>
+    <div class="rank-split">
+      <div class="rank-split-item" style="background:rgba(128,128,128,.1);">
+        <div class="rank-split-label">あなたの取り分</div>
+        <div class="rank-split-val" style="color:#606060;">75%</div>
+      </div>
+      <div class="rank-split-item" style="background:rgba(0,0,0,.04);">
+        <div class="rank-split-label">会社マージン</div>
+        <div class="rank-split-val" style="color:var(--muted);">25%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gold -->
+  <div class="rank-card" style="background:#fffbf0;border-color:#f0c040;">
+    <div class="rank-header">
+      <div class="rank-icon">🥇</div>
+      <div>
+        <div class="rank-name" style="color:#c8a000;">Gold</div>
+        <div class="rank-condition">月間稼働目安：15〜19日</div>
+      </div>
+    </div>
+    <div class="rank-bar-bg">
+      <div class="rank-bar-fill" style="width:80%;background:#c8a000;"></div>
+    </div>
+    <div class="rank-split">
+      <div class="rank-split-item" style="background:rgba(200,160,0,.12);">
+        <div class="rank-split-label">あなたの取り分</div>
+        <div class="rank-split-val" style="color:#c8a000;">80%</div>
+      </div>
+      <div class="rank-split-item" style="background:rgba(0,0,0,.04);">
+        <div class="rank-split-label">会社マージン</div>
+        <div class="rank-split-val" style="color:var(--muted);">20%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Platinum -->
+  <div class="rank-card" style="background:#f0f8ff;border-color:#8ab4d8;">
+    <div class="rank-header">
+      <div class="rank-icon">💎</div>
+      <div>
+        <div class="rank-name" style="color:#4a88b8;">Platinum</div>
+        <div class="rank-condition">月間稼働目安：20日〜</div>
+      </div>
+    </div>
+    <div class="rank-bar-bg">
+      <div class="rank-bar-fill" style="width:85%;background:#4a88b8;"></div>
+    </div>
+    <div class="rank-split">
+      <div class="rank-split-item" style="background:rgba(74,136,184,.12);">
+        <div class="rank-split-label">あなたの取り分</div>
+        <div class="rank-split-val" style="color:#4a88b8;">85%</div>
+      </div>
+      <div class="rank-split-item" style="background:rgba(0,0,0,.04);">
+        <div class="rank-split-label">会社マージン</div>
+        <div class="rank-split-val" style="color:var(--muted);">15%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Diamond -->
+  <div class="rank-card" style="background:linear-gradient(135deg,#f0f8ff,#f8f0ff);border-color:#b0a0d0;">
+    <div class="rank-header">
+      <div class="rank-icon">🔷</div>
+      <div>
+        <div class="rank-name" style="color:#7040c0;">Diamond</div>
+        <div class="rank-condition">20日以上の稼働を3ヶ月継続</div>
+      </div>
+    </div>
+    <div class="rank-bar-bg">
+      <div class="rank-bar-fill" style="width:90%;background:linear-gradient(90deg,#7040c0,#a060e0);"></div>
+    </div>
+    <div class="rank-split">
+      <div class="rank-split-item" style="background:rgba(112,64,192,.1);">
+        <div class="rank-split-label">あなたの取り分</div>
+        <div class="rank-split-val" style="color:#7040c0;">90%</div>
+      </div>
+      <div class="rank-split-item" style="background:rgba(0,0,0,.04);">
+        <div class="rank-split-label">会社マージン</div>
+        <div class="rank-split-val" style="color:var(--muted);">10%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Master -->
+  <div class="rank-card" style="background:linear-gradient(135deg,#fff8f0,#fff0f8);border-color:#e0a080;">
+    <div class="rank-header">
+      <div class="rank-icon">👑</div>
+      <div>
+        <div class="rank-name" style="color:#c05000;">Master</div>
+        <div class="rank-condition">特別枠</div>
+      </div>
+    </div>
+    <div class="rank-bar-bg">
+      <div class="rank-bar-fill" style="width:90%;background:linear-gradient(90deg,#c05000,#e08000);"></div>
+    </div>
+    <div class="rank-split">
+      <div class="rank-split-item" style="background:rgba(192,80,0,.1);">
+        <div class="rank-split-label">あなたの取り分</div>
+        <div class="rank-split-val" style="color:#c05000;">90%</div>
+      </div>
+      <div class="rank-split-item" style="background:rgba(0,0,0,.04);">
+        <div class="rank-split-label">会社マージン</div>
+        <div class="rank-split-val" style="color:var(--muted);">10%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 問い合わせ -->
+  <div style="text-align:center;padding:8px 0 0;">
+    <p style="font-size:12px;color:var(--muted);margin-bottom:12px;">ランク・報酬についてのご質問はLINEへ</p>
+    <a class="btn-line-footer" href="https://line.me/R/ti/p/@597ckygq" target="_blank" style="display:inline-flex;">
+      <svg width="18" height="18" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="10" fill="white"/><path d="M24 8C15.16 8 8 14.26 8 22c0 5.4 3.4 10.14 8.5 12.82-.36 1.34-1.28 4.86-1.46 5.6-.22.88.32.88.68.64.28-.18 4.38-2.98 6.16-4.18.68.1 1.38.14 2.12.14 8.84 0 16-6.26 16-14S32.84 8 24 8z" fill="#06C755"/></svg>
+      LINEで問い合わせる
+    </a>
+  </div>
+</div>
+
+<!-- ===== JOB MODAL ===== -->
+<div class="modal-overlay" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-carrier-bar" id="modal-bar"></div>
+    <div class="modal-station" id="modal-station"></div>
+    <div class="modal-store" id="modal-store"></div>
+    <div id="modal-tags" style="margin-bottom:16px;"></div>
+    <div class="modal-price" id="modal-price"></div>
+    <div class="modal-grid" id="modal-grid"></div>
+    <a class="btn-line" id="modal-line-btn" href="#" target="_blank">
+      <svg width="22" height="22" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="12" fill="white"/><path d="M24 8C15.16 8 8 14.26 8 22c0 5.4 3.4 10.14 8.5 12.82-.36 1.34-1.28 4.86-1.46 5.6-.22.88.32 .88.68.64.28-.18 4.38-2.98 6.16-4.18.68.1 1.38.14 2.12.14 8.84 0 16-6.26 16-14S32.84 8 24 8z" fill="#06C755"/></svg>
+      出勤を希望する 🟢
+    </a>
+    <button class="btn-close" onclick="closeModal()">閉じる</button>
+  </div>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div class="footer">
+  <p>気になる案件はLINEでお気軽にお問い合わせください</p>
+  <a class="btn-line-footer" href="https://line.me/R/ti/p/@597ckygq" target="_blank">
+    <svg width="18" height="18" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="10" fill="white"/><path d="M24 8C15.16 8 8 14.26 8 22c0 5.4 3.4 10.14 8.5 12.82-.36 1.34-1.28 4.86-1.46 5.6-.22.88.32.88.68.64.28-.18 4.38-2.98 6.16-4.18.68.1 1.38.14 2.12.14 8.84 0 16-6.26 16-14S32.84 8 24 8z" fill="#06C755"/></svg>
+    公式LINEに問い合わせる
+  </a>
+</div>
+
+<!-- ===== GUIDE PAGE ===== -->
+<div class="guide-page" id="guide-page">
+
+  <!-- ヒーロー -->
+  <div class="guide-hero">
+    <div class="emoji">📋</div>
+    <h2>現場ガイド</h2>
+    <p>このガイドは、あなたが安心して現場に出るためのものです。<br>ルールは縛るためではなく、<br>あなたと現場を守るためにあります。</p>
+  </div>
+
+  <!-- 要点まとめ目次 -->
+  <div style="background:#fff;border-radius:var(--radius);padding:18px;margin-bottom:16px;border:1px solid var(--border);box-shadow:0 2px 8px rgba(0,0,0,.06);">
+    <div style="font-size:13px;font-weight:900;margin-bottom:12px;">📌 要点まとめ　タップで詳細へ</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+      <a href="#guide-basic" onclick="scrollToSection('guide-basic')" class="guide-toc-item">
+        <span class="guide-toc-icon">🎯</span>
+        <div><div class="guide-toc-title">基本姿勢</div><div class="guide-toc-sub">誠実に・チームで動く</div></div>
+      </a>
+      <a href="#guide-contact" onclick="scrollToSection('guide-contact')" class="guide-toc-item">
+        <span class="guide-toc-icon">⏰</span>
+        <div><div class="guide-toc-title">集合・報連相</div><div class="guide-toc-sub">10分前・遅刻は即連絡</div></div>
+      </a>
+      <a href="#guide-appearance" onclick="scrollToSection('guide-appearance')" class="guide-toc-item">
+        <span class="guide-toc-icon">👔</span>
+        <div><div class="guide-toc-title">身だしなみ</div><div class="guide-toc-sub">笑顔・清潔感が基本</div></div>
+      </a>
+      <a href="#guide-judgment" onclick="scrollToSection('guide-judgment')" class="guide-toc-item">
+        <span class="guide-toc-icon">🤔</span>
+        <div><div class="guide-toc-title">勝手な判断NG</div><div class="guide-toc-sub">迷ったら必ず確認</div></div>
+      </a>
+      <a href="#guide-privacy" onclick="scrollToSection('guide-privacy')" class="guide-toc-item">
+        <span class="guide-toc-icon">🔒</span>
+        <div><div class="guide-toc-title">個人情報</div><div class="guide-toc-sub">放置・撮影・持ち出しNG</div></div>
+      </a>
+      <a href="#guide-customer" onclick="scrollToSection('guide-customer')" class="guide-toc-item">
+        <span class="guide-toc-icon">🤝</span>
+        <div><div class="guide-toc-title">お客様対応</div><div class="guide-toc-sub">強引NG・最後まで聞く</div></div>
+      </a>
+      <a href="#guide-tossup" onclick="scrollToSection('guide-tossup')" class="guide-toc-item" style="border:1.5px solid var(--accent);">
+        <span class="guide-toc-icon">🔄</span>
+        <div><div class="guide-toc-title" style="color:var(--accent);">トスアップ 🔴</div><div class="guide-toc-sub">8項目を必ず確認</div></div>
+      </a>
+      <a href="#guide-numbers" onclick="scrollToSection('guide-numbers')" class="guide-toc-item">
+        <span class="guide-toc-icon">📊</span>
+        <div><div class="guide-toc-title">数字管理</div><div class="guide-toc-sub">4指標を常に把握</div></div>
+      </a>
+      <a href="#guide-trouble" onclick="scrollToSection('guide-trouble')" class="guide-toc-item">
+        <span class="guide-toc-icon">🚨</span>
+        <div><div class="guide-toc-title">トラブル対応</div><div class="guide-toc-sub">自己判断せず即報告</div></div>
+      </a>
+      <a href="#guide-prohibited" onclick="scrollToSection('guide-prohibited')" class="guide-toc-item">
+        <span class="guide-toc-icon">🚫</span>
+        <div><div class="guide-toc-title">禁止事項</div><div class="guide-toc-sub">違反は即契約終了</div></div>
+      </a>
+      <a href="#guide-report" onclick="scrollToSection('guide-report')" class="guide-toc-item" style="grid-column:span 2;">
+        <span class="guide-toc-icon">📝</span>
+        <div><div class="guide-toc-title">終了後の報告</div><div class="guide-toc-sub">稼働終了から1時間以内に提出</div></div>
+      </a>
+    </div>
+  </div>
+
+  <!-- 1. 基本姿勢 -->
+  <div class="guide-section" id="guide-basic" style="animation-delay:.04s;">
+    <div class="guide-section-title"><span class="icon">🎯</span>催事の基本姿勢</div>
+    <div class="guide-do">
+      <div class="guide-do-title">✅ やること</div>
+      <ul class="guide-list">
+        <li>お客様の立場で考え、誠実に対応する</li>
+        <li>チームの一員として周囲と連携を意識する</li>
+        <li>「自分が現場の顔」という責任感を持って行動する</li>
+      </ul>
+    </div>
+    <div class="guide-ng">
+      <div class="guide-ng-title">❌ NG例</div>
+      <ul class="guide-ng-list">
+        <li>お客様を「数字」として見て雑な対応をする</li>
+        <li>個人プレーに走り、チームの流れを乱す</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 2. 集合・報連相 -->
+  <div class="guide-section" id="guide-contact" style="animation-delay:.08s;">
+    <div class="guide-section-title"><span class="icon">⏰</span>集合・報連相・遅刻欠勤</div>
+    <div class="guide-do">
+      <div class="guide-do-title">✅ 集合ルール</div>
+      <ul class="guide-list">
+        <li>指定時間の<strong>10分前</strong>には現場に到着する</li>
+        <li>到着したら必ずリーダーに声をかける</li>
+      </ul>
+    </div>
+    <div class="guide-do">
+      <div class="guide-do-title">✅ 遅刻・欠勤の連絡</div>
+      <ul class="guide-list">
+        <li>遅刻：<strong>出発前に</strong>担当者へ連絡</li>
+        <li>欠勤：<strong>前日21時まで</strong>に連絡</li>
+        <li>LINEの既読スルーは厳禁。確認したら必ず返信</li>
+      </ul>
+    </div>
+    <div class="guide-ng">
+      <div class="guide-ng-title">❌ NG例</div>
+      <ul class="guide-ng-list">
+        <li>連絡なしの無断欠勤（即契約終了の対象）</li>
+        <li>当日朝の欠勤連絡</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 3. 身だしなみ -->
+  <div class="guide-section" id="guide-appearance" style="animation-delay:.12s;">
+    <div class="guide-section-title"><span class="icon">👔</span>身だしなみ・接客態度</div>
+    <div class="guide-do">
+      <div class="guide-do-title">✅ 出勤前チェック</div>
+      <ul class="guide-list">
+        <li>指定のユニフォーム・服装で出勤しているか</li>
+        <li>清潔感はあるか（爪・髪・においなど）</li>
+        <li>名札・バッジは正しい位置についているか</li>
+        <li>笑顔・明るいあいさつは基本中の基本</li>
+      </ul>
+    </div>
+    <div class="guide-ng">
+      <div class="guide-ng-title">❌ NG例</div>
+      <ul class="guide-ng-list">
+        <li>スマホをいじりながら待機する</li>
+        <li>スタッフ同士で固まって雑談する</li>
+        <li>暗い顔・無気力な対応をする</li>
+        <li>タメ語・馴れ馴れしい言葉遣い</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 4. 勝手な判断 -->
+  <div class="guide-section" id="guide-judgment" style="animation-delay:.16s;">
+    <div class="guide-section-title"><span class="icon">🤔</span>現場での勝手な判断をしないこと</div>
+    <div class="guide-do">
+      <div class="guide-do-title">✅ 迷ったらすぐ確認</div>
+      <ul class="guide-list">
+        <li>料金・割引・キャンペーンの説明は自己判断で言わない</li>
+        <li>わからないことは「確認してまいります」と伝える</li>
+        <li>クレーム・契約内容・他キャリア比較は特に注意</li>
+      </ul>
+    </div>
+    <div class="guide-note">💡「知ったかぶり」より「正直に確認する」ほうが、お客様からの信頼につながります。</div>
+  </div>
+
+  <!-- 5. 個人情報 -->
+  <div class="guide-section" id="guide-privacy" style="animation-delay:.20s;">
+    <div class="guide-section-title"><span class="icon">🔒</span>個人情報の取り扱い</div>
+    <div class="guide-do">
+      <div class="guide-do-title">✅ 守るべきこと</div>
+      <ul class="guide-list">
+        <li>お客様情報は業務以外の目的で使用しない</li>
+        <li>記録した情報（紙・端末）は絶対に放置しない</li>
+        <li>業務終了後は指示に従い適切に廃棄・返却する</li>
+      </ul>
+    </div>
+    <div class="guide-ng">
+      <div class="guide-ng-title">❌ 絶対NG</div>
+      <ul class="guide-ng-list">
+        <li>お客様情報をスマホで撮影する</li>
+        <li>個人情報が載った書類を持ち帰る</li>
+        <li>社外の人に業務内容・顧客情報を話す</li>
+      </ul>
+    </div>
+    <div class="guide-note">⚠️ 個人情報の漏洩は、法的責任につながる場合があります。</div>
+  </div>
+
+  <!-- 6. お客様対応 -->
+  <div class="guide-section" id="guide-customer" style="animation-delay:.24s;">
+    <div class="guide-section-title"><span class="icon">🤝</span>お客様対応の注意点</div>
+    <div class="guide-do">
+      <div class="guide-do-title">✅ 案内時のポイント</div>
+      <ul class="guide-list">
+        <li>メリットだけでなく注意点もきちんと伝える</li>
+        <li>お客様が話しているときは最後まで聞く</li>
+        <li>お断りされたら気持ちよくお見送りする</li>
+        <li>クレームはすぐリーダーに引き継ぐ</li>
+      </ul>
+    </div>
+    <div class="guide-ng">
+      <div class="guide-ng-title">❌ NG例</div>
+      <ul class="guide-ng-list">
+        <li>「絶対お得」「今だけ」などの過剰表現を使う</li>
+        <li>しつこく引き留める・プレッシャーをかける</li>
+        <li>クレームに言い訳・反論をする</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 7. トスアップ -->
+  <div class="guide-section" id="guide-tossup" style="animation-delay:.28s;">
+    <div class="guide-section-title">
+      <span class="icon">🔄</span>トスアップ・引き継ぎのルール
+      <span class="badge-important">最重要</span>
+    </div>
+
+    <!-- 重要性 -->
+    <div style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.7;">
+      「キャッチ」がお客様を席に案内したあと、「クローザー」にバトンを渡す瞬間が<strong style="color:var(--text);">トスアップ</strong>です。<br>
+      この引き継ぎの質が、チームの獲得数を決めます。
+    </div>
+
+    <!-- 必須確認項目 -->
+    <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:10px;letter-spacing:.05em;">📋 トスアップ前の必須確認8項目</div>
+    <div class="tossup-item">
+      <div class="tossup-num">1</div>
+      <div class="tossup-content"><h4>お名前</h4><p>本人確認・呼びかけのため</p></div>
+    </div>
+    <div class="tossup-item">
+      <div class="tossup-num">2</div>
+      <div class="tossup-content"><h4>電話番号</h4><p>手続き・後日対応のため</p></div>
+    </div>
+    <div class="tossup-item">
+      <div class="tossup-num">3</div>
+      <div class="tossup-content"><h4>予約番号</h4><p>手続きの照合・特典確認のため</p></div>
+    </div>
+    <div class="tossup-item">
+      <div class="tossup-num">4</div>
+      <div class="tossup-content"><h4>乗り換え元キャリア</h4><p>MNP手続きの要否を判断するため</p></div>
+    </div>
+    <div class="tossup-item">
+      <div class="tossup-num">5</div>
+      <div class="tossup-content"><h4>使用する施策（キャンペーン）</h4><p>適用条件・在庫確認のため</p></div>
+    </div>
+    <div class="tossup-item">
+      <div class="tossup-num">6</div>
+      <div class="tossup-content"><h4>SIMロック解除ができているか</h4><p>未解除のままだと手続きがその場でストップするため</p></div>
+    </div>
+    <div class="tossup-item">
+      <div class="tossup-num">7</div>
+      <div class="tossup-content"><h4>データ移行をするかどうか</h4><p>対応時間・準備の見積もりのため</p></div>
+    </div>
+    <div class="tossup-item">
+      <div class="tossup-num">8</div>
+      <div class="tossup-content"><h4>本人確認書類を持っているか</h4><p>書類不備は手続き不可につながるため</p></div>
+    </div>
+
+    <!-- トラブル例 -->
+    <div class="guide-ng" style="margin-top:14px;">
+      <div class="guide-ng-title">❌ 確認不足で起こるトラブル例</div>
+      <ul class="guide-ng-list">
+        <li>SIMロック未解除でその場対応できず、お客様が帰られる</li>
+        <li>本人確認書類を忘れて手続きがストップ</li>
+        <li>MNP予約番号がなく乗り換えできない</li>
+        <li>施策の認識がずれていてクローザーが違う説明をしてしまう</li>
+      </ul>
+    </div>
+    <div class="guide-note">💡 いずれも「引き継ぎ前の5分の確認」で防げるトラブルです。</div>
+
+    <!-- 良い引き継ぎ例 -->
+    <div style="font-size:12px;font-weight:700;color:var(--green);margin:14px 0 8px;letter-spacing:.05em;">✅ 良い引き継ぎの例</div>
+    <div class="tossup-example">
+      「<strong>田中様</strong>です。<br>
+      電話番号は<strong>090-XXXX-XXXX</strong>、予約番号あり。<br>
+      <strong>auからの乗り換え</strong>で、施策は<strong>○○キャンペーン</strong>ご希望。<br>
+      <strong>SIMロック解除済み</strong>、<strong>データ移行希望</strong>、<strong>免許証お持ち</strong>です。よろしくお願いします！」
+    </div>
+    <div class="guide-note" style="margin-top:10px;">⚡ この一言で、クローザーはすぐに次の対応に入れます。</div>
+  </div>
+
+  <!-- 8. 数字管理 -->
+  <div class="guide-section" id="guide-numbers" style="animation-delay:.32s;">
+    <div class="guide-section-title"><span class="icon">📊</span>現場の数字管理</div>
+    <table class="guide-table">
+      <tr><th>指標</th><th>内容</th></tr>
+      <tr><td><strong>キャッチ数</strong></td><td>声をかけてお客様に足を止めてもらった数</td></tr>
+      <tr><td><strong>着座数</strong></td><td>席に案内できた数</td></tr>
+      <tr><td><strong>獲得数</strong></td><td>実際に契約が成立した数</td></tr>
+      <tr><td><strong>見込み数</strong></td><td>「検討します」など後日対応の可能性がある数</td></tr>
+    </table>
+    <div class="guide-note" style="margin-top:12px;">📌 終日稼働の場合、昼・終了前の2回は数字を確認・共有してください。</div>
+  </div>
+
+  <!-- 9. トラブル対応 -->
+  <div class="guide-section" id="guide-trouble" style="animation-delay:.36s;">
+    <div class="guide-section-title"><span class="icon">🚨</span>トラブル時の対応ルール</div>
+    <div class="guide-do">
+      <div class="guide-do-title">✅ 基本の流れ</div>
+      <ul class="guide-list">
+        <li>「少々お待ちください」でその場をつなぐ</li>
+        <li>すぐにリーダー・担当者に報告する</li>
+        <li>自己判断で解決しようとしない</li>
+        <li>指示を受けてから対応する</li>
+      </ul>
+    </div>
+    <div class="guide-ng">
+      <div class="guide-ng-title">❌ 重大トラブル（当日中に書面報告が必要）</div>
+      <ul class="guide-ng-list">
+        <li>契約内容の誤案内</li>
+        <li>お客様情報の紛失・流出</li>
+        <li>お客様からの強いクレーム・暴言</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 10. 禁止事項 -->
+  <div class="guide-section" id="guide-prohibited" style="animation-delay:.40s;">
+    <div class="guide-section-title"><span class="icon">🚫</span>禁止事項</div>
+    <div class="guide-ng">
+      <div class="guide-ng-title">❌ 発覚した場合、即契約終了の対象</div>
+      <ul class="guide-ng-list">
+        <li>無断欠勤・連絡なしの遅刻</li>
+        <li>個人情報の無断持ち出し・撮影</li>
+        <li>虚偽の説明・誇張した案内</li>
+        <li>強引な勧誘・お客様へのプレッシャー</li>
+        <li>業務中のスマホ私的利用</li>
+        <li>スタッフ間のトラブル・言い争い</li>
+        <li>業務内容のSNS投稿・口外</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 11. 終了後の報告 -->
+  <div class="guide-section" id="guide-report" style="animation-delay:.44s;">
+    <div class="guide-section-title"><span class="icon">📝</span>終了後の報告ルール</div>
+    <div class="guide-do">
+      <div class="guide-do-title">✅ 報告内容</div>
+      <ul class="guide-list">
+        <li>キャッチ数・着座数・獲得数・見込み数</li>
+        <li>トラブルの有無（あった場合は概要）</li>
+        <li>特記事項・改善提案など</li>
+      </ul>
+    </div>
+    <div class="guide-note">⏰ 稼働終了から<strong>1時間以内</strong>に指定フォームまたはLINEで報告してください。</div>
+  </div>
+
+  <!-- 重要ポイント10選 -->
+  <div class="summary-card">
+    <h3>✅ スタッフが守るべき重要ポイント10</h3>
+    <div class="summary-item"><div class="summary-num">1</div><p>集合は<strong>10分前</strong>が基本。遅刻するなら出発前に連絡</p></div>
+    <div class="summary-item"><div class="summary-num">2</div><p><strong>報連相は即時</strong>。迷ったらすぐ上に確認</p></div>
+    <div class="summary-item"><div class="summary-num">3</div><p><strong>身だしなみ・笑顔</strong>はお客様との信頼の入口</p></div>
+    <div class="summary-item"><div class="summary-num">4</div><p><strong>勝手な判断はしない</strong>。わからないことは確認してから伝える</p></div>
+    <div class="summary-item"><div class="summary-num">5</div><p><strong>個人情報は厳重管理</strong>。放置・持ち帰り・撮影は絶対NG</p></div>
+    <div class="summary-item"><div class="summary-num">6</div><p><strong>強引な勧誘はしない</strong>。誠実な案内が信頼につながる</p></div>
+    <div class="summary-item"><div class="summary-num">7</div><p><strong>トスアップ前に8項目を必ず確認</strong>。引き継ぎの質が獲得数を決める</p></div>
+    <div class="summary-item"><div class="summary-num">8</div><p><strong>4つの数字（キャッチ・着座・獲得・見込み）</strong>を常に把握する</p></div>
+    <div class="summary-item"><div class="summary-num">9</div><p><strong>トラブルは自己判断せず即報告</strong>。対応はリーダーの指示を待つ</p></div>
+    <div class="summary-item"><div class="summary-num">10</div><p><strong>終了後1時間以内に報告</strong>を完了させる</p></div>
+  </div>
+
+</div>
+
+<script>
+const LINE_ID = '@597ckygq';
+
+function scrollToSection(id) {
+  // 少し遅延させてDOMが安定してからスクロール
+  setTimeout(() => {
+    const el = document.getElementById(id);
+    if (el) {
+      const headerH = document.querySelector('.header')?.offsetHeight || 110;
+      const top = el.getBoundingClientRect().top + window.scrollY - headerH - 8;
+      window.scrollTo({ top, behavior: 'smooth' });
+    }
+  }, 50);
+  return false;
+}
+
+function switchTab(tab, btn) {
+  document.querySelectorAll('.tab-nav-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('job-list').style.display    = tab === 'jobs'    ? 'block' : 'none';
+  document.getElementById('partner-page').classList.toggle('active', tab === 'partner');
+  document.getElementById('rank-page').classList.toggle('active',    tab === 'rank');
+  document.getElementById('guide-page').classList.toggle('active',   tab === 'guide');
+  document.querySelector('.footer').style.display = tab === 'jobs' ? 'block' : 'none';
+  document.getElementById('filter-bar').style.display = tab === 'jobs' ? 'flex' : 'none';
+  window.scrollTo(0, 0);
+}
+
+const CARRIER = {
+  docomo:   { color:'#e53935', emoji:'🍄', label:'docomo' },
+  au:       { color:'#f57c00', emoji:'🍊', label:'au' },
+  softbank: { color:'#1565c0', emoji:'⚪', label:'SoftBank' },
+  uq:       { color:'#2e7d32', emoji:'♕', label:'UQ' },
+  ymobile:  { color:'#7b1fa2', emoji:'🐱', label:'Y!mobile' },
+  other:    { color:'#455a64', emoji:'🏢', label:'その他' }
+};
+
+// ★ここに案件を追加してください
+const JOBS = [
+  {
+    id: 6,
+    carrier: 'docomo',
+    station: '大久保駅',
+    store: 'NTT法人フィールドセールス',
+    price: 23000,
+    dates: '4月中旬〜（長期・週5日）',
+    transport: '交通費全額支給',
+    lodging: '',
+    position: 'フィールドセールス',
+    count: 4,
+    status: 'open',
+    tag: '高単価',
+    note: '直行直帰OK・3ヶ月更新（長期前提）・スキルにより単価UP相談可'
+  },
+  {
+    id: 7,
+    carrier: 'other',
+    station: '北関東／埼玉／湘南（急募）',
+    store: '大手家電メーカーラウンダー',
+    price: 2200,
+    priceUnit: '時給',
+    dates: '週5日（土日含む）',
+    transport: '交通費支給・ガソリン代別途支給',
+    lodging: '',
+    position: 'ラウンダー',
+    count: 0,
+    status: 'open',
+    tag: '安定稼働',
+    note: '直行直帰OK・残業なし・未経験相談可。車稼働の場合+1,000円/日'
+  }
+];
+
+let currentFilter = 'all';
+let currentJob = null;
+
+function setFilter(carrier, btn) {
+  currentFilter = carrier;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderJobs();
+}
+
+function renderJobs() {
+  const list = document.getElementById('job-list');
+  const filtered = currentFilter === 'all'
+    ? JOBS
+    : JOBS.filter(j => j.carrier === currentFilter);
+
+  const openCount = filtered.filter(j => j.status === 'open').length;
+  document.getElementById('count-badge').textContent = `募集中 ${openCount}件`;
+
+  if (!filtered.length) {
+    list.innerHTML = '<div class="empty"><div class="icon">📋</div><p>該当する案件がありません</p></div>';
+    return;
+  }
+
+  list.innerHTML = filtered.map((j, i) => {
+    const c = CARRIER[j.carrier] || { color:'#888', emoji:'📋', label:j.carrier };
+    const priceLabel = j.priceUnit === '時給'
+      ? `<span class="job-price">¥${j.price.toLocaleString()}<span style="font-size:12px;color:var(--muted);font-family:'Noto Sans JP';font-weight:400;">/時</span></span>`
+      : `<span class="job-price">¥${j.price.toLocaleString()}<span style="font-size:12px;color:var(--muted);font-family:'Noto Sans JP';font-weight:400;">/日</span></span>`;
+    return `
+      <div class="job-card ${j.status === 'full' ? 'full' : ''}"
+           style="animation-delay:${i * 0.04}s"
+           onclick="openModal(${j.id})">
+        <div class="carrier-bar" style="background:${c.color};"></div>
+        <div class="job-body">
+          <div class="job-meta">
+            <span class="carrier-tag" style="color:${c.color};">${c.emoji} ${c.label}</span>
+            ${j.tag ? `<span style="background:rgba(192,25,26,.1);color:var(--accent);font-size:10px;font-weight:700;padding:2px 8px;border-radius:100px;">★ ${j.tag}</span>` : ''}
+            ${j.status === 'full' ? '<span class="full-badge">満員</span>' : ''}
+          </div>
+          <div class="job-station">${j.station}</div>
+          <div class="job-store">${j.store}</div>
+          <div class="job-row">
+            <div class="job-item">
+              <span>単価</span>
+              ${priceLabel}
+            </div>
+            <div class="job-item">
+              <span>日程</span>
+              <div class="val">${j.dates}</div>
+            </div>
+            ${j.count > 0 ? `<div class="job-item"><span>ポジション</span><div class="val">${j.position} ${j.count}名</div></div>` : `<div class="job-item"><span>ポジション</span><div class="val">${j.position}</div></div>`}
+          </div>
+          ${j.note ? `<div style="font-size:12px;color:var(--muted);padding-top:6px;border-top:1px solid var(--border);">${j.note}</div>` : ''}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function openModal(id) {
+  currentJob = JOBS.find(j => j.id === id);
+  if (!currentJob) return;
+  const j = currentJob;
+  const c = CARRIER[j.carrier] || { color:'#888', emoji:'📋', label:j.carrier };
+
+  document.getElementById('modal-bar').style.background = c.color;
+  document.getElementById('modal-station').textContent = j.station;
+  document.getElementById('modal-store').textContent = j.store;
+  document.getElementById('modal-tags').innerHTML =
+    `<span style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:8px;background:rgba(0,0,0,.05);font-size:12px;font-weight:700;color:${c.color};">${c.emoji} ${c.label}</span>`;
+  document.getElementById('modal-price').innerHTML =
+    j.priceUnit === '時給'
+      ? `¥${j.price.toLocaleString()}<span>/時</span>`
+      : `¥${j.price.toLocaleString()}<span>/日</span>`;
+  document.getElementById('modal-grid').innerHTML = `
+    <div class="modal-item"><label>日程・勤務</label><div class="val">${j.dates}</div></div>
+    <div class="modal-item"><label>ポジション</label><div class="val">${j.position}${j.count > 0 ? ' ' + j.count + '名' : ''}</div></div>
+    <div class="modal-item"><label>交通費</label><div class="val">${j.transport}</div></div>
+    <div class="modal-item"><label>宿泊費</label><div class="val">${j.lodging || 'なし'}</div></div>
+    ${j.note ? `<div class="modal-item" style="grid-column:span 2;"><label>備考</label><div class="val" style="font-size:13px;line-height:1.6;">${j.note}</div></div>` : ''}
+  `;
+
+  const priceLabel = j.priceUnit === '時給'
+    ? `¥${j.price.toLocaleString()}/時`
+    : `¥${j.price.toLocaleString()}/日〜`;
+  const transportLine = j.transport + (j.lodging ? ' / ' + j.lodging : '');
+
+  const msg = encodeURIComponent(
+    `【案件応募】\n${j.store}（${j.station}）\n${j.dates}\n${j.position}\n${priceLabel}${transportLine}\n\n上記案件に応募します。`
+  );
+  document.getElementById('modal-line-btn').href =
+    `https://line.me/R/ti/p/${LINE_ID}?text=${msg}`;
+
+  document.getElementById('modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+renderJobs();
+</script>
+</body>
+</html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
