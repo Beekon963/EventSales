@@ -23,7 +23,7 @@
     --radius: 16px;
     --nav-h: 60px;
   }
-
+ 
   * { margin:0; padding:0; box-sizing:border-box; }
   html, body { height:100%; }
   body {
@@ -33,7 +33,7 @@
     min-height:100vh;
     overflow-x:hidden;
   }
-
+ 
   /* ===== HEADER ===== */
   .header {
     position:sticky; top:0; z-index:100;
@@ -57,7 +57,7 @@
     margin-left:auto; background:rgba(192,25,26,.1); color:var(--accent);
     font-size:11px; font-weight:700; padding:3px 10px; border-radius:100px;
   }
-
+ 
   /* ===== FILTER BAR ===== */
   .filter-bar {
     display:flex; gap:7px; overflow-x:auto;
@@ -78,7 +78,7 @@
   .filter-btn[data-carrier="docomo"].active { background:var(--docomo); border-color:var(--docomo); }
   .filter-btn[data-carrier="au"].active { background:var(--au); border-color:var(--au); }
   .filter-btn[data-carrier="softbank"].active { background:var(--softbank); border-color:var(--softbank); }
-
+ 
   /* ===== POSITION BAR ===== */
   .pos-bar {
     display:flex; gap:6px; padding:8px 16px 0;
@@ -94,7 +94,7 @@
   .pos-btn.active {
     background:#1a1a2e; color:#fff; border-color:#1a1a2e;
   }
-
+ 
   /* ===== JOB LIST ===== */
   .job-list {
     padding:16px 16px 80px; max-width:600px; margin:0 auto;
@@ -118,7 +118,7 @@
   .job-card:nth-child(3) { animation-delay:.12s; }
   .job-card:nth-child(4) { animation-delay:.16s; }
   .job-card:nth-child(5) { animation-delay:.20s; }
-
+ 
   .carrier-bar { height:4px; }
   .job-body { padding:16px; }
   .job-meta { display:flex; align-items:center; gap:6px; margin-bottom:10px; }
@@ -142,10 +142,31 @@
   .job-item .val { font-size:13px; font-weight:500; }
   .job-price {
     font-family:'Space Mono',monospace;
-    font-size:18px; font-weight:700;
+    font-size:32px; font-weight:700;
     color:var(--accent);
+    line-height:1;
+    letter-spacing:-.02em;
   }
-
+  .job-price-wrap {
+    display:flex; align-items:center; justify-content:space-between;
+    background:linear-gradient(135deg, rgba(192,25,26,.08), rgba(192,25,26,.04));
+    border:1.5px solid rgba(192,25,26,.15);
+    border-radius:12px;
+    padding:10px 14px;
+    margin:10px 0 8px;
+  }
+  .job-price-left { display:flex; align-items:baseline; gap:4px; }
+  .job-price-unit {
+    font-size:13px; color:var(--muted);
+    font-family:'Noto Sans JP',sans-serif;
+    font-weight:600;
+  }
+  .job-price-label {
+    font-size:10px; color:var(--muted);
+    font-weight:700; letter-spacing:.06em;
+    text-transform:uppercase;
+  }
+ 
   /* ===== MODAL ===== */
   .modal-overlay {
     display:none; position:fixed; inset:0;
@@ -172,8 +193,9 @@
   .modal-store { font-size:13px; color:var(--muted); margin-bottom:16px; }
   .modal-price {
     font-family:'Space Mono',monospace;
-    font-size:34px; font-weight:700; color:var(--accent);
+    font-size:42px; font-weight:700; color:var(--accent);
     margin-bottom:4px;
+    line-height:1.1;
   }
   .modal-price span { font-size:14px; color:var(--muted); font-weight:400; font-family:'Noto Sans JP',sans-serif; }
   .modal-grid {
@@ -182,7 +204,7 @@
   }
   .modal-item label { font-size:11px; color:var(--muted); display:block; margin-bottom:3px; }
   .modal-item .val { font-size:14px; font-weight:500; }
-
+ 
   .btn-line {
     display:flex; align-items:center; justify-content:center; gap:10px;
     width:100%; padding:16px; border-radius:14px;
@@ -200,12 +222,12 @@
     font-family:inherit; font-size:14px; font-weight:700;
     border:none; cursor:pointer; margin-top:10px;
   }
-
+ 
   /* ===== EMPTY ===== */
   .empty { text-align:center; padding:60px 0; }
   .empty .icon { font-size:48px; margin-bottom:16px; opacity:.3; }
   .empty p { font-size:14px; color:var(--muted); }
-
+ 
   /* ===== TAB NAV ===== */
   .tab-nav {
     display:flex; border-bottom:2px solid var(--border);
@@ -218,7 +240,7 @@
     margin-bottom:-2px; transition:all .2s;
   }
   .tab-nav-btn.active { color:var(--accent); border-bottom-color:var(--accent); }
-
+ 
   /* ===== PARTNER PAGE ===== */
   .partner-page { display:none; padding:16px 16px 100px; max-width:600px; margin:0 auto; }
   .partner-page.active { display:block; }
@@ -280,7 +302,7 @@
     background:#fffbf0; border:1px solid #f0d080; border-radius:10px;
     padding:12px 14px; font-size:12px; color:#806000; line-height:1.7;
   }
-
+ 
   /* ===== RANK PAGE ===== */
   .rank-page { display:none; padding:20px 16px 100px; max-width:600px; margin:0 auto; }
   .rank-page.active { display:block; }
@@ -313,7 +335,7 @@
   .rank-split-val {
     font-family:'Space Mono',monospace; font-size:20px; font-weight:700;
   }
-
+ 
   /* ===== GUIDE PAGE ===== */
   .guide-page { display:none; padding:16px 16px 100px; max-width:600px; margin:0 auto; }
   .guide-page.active { display:block; }
@@ -397,7 +419,7 @@
     display:flex; align-items:center; justify-content:center; flex-shrink:0;
   }
   .summary-item p { font-size:13px; line-height:1.5; }
-
+ 
   /* ===== GUIDE TOC ===== */
   .guide-toc-item {
     display:flex; align-items:center; gap:8px;
@@ -409,7 +431,7 @@
   .guide-toc-icon { font-size:20px; flex-shrink:0; }
   .guide-toc-title { font-size:12px; font-weight:700; margin-bottom:2px; }
   .guide-toc-sub { font-size:10px; color:var(--muted); line-height:1.4; }
-
+ 
   /* ===== FOOTER ===== */
   .footer {
     position:fixed; bottom:0; left:0; right:0;
@@ -431,7 +453,7 @@
 </style>
 </head>
 <body>
-
+ 
 <!-- ===== HEADER ===== -->
 <div class="header">
   <div class="header-top">
@@ -453,7 +475,6 @@
     <button class="pos-btn" onclick="setPosition('キャッチャー',this)">🙋 キャッチャー</button>
     <button class="pos-btn" onclick="setPosition('クローザー',this)">🤝 クローザー</button>
   </div>
-  <!-- タブナビ -->
   <div class="tab-nav">
     <button class="tab-nav-btn active" onclick="switchTab('jobs',this)">📋 単発案件</button>
     <button class="tab-nav-btn" onclick="switchTab('partner',this)">🏢 長期案件</button>
@@ -461,21 +482,17 @@
     <button class="tab-nav-btn" onclick="switchTab('guide',this)">📖 現場ガイド</button>
   </div>
 </div>
-
+ 
 <!-- ===== JOB LIST ===== -->
 <div class="job-list" id="job-list"></div>
-
+ 
 <!-- ===== PARTNER PAGE ===== -->
 <div class="partner-page" id="partner-page">
-
-  <!-- 緊急バナー -->
   <div class="urgent-banner">
     <div class="badge">⚡ 残りわずか・急募</div>
     <h2>🍄 docomo 長期案件 募集</h2>
     <p>5月スタート・首都圏エリア<br>ライン受け（①+②）できる会社様</p>
   </div>
-
-  <!-- 概要 -->
   <div class="partner-section" style="animation-delay:.04s;">
     <div class="partner-section-title">📋 概要</div>
     <div class="partner-row">
@@ -495,8 +512,6 @@
       <span class="val">6月までに<strong>最大20ライン</strong>へ拡大</span>
     </div>
   </div>
-
-  <!-- 稼働パターン -->
   <div class="partner-section" style="animation-delay:.08s;">
     <div class="partner-section-title">📅 稼働パターン</div>
     <div class="pattern-box" style="margin-bottom:10px;">
@@ -508,8 +523,6 @@
       <p>D（ディレクター）×1名 ／ CL（クローザー）×2名<br>※祝日等で変動あり</p>
     </div>
   </div>
-
-  <!-- 単価 -->
   <div class="partner-section" style="animation-delay:.12s;">
     <div class="partner-section-title">💰 単価</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
@@ -540,8 +553,6 @@
       ※ ライン受けでない場合は単価が下がる可能性あり
     </div>
   </div>
-
-  <!-- スケジュール -->
   <div class="partner-section" style="animation-delay:.16s;">
     <div class="partner-section-title">🗓 スケジュール</div>
     <div class="partner-row">
@@ -553,8 +564,6 @@
       <span class="val">最大20ラインへ拡大予定</span>
     </div>
   </div>
-
-  <!-- 求める人材 -->
   <div class="partner-section" style="animation-delay:.20s;">
     <div class="partner-section-title">👤 求める人材</div>
     <ul class="req-list">
@@ -566,15 +575,11 @@
       <li>報告物の提出に滞らない方</li>
     </ul>
   </div>
-
-  <!-- 注意事項 -->
   <div class="partner-section" style="animation-delay:.24s;">
     <div class="notice-box">
       ⚠️ 本案件内容のSNS等への投稿は禁止です。情報管理の徹底をお願いします。
     </div>
   </div>
-
-  <!-- 問い合わせ -->
   <div style="text-align:center;padding:4px 0 0;">
     <p style="font-size:12px;color:var(--muted);margin-bottom:12px;">お問い合わせ・お打ち合わせはLINEへ</p>
     <a href="https://line.me/R/ti/p/@597ckygq" target="_blank" class="btn-line-footer" style="display:inline-flex;">
@@ -583,17 +588,14 @@
     </a>
     <div style="margin-top:10px;font-size:11px;color:var(--muted);">担当：梶浦・木村・中村</div>
   </div>
-
 </div>
-
+ 
 <!-- ===== RANK PAGE ===== -->
 <div class="rank-page" id="rank-page">
   <div class="rank-intro">
     <h2>🏆 ランク別報酬分配制度</h2>
     <p>月間稼働日数・継続実績に応じてランクが上がり、あなたの取り分率がアップする仕組みです。稼働が多いほど、継続するほど条件が良くなります。</p>
   </div>
-
-  <!-- Bronze -->
   <div class="rank-card" style="background:#fff5f0;border-color:#f4c7a8;">
     <div class="rank-header">
       <div class="rank-icon">🥉</div>
@@ -602,9 +604,7 @@
         <div class="rank-condition">月間稼働目安：〜7日</div>
       </div>
     </div>
-    <div class="rank-bar-bg">
-      <div class="rank-bar-fill" style="width:70%;background:#cd7f32;"></div>
-    </div>
+    <div class="rank-bar-bg"><div class="rank-bar-fill" style="width:70%;background:#cd7f32;"></div></div>
     <div class="rank-split">
       <div class="rank-split-item" style="background:rgba(205,127,50,.1);">
         <div class="rank-split-label">あなたの取り分</div>
@@ -616,8 +616,6 @@
       </div>
     </div>
   </div>
-
-  <!-- Silver -->
   <div class="rank-card" style="background:#f8f8fc;border-color:#c0c0c0;">
     <div class="rank-header">
       <div class="rank-icon">🥈</div>
@@ -626,9 +624,7 @@
         <div class="rank-condition">月間稼働目安：8〜14日</div>
       </div>
     </div>
-    <div class="rank-bar-bg">
-      <div class="rank-bar-fill" style="width:75%;background:#808080;"></div>
-    </div>
+    <div class="rank-bar-bg"><div class="rank-bar-fill" style="width:75%;background:#808080;"></div></div>
     <div class="rank-split">
       <div class="rank-split-item" style="background:rgba(128,128,128,.1);">
         <div class="rank-split-label">あなたの取り分</div>
@@ -640,8 +636,6 @@
       </div>
     </div>
   </div>
-
-  <!-- Gold -->
   <div class="rank-card" style="background:#fffbf0;border-color:#f0c040;">
     <div class="rank-header">
       <div class="rank-icon">🥇</div>
@@ -650,9 +644,7 @@
         <div class="rank-condition">月間稼働目安：15〜19日</div>
       </div>
     </div>
-    <div class="rank-bar-bg">
-      <div class="rank-bar-fill" style="width:80%;background:#c8a000;"></div>
-    </div>
+    <div class="rank-bar-bg"><div class="rank-bar-fill" style="width:80%;background:#c8a000;"></div></div>
     <div class="rank-split">
       <div class="rank-split-item" style="background:rgba(200,160,0,.12);">
         <div class="rank-split-label">あなたの取り分</div>
@@ -664,8 +656,6 @@
       </div>
     </div>
   </div>
-
-  <!-- Platinum -->
   <div class="rank-card" style="background:#f0f8ff;border-color:#8ab4d8;">
     <div class="rank-header">
       <div class="rank-icon">💎</div>
@@ -674,9 +664,7 @@
         <div class="rank-condition">月間稼働目安：20日〜</div>
       </div>
     </div>
-    <div class="rank-bar-bg">
-      <div class="rank-bar-fill" style="width:85%;background:#4a88b8;"></div>
-    </div>
+    <div class="rank-bar-bg"><div class="rank-bar-fill" style="width:85%;background:#4a88b8;"></div></div>
     <div class="rank-split">
       <div class="rank-split-item" style="background:rgba(74,136,184,.12);">
         <div class="rank-split-label">あなたの取り分</div>
@@ -688,8 +676,6 @@
       </div>
     </div>
   </div>
-
-  <!-- Diamond -->
   <div class="rank-card" style="background:linear-gradient(135deg,#f0f8ff,#f8f0ff);border-color:#b0a0d0;">
     <div class="rank-header">
       <div class="rank-icon">🔷</div>
@@ -698,9 +684,7 @@
         <div class="rank-condition">20日以上の稼働を3ヶ月継続</div>
       </div>
     </div>
-    <div class="rank-bar-bg">
-      <div class="rank-bar-fill" style="width:90%;background:linear-gradient(90deg,#7040c0,#a060e0);"></div>
-    </div>
+    <div class="rank-bar-bg"><div class="rank-bar-fill" style="width:90%;background:linear-gradient(90deg,#7040c0,#a060e0);"></div></div>
     <div class="rank-split">
       <div class="rank-split-item" style="background:rgba(112,64,192,.1);">
         <div class="rank-split-label">あなたの取り分</div>
@@ -712,8 +696,6 @@
       </div>
     </div>
   </div>
-
-  <!-- Master -->
   <div class="rank-card" style="background:linear-gradient(135deg,#fff8f0,#fff0f8);border-color:#e0a080;">
     <div class="rank-header">
       <div class="rank-icon">👑</div>
@@ -722,9 +704,7 @@
         <div class="rank-condition">特別枠</div>
       </div>
     </div>
-    <div class="rank-bar-bg">
-      <div class="rank-bar-fill" style="width:90%;background:linear-gradient(90deg,#c05000,#e08000);"></div>
-    </div>
+    <div class="rank-bar-bg"><div class="rank-bar-fill" style="width:90%;background:linear-gradient(90deg,#c05000,#e08000);"></div></div>
     <div class="rank-split">
       <div class="rank-split-item" style="background:rgba(192,80,0,.1);">
         <div class="rank-split-label">あなたの取り分</div>
@@ -736,8 +716,6 @@
       </div>
     </div>
   </div>
-
-  <!-- 問い合わせ -->
   <div style="text-align:center;padding:8px 0 0;">
     <p style="font-size:12px;color:var(--muted);margin-bottom:12px;">ランク・報酬についてのご質問はLINEへ</p>
     <a class="btn-line-footer" href="https://line.me/R/ti/p/@597ckygq" target="_blank" style="display:inline-flex;">
@@ -746,7 +724,7 @@
     </a>
   </div>
 </div>
-
+ 
 <!-- ===== JOB MODAL ===== -->
 <div class="modal-overlay" id="modal" onclick="if(event.target===this)closeModal()">
   <div class="modal-sheet">
@@ -764,7 +742,7 @@
     <button class="btn-close" onclick="closeModal()">閉じる</button>
   </div>
 </div>
-
+ 
 <!-- ===== FOOTER ===== -->
 <div class="footer">
   <p>気になる案件はLINEでお気軽にお問い合わせください</p>
@@ -773,18 +751,14 @@
     公式LINEに問い合わせる
   </a>
 </div>
-
+ 
 <!-- ===== GUIDE PAGE ===== -->
 <div class="guide-page" id="guide-page">
-
-  <!-- ヒーロー -->
   <div class="guide-hero">
     <div class="emoji">📋</div>
     <h2>現場ガイド</h2>
     <p>このガイドは、あなたが安心して現場に出るためのものです。<br>ルールは縛るためではなく、<br>あなたと現場を守るためにあります。</p>
   </div>
-
-  <!-- 要点まとめ目次 -->
   <div style="background:#fff;border-radius:var(--radius);padding:18px;margin-bottom:16px;border:1px solid var(--border);box-shadow:0 2px 8px rgba(0,0,0,.06);">
     <div style="font-size:13px;font-weight:900;margin-bottom:12px;">📌 要点まとめ　タップで詳細へ</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
@@ -834,8 +808,6 @@
       </a>
     </div>
   </div>
-
-  <!-- 1. 基本姿勢 -->
   <div class="guide-section" id="guide-basic" style="animation-delay:.04s;">
     <div class="guide-section-title"><span class="icon">🎯</span>催事の基本姿勢</div>
     <div class="guide-do">
@@ -854,8 +826,6 @@
       </ul>
     </div>
   </div>
-
-  <!-- 2. 集合・報連相 -->
   <div class="guide-section" id="guide-contact" style="animation-delay:.08s;">
     <div class="guide-section-title"><span class="icon">⏰</span>集合・報連相・遅刻欠勤</div>
     <div class="guide-do">
@@ -881,8 +851,6 @@
       </ul>
     </div>
   </div>
-
-  <!-- 3. 身だしなみ -->
   <div class="guide-section" id="guide-appearance" style="animation-delay:.12s;">
     <div class="guide-section-title"><span class="icon">👔</span>身だしなみ・接客態度</div>
     <div class="guide-do">
@@ -904,8 +872,6 @@
       </ul>
     </div>
   </div>
-
-  <!-- 4. 勝手な判断 -->
   <div class="guide-section" id="guide-judgment" style="animation-delay:.16s;">
     <div class="guide-section-title"><span class="icon">🤔</span>現場での勝手な判断をしないこと</div>
     <div class="guide-do">
@@ -918,8 +884,6 @@
     </div>
     <div class="guide-note">💡「知ったかぶり」より「正直に確認する」ほうが、お客様からの信頼につながります。</div>
   </div>
-
-  <!-- 5. 個人情報 -->
   <div class="guide-section" id="guide-privacy" style="animation-delay:.20s;">
     <div class="guide-section-title"><span class="icon">🔒</span>個人情報の取り扱い</div>
     <div class="guide-do">
@@ -940,8 +904,6 @@
     </div>
     <div class="guide-note">⚠️ 個人情報の漏洩は、法的責任につながる場合があります。</div>
   </div>
-
-  <!-- 6. お客様対応 -->
   <div class="guide-section" id="guide-customer" style="animation-delay:.24s;">
     <div class="guide-section-title"><span class="icon">🤝</span>お客様対応の注意点</div>
     <div class="guide-do">
@@ -962,56 +924,24 @@
       </ul>
     </div>
   </div>
-
-  <!-- 7. トスアップ -->
   <div class="guide-section" id="guide-tossup" style="animation-delay:.28s;">
     <div class="guide-section-title">
       <span class="icon">🔄</span>トスアップ・引き継ぎのルール
       <span class="badge-important">最重要</span>
     </div>
-
-    <!-- 重要性 -->
     <div style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.7;">
       「キャッチ」がお客様を席に案内したあと、「クローザー」にバトンを渡す瞬間が<strong style="color:var(--text);">トスアップ</strong>です。<br>
       この引き継ぎの質が、チームの獲得数を決めます。
     </div>
-
-    <!-- 必須確認項目 -->
     <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:10px;letter-spacing:.05em;">📋 トスアップ前の必須確認8項目</div>
-    <div class="tossup-item">
-      <div class="tossup-num">1</div>
-      <div class="tossup-content"><h4>お名前</h4><p>本人確認・呼びかけのため</p></div>
-    </div>
-    <div class="tossup-item">
-      <div class="tossup-num">2</div>
-      <div class="tossup-content"><h4>電話番号</h4><p>手続き・後日対応のため</p></div>
-    </div>
-    <div class="tossup-item">
-      <div class="tossup-num">3</div>
-      <div class="tossup-content"><h4>予約番号</h4><p>手続きの照合・特典確認のため</p></div>
-    </div>
-    <div class="tossup-item">
-      <div class="tossup-num">4</div>
-      <div class="tossup-content"><h4>乗り換え元キャリア</h4><p>MNP手続きの要否を判断するため</p></div>
-    </div>
-    <div class="tossup-item">
-      <div class="tossup-num">5</div>
-      <div class="tossup-content"><h4>使用する施策（キャンペーン）</h4><p>適用条件・在庫確認のため</p></div>
-    </div>
-    <div class="tossup-item">
-      <div class="tossup-num">6</div>
-      <div class="tossup-content"><h4>SIMロック解除ができているか</h4><p>未解除のままだと手続きがその場でストップするため</p></div>
-    </div>
-    <div class="tossup-item">
-      <div class="tossup-num">7</div>
-      <div class="tossup-content"><h4>データ移行をするかどうか</h4><p>対応時間・準備の見積もりのため</p></div>
-    </div>
-    <div class="tossup-item">
-      <div class="tossup-num">8</div>
-      <div class="tossup-content"><h4>本人確認書類を持っているか</h4><p>書類不備は手続き不可につながるため</p></div>
-    </div>
-
-    <!-- トラブル例 -->
+    <div class="tossup-item"><div class="tossup-num">1</div><div class="tossup-content"><h4>お名前</h4><p>本人確認・呼びかけのため</p></div></div>
+    <div class="tossup-item"><div class="tossup-num">2</div><div class="tossup-content"><h4>電話番号</h4><p>手続き・後日対応のため</p></div></div>
+    <div class="tossup-item"><div class="tossup-num">3</div><div class="tossup-content"><h4>予約番号</h4><p>手続きの照合・特典確認のため</p></div></div>
+    <div class="tossup-item"><div class="tossup-num">4</div><div class="tossup-content"><h4>乗り換え元キャリア</h4><p>MNP手続きの要否を判断するため</p></div></div>
+    <div class="tossup-item"><div class="tossup-num">5</div><div class="tossup-content"><h4>使用する施策（キャンペーン）</h4><p>適用条件・在庫確認のため</p></div></div>
+    <div class="tossup-item"><div class="tossup-num">6</div><div class="tossup-content"><h4>SIMロック解除ができているか</h4><p>未解除のままだと手続きがその場でストップするため</p></div></div>
+    <div class="tossup-item"><div class="tossup-num">7</div><div class="tossup-content"><h4>データ移行をするかどうか</h4><p>対応時間・準備の見積もりのため</p></div></div>
+    <div class="tossup-item"><div class="tossup-num">8</div><div class="tossup-content"><h4>本人確認書類を持っているか</h4><p>書類不備は手続き不可につながるため</p></div></div>
     <div class="guide-ng" style="margin-top:14px;">
       <div class="guide-ng-title">❌ 確認不足で起こるトラブル例</div>
       <ul class="guide-ng-list">
@@ -1022,8 +952,6 @@
       </ul>
     </div>
     <div class="guide-note">💡 いずれも「引き継ぎ前の5分の確認」で防げるトラブルです。</div>
-
-    <!-- 良い引き継ぎ例 -->
     <div style="font-size:12px;font-weight:700;color:var(--green);margin:14px 0 8px;letter-spacing:.05em;">✅ 良い引き継ぎの例</div>
     <div class="tossup-example">
       「<strong>田中様</strong>です。<br>
@@ -1033,8 +961,6 @@
     </div>
     <div class="guide-note" style="margin-top:10px;">⚡ この一言で、クローザーはすぐに次の対応に入れます。</div>
   </div>
-
-  <!-- 8. 数字管理 -->
   <div class="guide-section" id="guide-numbers" style="animation-delay:.32s;">
     <div class="guide-section-title"><span class="icon">📊</span>現場の数字管理</div>
     <table class="guide-table">
@@ -1046,8 +972,6 @@
     </table>
     <div class="guide-note" style="margin-top:12px;">📌 終日稼働の場合、昼・終了前の2回は数字を確認・共有してください。</div>
   </div>
-
-  <!-- 9. トラブル対応 -->
   <div class="guide-section" id="guide-trouble" style="animation-delay:.36s;">
     <div class="guide-section-title"><span class="icon">🚨</span>トラブル時の対応ルール</div>
     <div class="guide-do">
@@ -1068,8 +992,6 @@
       </ul>
     </div>
   </div>
-
-  <!-- 10. 禁止事項 -->
   <div class="guide-section" id="guide-prohibited" style="animation-delay:.40s;">
     <div class="guide-section-title"><span class="icon">🚫</span>禁止事項</div>
     <div class="guide-ng">
@@ -1085,8 +1007,6 @@
       </ul>
     </div>
   </div>
-
-  <!-- 11. 終了後の報告 -->
   <div class="guide-section" id="guide-report" style="animation-delay:.44s;">
     <div class="guide-section-title"><span class="icon">📝</span>終了後の報告ルール</div>
     <div class="guide-do">
@@ -1099,8 +1019,6 @@
     </div>
     <div class="guide-note">⏰ 稼働終了から<strong>1時間以内</strong>に指定フォームまたはLINEで報告してください。</div>
   </div>
-
-  <!-- 重要ポイント10選 -->
   <div class="summary-card">
     <h3>✅ スタッフが守るべき重要ポイント10</h3>
     <div class="summary-item"><div class="summary-num">1</div><p>集合は<strong>10分前</strong>が基本。遅刻するなら出発前に連絡</p></div>
@@ -1114,14 +1032,12 @@
     <div class="summary-item"><div class="summary-num">9</div><p><strong>トラブルは自己判断せず即報告</strong>。対応はリーダーの指示を待つ</p></div>
     <div class="summary-item"><div class="summary-num">10</div><p><strong>終了後1時間以内に報告</strong>を完了させる</p></div>
   </div>
-
 </div>
-
+ 
 <script>
 const LINE_ID = '@597ckygq';
-
+ 
 function scrollToSection(id) {
-  // 少し遅延させてDOMが安定してからスクロール
   setTimeout(() => {
     const el = document.getElementById(id);
     if (el) {
@@ -1132,7 +1048,7 @@ function scrollToSection(id) {
   }, 50);
   return false;
 }
-
+ 
 function switchTab(tab, btn) {
   document.querySelectorAll('.tab-nav-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
@@ -1145,7 +1061,7 @@ function switchTab(tab, btn) {
   document.getElementById('pos-bar').style.display    = tab === 'jobs' ? 'flex' : 'none';
   window.scrollTo(0, 0);
 }
-
+ 
 const CARRIER = {
   docomo:   { color:'#e53935', emoji:'🍄', label:'docomo' },
   au:       { color:'#f57c00', emoji:'🍊', label:'au' },
@@ -1154,15 +1070,223 @@ const CARRIER = {
   ymobile:  { color:'#7b1fa2', emoji:'🐱', label:'Y!mobile' },
   other:    { color:'#455a64', emoji:'🏢', label:'その他' }
 };
-
-// ★ここに案件を追加してください
+ 
 const JOBS = [
+  {
+    id: 8,
+    carrier: 'docomo',
+    station: '東松山',
+    store: 'DS東松山（店内）',
+    price: 31000,
+    priceUnit: '日給',
+    dates: '5/1(木)〜5/31(土)',
+    transport: '交通費別',
+    lodging: '',
+    position: '店内ヘルパー',
+    count: 1,
+    status: 'open',
+    tag: '熟練者募集',
+    note: ''
+  },
+  {
+    id: 9,
+    carrier: 'docomo',
+    station: '東松山',
+    store: 'DS東松山（外販）',
+    price: 33000,
+    priceUnit: '日給',
+    dates: '5/9(金)・10(土)・16(金)・17(土)・23(金)・24(土)・29(木)・30(金)・31(土)',
+    transport: '交通費別',
+    lodging: '',
+    position: '外販ヘルパー',
+    count: 1,
+    status: 'open',
+    tag: '安定稼働',
+    note: ''
+  },
+  {
+    id: 10,
+    carrier: 'docomo',
+    station: '昭島',
+    store: 'DS島忠昭島',
+    price: 30000,
+    priceUnit: '日給',
+    dates: '5/3(土)〜5/6(火)・16(金)・17(土)・18(日)',
+    transport: '交通費別',
+    lodging: '',
+    position: '外販ヘルパー',
+    count: 1,
+    status: 'open',
+    tag: '',
+    note: ''
+  },
+  {
+    id: 11,
+    carrier: 'docomo',
+    station: '新中野',
+    store: 'DS新中野',
+    price: 30000,
+    priceUnit: '日給',
+    dates: '5/9(金)・10(土)・11(日)',
+    transport: '交通費別',
+    lodging: '',
+    position: '外販ヘルパー',
+    count: 1,
+    status: 'open',
+    tag: '',
+    note: ''
+  },
+  {
+    id: 12,
+    carrier: 'docomo',
+    station: '大宮',
+    store: 'DS髙島屋',
+    price: 30000,
+    priceUnit: '日給',
+    dates: '5/29(木)・30(金)・31(土)',
+    transport: '交通費別',
+    lodging: '',
+    position: '外販ヘルパー',
+    count: 1,
+    status: 'open',
+    tag: '',
+    note: ''
+  },
+  {
+    id: 13,
+    carrier: 'docomo',
+    station: '八王子',
+    store: 'DSイトーヨーカドー八王子',
+    price: 35000,
+    priceUnit: '日給',
+    dates: '5/3(土)〜5/6(火)',
+    transport: '交通費別',
+    lodging: '',
+    position: '外販ヘルパー',
+    count: 1,
+    status: 'open',
+    tag: '高単価',
+    note: ''
+  },
+  {
+    id: 14,
+    carrier: 'docomo',
+    station: '海老名',
+    store: 'DSららぽーと海老名',
+    price: 35000,
+    priceUnit: '日給',
+    dates: '5/11(日)〜5/14(水)',
+    transport: '交通費別',
+    lodging: '',
+    position: '外販ヘルパー',
+    count: 1,
+    status: 'open',
+    tag: '高単価',
+    note: ''
+  },
+  {
+    id: 15,
+    carrier: 'docomo',
+    station: '上尾',
+    store: 'イオンモール上尾',
+    price: 18000,
+    priceUnit: '日給',
+    dates: '5/2(金)〜5/6(火) 10:00〜18:00',
+    transport: '交通費別',
+    lodging: '',
+    position: 'ガール',
+    count: 8,
+    status: 'open',
+    tag: '未経験可',
+    note: '2日：2名 / 3日：1名 / 4日：1名 / 5日：1名 / 6日：2名'
+  },
+  {
+    id: 16,
+    carrier: 'docomo',
+    station: '上尾',
+    store: 'イオンモール上尾',
+    price: 28000,
+    priceUnit: '日給',
+    dates: '5/4(日)〜5/6(火) 10:00〜18:00',
+    transport: '交通費別',
+    lodging: '',
+    position: 'クローザー',
+    count: 2,
+    status: 'open',
+    tag: '',
+    note: '各日2名募集'
+  },
+  {
+    id: 17,
+    carrier: 'docomo',
+    station: '東久留米・武蔵村山',
+    store: 'イオン東久留米 / イオン武蔵村山',
+    price: 17000,
+    priceUnit: '日給',
+    dates: '4月〜（長期・月20日・シフト制）',
+    transport: '交通費込',
+    lodging: '',
+    position: '店内スタッフ',
+    count: 0,
+    status: 'open',
+    tag: '長期・未経験可',
+    note: '9H拘束8H実働・土日祝含むシフト制。未経験の場合3ヶ月後に試験あり。Web面談→エンド面談'
+  },
+  {
+    id: 18,
+    carrier: 'other',
+    station: '町田',
+    store: '楽天ショップ町田',
+    price: 17000,
+    priceUnit: '日給',
+    dates: '4月〜（長期・月20日・シフト制）',
+    transport: '交通費込',
+    lodging: '',
+    position: '店内スタッフ',
+    count: 0,
+    status: 'open',
+    tag: '長期・未経験可',
+    note: '10:00〜19:00 or 11:00〜20:00・土日祝含むシフト制。Web面談→エンド面談'
+  },
+  {
+    id: 19,
+    carrier: 'softbank',
+    station: '川崎',
+    store: 'ビックカメラ ラゾーナ川崎店',
+    price: 17000,
+    priceUnit: '日給',
+    dates: '随時スタート（長期・月20日・シフト制）',
+    transport: '交通費込',
+    lodging: '',
+    position: 'クローザー',
+    count: 0,
+    status: 'open',
+    tag: '経験者のみ',
+    note: '9H拘束8H実働・土日含むシフト制。稼働前にクライアント研修あり（研修単価7,380円/日）。Web面談→対面面談'
+  },
+  {
+    id: 20,
+    carrier: 'docomo',
+    station: '全国（一部除く）',
+    store: 'ドコモiPhoneイベント',
+    price: 35000,
+    priceUnit: '日給',
+    dates: 'GW前後〜（週金土日 約12日/月）',
+    transport: '交通費別',
+    lodging: '',
+    position: 'キャッチャー／クローザー',
+    count: 0,
+    status: 'open',
+    tag: '高単価',
+    note: 'iPhone商戦期準備。1〜2ヶ月の短期も相談可。事前にドコモ審査あり（スキルシート提出必須）'
+  },
   {
     id: 6,
     carrier: 'docomo',
     station: '大久保駅',
     store: 'NTT法人フィールドセールス',
     price: 23000,
+    priceUnit: '日給',
     dates: '4月中旬〜（長期・週5日）',
     transport: '交通費全額支給',
     lodging: '',
@@ -1187,161 +1311,54 @@ const JOBS = [
     status: 'open',
     tag: '安定稼働',
     note: '直行直帰OK・残業なし・未経験相談可。車稼働の場合+1,000円/日'
-  },
-  {
-  id: 8,
-  carrier: 'docomo',
-  station: '東松山',
-  store: 'DS東松山（店内）',
-  price: 31000,
-  priceUnit: '日給',
-  dates: '5/1(木)〜5/31(土)',
-  transport: '交通費別',
-  lodging: '',
-  position: '店内ヘルパー',
-  count: 1,
-  status: 'open',
-  tag: '実力者求む',
-  note: ''
-},
-{
-  id: 9,
-  carrier: 'docomo',
-  station: '東松山',
-  store: 'DS東松山（外販）',
-  price: 33000,
-  priceUnit: '日給',
-  dates: '5/9(金)・10(土)・16(金)・17(土)・23(金)・24(土)・29(木)・30(金)・31(土)',
-  transport: '交通費別',
-  lodging: '',
-  position: '外販ヘルパー',
-  count: 2,
-  status: 'open',
-  tag: '高単価',
-  note: ''
-},
-{
-  id: 10,
-  carrier: 'docomo',
-  station: '昭島',
-  store: 'DS島忠昭島',
-  price: 30000,
-  priceUnit: '日給',
-  dates: '5/3(土)〜5/6(火)・16(金)・17(土)・18(日)',
-  transport: '交通費別',
-  lodging: '',
-  position: '外販ヘルパー',
-  count: 1,
-  status: 'open',
-  tag: '新規案件',
-  note: ''
-},
-{
-  id: 11,
-  carrier: 'docomo',
-  station: '新中野',
-  store: 'DS新中野',
-  price: 30000,
-  priceUnit: '日給',
-  dates: '5/9(金)・10(土)・11(日)',
-  transport: '交通費別',
-  lodging: '',
-  position: '外販ヘルパー',
-  count: 2,
-  status: 'open',
-  tag: '新規案件',
-  note: ''
-},
-{
-  id: 12,
-  carrier: 'docomo',
-  station: '大宮',
-  store: 'DS髙島屋',
-  price: 30000,
-  priceUnit: '日給',
-  dates: '5/29(木)・30(金)・31(土)',
-  transport: '交通費別',
-  lodging: '',
-  position: '外販ヘルパー',
-  count: 2,
-  status: 'open',
-  tag: '近場案件',
-  note: ''
-},
-{
-  id: 13,
-  carrier: 'docomo',
-  station: '八王子',
-  store: 'DSイトーヨーカドー八王子',
-  price: 35000,
-  priceUnit: '日給',
-  dates: '5/3(土)〜5/6(火)',
-  transport: '交通費別',
-  lodging: '',
-  position: '外販ヘルパー',
-  count: 3,
-  status: 'open',
-  tag: '高単価',
-  note: ''
-},
-{
-  id: 14,
-  carrier: 'docomo',
-  station: '海老名',
-  store: 'DSららぽーと海老名',
-  price: 35000,
-  priceUnit: '日給',
-  dates: '5/11(日)〜5/14(水)',
-  transport: '交通費別',
-  lodging: '',
-  position: '外販ヘルパー',
-  count: 5,
-  status: 'open',
-  tag: '高単価',
-  note: ''
-},
+  }
 ];
-
+ 
 let currentCarrier = 'all';
 let currentPosition = 'all';
 let currentJob = null;
-
+ 
 function setCarrier(carrier, btn) {
   currentCarrier = carrier;
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   renderJobs();
 }
-
+ 
 function setPosition(position, btn) {
   currentPosition = position;
   document.querySelectorAll('.pos-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   renderJobs();
 }
-
-// 後方互換
+ 
 function setFilter(carrier, btn) { setCarrier(carrier, btn); }
-
+ 
 function renderJobs() {
   const list = document.getElementById('job-list');
   let filtered = JOBS;
   if (currentCarrier !== 'all') filtered = filtered.filter(j => j.carrier === currentCarrier);
   if (currentPosition !== 'all') filtered = filtered.filter(j => j.position && j.position.includes(currentPosition));
-
+ 
   const openCount = filtered.filter(j => j.status === 'open').length;
   document.getElementById('count-badge').textContent = `募集中 ${openCount}件`;
-
+ 
   if (!filtered.length) {
     list.innerHTML = '<div class="empty"><div class="icon">📋</div><p>該当する案件がありません</p></div>';
     return;
   }
-
+ 
   list.innerHTML = filtered.map((j, i) => {
     const c = CARRIER[j.carrier] || { color:'#888', emoji:'📋', label:j.carrier };
-    const priceLabel = j.priceUnit === '時給'
-      ? `<span class="job-price">¥${j.price.toLocaleString()}<span style="font-size:12px;color:var(--muted);font-family:'Noto Sans JP';font-weight:400;">/時</span></span>`
-      : `<span class="job-price">¥${j.price.toLocaleString()}<span style="font-size:12px;color:var(--muted);font-family:'Noto Sans JP';font-weight:400;">/日</span></span>`;
+    const priceUnit = j.priceUnit === '時給' ? '/時' : '/日';
+    const priceLabel = `
+      <div class="job-price-wrap">
+        <div class="job-price-left">
+          <span class="job-price">¥${j.price.toLocaleString()}</span>
+          <span class="job-price-unit">${priceUnit}</span>
+        </div>
+        <span class="job-price-label">単価</span>
+      </div>`;
     return `
       <div class="job-card ${j.status === 'full' ? 'full' : ''}"
            style="animation-delay:${i * 0.04}s"
@@ -1355,11 +1372,8 @@ function renderJobs() {
           </div>
           <div class="job-station">${j.station}</div>
           <div class="job-store">${j.store}</div>
+          ${priceLabel}
           <div class="job-row">
-            <div class="job-item">
-              <span>単価</span>
-              ${priceLabel}
-            </div>
             <div class="job-item">
               <span>日程</span>
               <div class="val">${j.dates}</div>
@@ -1371,13 +1385,13 @@ function renderJobs() {
       </div>`;
   }).join('');
 }
-
+ 
 function openModal(id) {
   currentJob = JOBS.find(j => j.id === id);
   if (!currentJob) return;
   const j = currentJob;
   const c = CARRIER[j.carrier] || { color:'#888', emoji:'📋', label:j.carrier };
-
+ 
   document.getElementById('modal-bar').style.background = c.color;
   document.getElementById('modal-station').textContent = j.station;
   document.getElementById('modal-store').textContent = j.store;
@@ -1394,27 +1408,27 @@ function openModal(id) {
     <div class="modal-item"><label>宿泊費</label><div class="val">${j.lodging || 'なし'}</div></div>
     ${j.note ? `<div class="modal-item" style="grid-column:span 2;"><label>備考</label><div class="val" style="font-size:13px;line-height:1.6;">${j.note}</div></div>` : ''}
   `;
-
+ 
   const priceLabel = j.priceUnit === '時給'
     ? `¥${j.price.toLocaleString()}/時`
     : `¥${j.price.toLocaleString()}/日〜`;
   const transportLine = j.transport + (j.lodging ? ' / ' + j.lodging : '');
-
+ 
   const msg = encodeURIComponent(
     `【案件応募】\n${j.store}（${j.station}）\n${j.dates}\n${j.position}\n${priceLabel}${transportLine}\n\n上記案件に応募します。`
   );
   document.getElementById('modal-line-btn').href =
     `https://line.me/R/oaMessage/%40597ckygq/?${msg}`;
-
+ 
   document.getElementById('modal').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
-
+ 
 function closeModal() {
   document.getElementById('modal').classList.remove('open');
   document.body.style.overflow = '';
 }
-
+ 
 renderJobs();
 </script>
 </body>
