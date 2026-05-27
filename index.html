@@ -262,7 +262,9 @@
 <script>
 const SALT = 'esp-portal-2026-salt-x7k9';
 const EXPECTED_HASH = '2a3af7a188ff5f96d503e59681dc4e9d235698d7f23cfce78be1916f59d920bb';
-const SESSION_KEY = 'esp_auth_v1';
+const LOGIN_ID = 'esp-staff';
+const LOGIN_PASSWORD = 'event2026';
+const SESSION_KEY = 'esp_auth_v2';
 const LINE_ID = '@597ckygq';
 
 const CARRIER = {
@@ -384,7 +386,7 @@ async function hashCredentials(id, pw) {
 }
 
 function isLoggedIn() {
-  return sessionStorage.getItem(SESSION_KEY) === EXPECTED_HASH;
+  return sessionStorage.getItem(SESSION_KEY) === 'logged-in';
 }
 
 function showMain() {
@@ -480,19 +482,13 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
   const errEl = document.getElementById('login-error');
   errEl.classList.remove('show');
 
-  try {
-    const hash = await hashCredentials(id, pw);
-    if (hash === EXPECTED_HASH) {
-      sessionStorage.setItem(SESSION_KEY, hash);
-      showMain();
-    } else {
-      errEl.textContent = 'IDまたはパスワードが違います';
-      errEl.classList.add('show');
-      document.getElementById('login-pw').value = '';
-    }
-  } catch (error) {
-    errEl.textContent = error.message;
+  if (id === LOGIN_ID && pw.trim() === LOGIN_PASSWORD) {
+    sessionStorage.setItem(SESSION_KEY, 'logged-in');
+    showMain();
+  } else {
+    errEl.textContent = 'IDまたはパスワードが違います';
     errEl.classList.add('show');
+    document.getElementById('login-pw').value = '';
   }
 });
 
