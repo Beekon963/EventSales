@@ -14,6 +14,11 @@
     --text: #1a1a1a;
     --muted: #9a9a9a;
     --accent: #c0191a;
+    --docomo: #e53935;
+    --au: #f57c00;
+    --softbank: #1565c0;
+    --uq: #2e7d32;
+    --ymobile: #7b1fa2;
     --green: #06C755;
     --radius: 16px;
   }
@@ -26,6 +31,8 @@
     min-height:100vh;
     overflow-x:hidden;
   }
+
+  /* ===== ログイン画面 ===== */
   .login-wrap {
     position:fixed; inset:0; z-index:1000;
     display:flex; align-items:center; justify-content:center;
@@ -45,34 +52,52 @@
     box-shadow:0 12px 40px rgba(0,0,0,0.08);
     animation:fadeUp .5s ease both;
   }
-  .login-logo { display:flex; align-items:center; gap:12px; margin-bottom:24px; }
-  .login-logo-mark, .logo-mark {
-    border-radius:14px; background:var(--accent); display:flex;
-    align-items:center; justify-content:center; box-shadow:0 6px 20px rgba(192,25,26,0.3);
+  .login-logo {
+    display:flex; align-items:center; gap:12px; margin-bottom:24px;
   }
-  .login-logo-mark { width:48px; height:48px; font-size:24px; }
+  .login-logo-mark {
+    width:48px; height:48px; border-radius:14px;
+    background:var(--accent);
+    display:flex; align-items:center; justify-content:center;
+    font-size:24px;
+    box-shadow:0 6px 20px rgba(192,25,26,0.3);
+  }
   .login-title { font-size:18px; font-weight:900; letter-spacing:-.01em; }
-  .login-sub, .header-sub { font-size:10px; color:var(--muted); letter-spacing:.08em; margin-top:2px; }
-  .login-heading { font-size:22px; font-weight:900; margin-bottom:6px; letter-spacing:-.02em; }
-  .login-desc { font-size:13px; color:var(--muted); margin-bottom:24px; line-height:1.5; }
+  .login-sub { font-size:11px; color:var(--muted); letter-spacing:.08em; margin-top:2px; }
+  .login-heading {
+    font-size:22px; font-weight:900; margin-bottom:6px; letter-spacing:-.02em;
+  }
+  .login-desc {
+    font-size:13px; color:var(--muted); margin-bottom:24px; line-height:1.5;
+  }
   .form-group { margin-bottom:14px; }
   .form-label {
-    display:block; font-size:11px; font-weight:700; color:var(--muted);
-    margin-bottom:6px; letter-spacing:.06em; text-transform:uppercase;
+    display:block; font-size:11px; font-weight:700;
+    color:var(--muted); margin-bottom:6px;
+    letter-spacing:.06em; text-transform:uppercase;
   }
   .form-input {
-    width:100%; padding:13px 14px; border:1.5px solid var(--border); border-radius:12px;
-    background:var(--bg); font-family:inherit; font-size:15px; font-weight:500; color:var(--text);
+    width:100%; padding:13px 14px;
+    border:1.5px solid var(--border); border-radius:12px;
+    background:var(--bg);
+    font-family:inherit; font-size:15px; font-weight:500;
+    color:var(--text);
     transition:all .2s;
   }
   .form-input:focus {
-    outline:none; border-color:var(--accent); background:#fff;
+    outline:none;
+    border-color:var(--accent);
+    background:#fff;
     box-shadow:0 0 0 4px rgba(192,25,26,0.08);
   }
   .login-error {
-    display:none; background:rgba(192,25,26,0.08); color:var(--accent);
-    padding:10px 14px; border-radius:10px; font-size:12px; font-weight:700;
-    margin-bottom:14px; border:1px solid rgba(192,25,26,0.15);
+    display:none;
+    background:rgba(192,25,26,0.08);
+    color:var(--accent);
+    padding:10px 14px; border-radius:10px;
+    font-size:12px; font-weight:700;
+    margin-bottom:14px;
+    border:1px solid rgba(192,25,26,0.15);
   }
   .login-error.show { display:block; animation:shake .35s ease; }
   @keyframes shake {
@@ -81,113 +106,184 @@
     75% { transform:translateX(4px); }
   }
   .btn-login {
-    width:100%; padding:15px; border-radius:12px; border:none; background:var(--accent); color:#fff;
-    font-family:inherit; font-size:15px; font-weight:900; letter-spacing:.04em;
-    cursor:pointer; transition:all .2s; box-shadow:0 4px 16px rgba(192,25,26,0.25); margin-top:6px;
+    width:100%; padding:15px;
+    border-radius:12px; border:none;
+    background:var(--accent); color:#fff;
+    font-family:inherit; font-size:15px; font-weight:900;
+    letter-spacing:.04em;
+    cursor:pointer; transition:all .2s;
+    box-shadow:0 4px 16px rgba(192,25,26,0.25);
+    margin-top:6px;
   }
   .btn-login:hover { background:#a01516; transform:translateY(-1px); }
-  .login-foot { text-align:center; font-size:11px; color:var(--muted); margin-top:20px; line-height:1.6; }
+  .btn-login:active { transform:translateY(0); }
+  .login-foot {
+    text-align:center;
+    font-size:11px; color:var(--muted);
+    margin-top:20px; line-height:1.6;
+  }
   .login-foot a { color:var(--accent); text-decoration:none; font-weight:700; }
+
+  /* ===== メイン画面 ===== */
   .main-wrap.hidden { display:none; }
   .header {
-    position:sticky; top:0; z-index:100; background:rgba(255,255,255,0.95);
-    backdrop-filter:blur(12px); border-bottom:1px solid var(--border); padding:14px 16px 10px;
+    position:sticky; top:0; z-index:100;
+    background:rgba(255,255,255,0.95);
+    backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--border);
+    padding:14px 16px 10px;
   }
-  .header-top { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
-  .logo-mark { width:36px; height:36px; border-radius:10px; font-size:18px; flex-shrink:0; }
+  .header-top {
+    display:flex; align-items:center; gap:10px; margin-bottom:12px;
+  }
+  .logo-mark {
+    width:36px; height:36px; border-radius:10px;
+    background:var(--accent); display:flex; align-items:center;
+    justify-content:center; font-size:18px; flex-shrink:0;
+    box-shadow:0 4px 12px rgba(192,25,26,0.25);
+  }
   .header-title { font-size:16px; font-weight:900; letter-spacing:-.01em; }
+  .header-sub { font-size:10px; color:var(--muted); letter-spacing:.08em; }
   .job-count-badge {
     margin-left:auto; background:rgba(192,25,26,.1); color:var(--accent);
     font-size:11px; font-weight:700; padding:3px 10px; border-radius:100px;
   }
   .btn-logout {
-    background:transparent; border:1px solid var(--border); color:var(--muted); font-size:11px;
-    font-weight:700; padding:5px 10px; border-radius:8px; cursor:pointer; margin-left:8px;
-    font-family:inherit; transition:all .2s;
+    background:transparent; border:1px solid var(--border);
+    color:var(--muted); font-size:11px; font-weight:700;
+    padding:5px 10px; border-radius:8px; cursor:pointer;
+    margin-left:8px; font-family:inherit;
+    transition:all .2s;
   }
   .btn-logout:hover { background:var(--bg); color:var(--text); }
-  .job-list { padding:16px 16px 100px; max-width:600px; margin:0 auto; }
+  .job-list {
+    padding:16px 16px 100px; max-width:600px; margin:0 auto;
+  }
   .job-card {
-    background:var(--surface); border-radius:var(--radius); margin-bottom:12px; overflow:hidden;
-    border:1px solid var(--border); box-shadow:0 2px 8px rgba(0,0,0,0.06);
-    cursor:pointer; transition:all .2s; animation:fadeUp .35s ease both;
+    background:var(--surface); border-radius:var(--radius);
+    margin-bottom:12px; overflow:hidden;
+    border:1px solid var(--border);
+    box-shadow:0 2px 8px rgba(0,0,0,0.06);
+    cursor:pointer; transition:all .2s;
+    animation:fadeUp .35s ease both;
   }
   .job-card:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(0,0,0,0.1); }
   @keyframes fadeUp {
     from { opacity:0; transform:translateY(12px); }
-    to { opacity:1; transform:translateY(0); }
+    to   { opacity:1; transform:translateY(0); }
   }
   .carrier-bar { height:4px; }
   .job-body { padding:16px; }
   .job-meta { display:flex; align-items:center; gap:6px; margin-bottom:10px; }
   .carrier-tag {
-    display:inline-flex; align-items:center; gap:4px; padding:3px 8px; border-radius:6px;
-    font-size:11px; font-weight:700; background:rgba(0,0,0,.05);
+    display:inline-flex; align-items:center; gap:4px;
+    padding:3px 8px; border-radius:6px;
+    font-size:11px; font-weight:700;
+    background:rgba(0,0,0,.05);
   }
   .job-station { font-size:20px; font-weight:900; margin-bottom:3px; }
   .job-store { font-size:12px; color:var(--muted); margin-bottom:12px; }
   .job-price-wrap {
     display:flex; align-items:center; justify-content:space-between;
     background:linear-gradient(135deg, rgba(192,25,26,.08), rgba(192,25,26,.04));
-    border:1.5px solid rgba(192,25,26,.15); border-radius:12px; padding:10px 14px; margin:10px 0 8px;
+    border:1.5px solid rgba(192,25,26,.15);
+    border-radius:12px;
+    padding:10px 14px;
+    margin:10px 0 8px;
   }
   .job-price-left { display:flex; align-items:baseline; gap:4px; }
-  .job-price { font-family:'Space Mono',monospace; font-size:32px; font-weight:700; color:var(--accent); line-height:1; }
+  .job-price {
+    font-family:'Space Mono',monospace;
+    font-size:32px; font-weight:700;
+    color:var(--accent); line-height:1;
+  }
   .job-price-unit { font-size:13px; color:var(--muted); font-weight:600; }
   .job-price-label { font-size:10px; color:var(--muted); font-weight:700; letter-spacing:.06em; text-transform:uppercase; }
   .job-row { display:flex; gap:16px; flex-wrap:wrap; margin-bottom:8px; }
   .job-item span { font-size:10px; color:var(--muted); display:block; margin-bottom:2px; }
   .job-item .val { font-size:13px; font-weight:500; }
-  .transport-badge { display:inline-flex; gap:6px; flex-wrap:wrap; }
+  .transport-badge {
+    display:inline-flex; gap:6px; flex-wrap:wrap;
+  }
   .transport-tag {
     font-size:11px; font-weight:700; padding:3px 8px; border-radius:6px;
     background:rgba(0,0,0,.05); color:var(--muted);
   }
-  .transport-tag.lodging { background:rgba(192,25,26,.08); color:var(--accent); }
+  .transport-tag.lodging {
+    background:rgba(192,25,26,.08); color:var(--accent);
+  }
   .modal-overlay {
-    display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); backdrop-filter:blur(8px);
+    display:none; position:fixed; inset:0;
+    background:rgba(0,0,0,.5); backdrop-filter:blur(8px);
     z-index:200; align-items:flex-end; justify-content:center;
   }
   .modal-overlay.open { display:flex; }
   .modal-sheet {
-    background:#fff; border-radius:24px 24px 0 0; padding:24px 20px 40px;
-    width:100%; max-width:600px; animation:slideUp .25s ease; max-height:90vh; overflow-y:auto;
+    background:#fff; border-radius:24px 24px 0 0;
+    padding:24px 20px 40px; width:100%; max-width:600px;
+    animation:slideUp .25s ease;
+    max-height:90vh; overflow-y:auto;
   }
   @keyframes slideUp {
     from { transform:translateY(100%); }
-    to { transform:translateY(0); }
+    to   { transform:translateY(0); }
   }
-  .modal-handle { width:40px; height:4px; border-radius:4px; background:var(--border); margin:0 auto 20px; }
+  .modal-handle {
+    width:40px; height:4px; border-radius:4px;
+    background:var(--border); margin:0 auto 20px;
+  }
   .modal-carrier-bar { height:3px; border-radius:3px; margin-bottom:16px; }
   .modal-station { font-size:24px; font-weight:900; margin-bottom:4px; }
   .modal-store { font-size:13px; color:var(--muted); margin-bottom:16px; }
-  .modal-price { font-family:'Space Mono',monospace; font-size:42px; font-weight:700; color:var(--accent); margin-bottom:4px; line-height:1.1; }
+  .modal-price {
+    font-family:'Space Mono',monospace;
+    font-size:42px; font-weight:700; color:var(--accent);
+    margin-bottom:4px; line-height:1.1;
+  }
   .modal-price span { font-size:14px; color:var(--muted); font-weight:400; font-family:'Noto Sans JP',sans-serif; }
-  .modal-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:20px 0; }
+  .modal-grid {
+    display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:20px 0;
+  }
   .modal-item label { font-size:11px; color:var(--muted); display:block; margin-bottom:3px; }
   .modal-item .val { font-size:14px; font-weight:500; }
-  .btn-line, .btn-line-footer {
-    display:flex; align-items:center; justify-content:center; gap:10px; border:none; cursor:pointer;
-    background:var(--green); color:#fff; font-family:inherit; font-weight:900; text-decoration:none;
+  .btn-line {
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    width:100%; padding:16px; border-radius:14px;
+    background:var(--green); color:#fff;
+    font-family:inherit; font-size:16px; font-weight:900;
+    border:none; cursor:pointer; transition:all .2s;
+    text-decoration:none; letter-spacing:.02em;
     box-shadow:0 4px 16px rgba(6,199,85,.3);
   }
-  .btn-line { width:100%; padding:16px; border-radius:14px; font-size:16px; letter-spacing:.02em; }
   .btn-line:hover { background:#04a844; transform:translateY(-1px); }
   .btn-close {
-    display:flex; align-items:center; justify-content:center; width:100%; padding:13px; border-radius:12px;
-    background:var(--bg); color:var(--muted); font-family:inherit; font-size:14px; font-weight:700;
+    display:flex; align-items:center; justify-content:center;
+    width:100%; padding:13px; border-radius:12px;
+    background:var(--bg); color:var(--muted);
+    font-family:inherit; font-size:14px; font-weight:700;
     border:none; cursor:pointer; margin-top:10px;
   }
   .footer {
-    position:fixed; bottom:0; left:0; right:0; background:rgba(255,255,255,0.96);
-    backdrop-filter:blur(20px); border-top:1px solid var(--border); padding:10px 16px 16px;
-    text-align:center; box-shadow:0 -2px 12px rgba(0,0,0,0.06);
+    position:fixed; bottom:0; left:0; right:0;
+    background:rgba(255,255,255,0.96); backdrop-filter:blur(20px);
+    border-top:1px solid var(--border);
+    padding:10px 16px 16px; text-align:center;
+    box-shadow:0 -2px 12px rgba(0,0,0,0.06);
   }
   .footer p { font-size:11px; color:var(--muted); margin-bottom:8px; }
-  .btn-line-footer { display:inline-flex; padding:12px 28px; border-radius:100px; font-size:14px; }
+  .btn-line-footer {
+    display:inline-flex; align-items:center; gap:8px;
+    padding:12px 28px; border-radius:100px;
+    background:var(--green); color:#fff;
+    font-family:inherit; font-size:14px; font-weight:900;
+    border:none; cursor:pointer; text-decoration:none;
+    box-shadow:0 4px 16px rgba(6,199,85,.3);
+  }
 </style>
 </head>
 <body>
+
+<!-- ===== ログイン画面 ===== -->
 <div class="login-wrap" id="login-screen">
   <div class="login-card">
     <div class="login-logo">
@@ -199,7 +295,9 @@
     </div>
     <div class="login-heading">ログイン</div>
     <div class="login-desc">スタッフ専用ページです。<br>IDとパスワードを入力してください。</div>
+
     <div class="login-error" id="login-error">IDまたはパスワードが違います</div>
+
     <form id="login-form" autocomplete="off">
       <div class="form-group">
         <label class="form-label" for="login-id">ID</label>
@@ -211,6 +309,7 @@
       </div>
       <button type="submit" class="btn-login">ログイン</button>
     </form>
+
     <div class="login-foot">
       ID/パスワードをお忘れの方は<br>
       <a href="https://line.me/R/ti/p/@597ckygq" target="_blank">公式LINE</a>までご連絡ください
@@ -218,6 +317,7 @@
   </div>
 </div>
 
+<!-- ===== メイン画面 ===== -->
 <div class="main-wrap hidden" id="main-screen">
   <div class="header">
     <div class="header-top">
@@ -260,133 +360,23 @@
 </div>
 
 <script>
+/* ============================================================
+   認証設定
+   ============================================================ */
+
 const SALT = 'esp-portal-2026-salt-x7k9';
 const EXPECTED_HASH = '2a3af7a188ff5f96d503e59681dc4e9d235698d7f23cfce78be1916f59d920bb';
-const LOGIN_ID = 'esp-staff';
-const LOGIN_PASSWORD = 'event2026';
-const SESSION_KEY = 'esp_auth_v2';
-const LINE_ID = '@597ckygq';
-
-const CARRIER = {
-  docomo: { color:'#e53935', emoji:'🍄', label:'docomo' },
-  au: { color:'#f57c00', emoji:'🍊', label:'au' },
-  softbank: { color:'#1565c0', emoji:'⚪', label:'SoftBank' },
-  uq: { color:'#2e7d32', emoji:'♕', label:'UQ' },
-  ymobile: { color:'#7b1fa2', emoji:'🐱', label:'Y!mobile' },
-  other: { color:'#455a64', emoji:'🏢', label:'その他' }
-};
-
-const JOBS = [
-  { id: 201, carrier: 'softbank', station: '北戸田', store: 'イオンモール北戸田', price: 24000, dates: '6/6(土)〜6/7(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
-  { id: 202, carrier: 'au', station: 'たつのこまち', store: 'ケーズデンキたつのこまち', price: 24000, dates: '6/6(土)〜6/7(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
-  { id: 203, carrier: 'softbank', station: '立川', store: 'ビックカメラ立川', price: 25000, dates: '6/6(土)〜6/7(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
-  { id: 204, carrier: 'softbank', station: '磯子', store: 'ヤマダデンキ テックランド磯子店', price: 24000, dates: '6/6(土)〜6/7(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 2 },
-  { id: 205, carrier: 'softbank', station: '磯子', store: 'ヤマダデンキ テックランド磯子店', price: 19000, dates: '6/6(土)〜6/7(日)', transport: '交通費込み', lodging: '', position: 'キャッチャー', count: 1 },
-  { id: 206, carrier: 'softbank', station: '青葉', store: 'ヤマダデンキ テックランド青葉店', price: 25000, dates: '6/6(土)〜6/7(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
-  { id: 207, carrier: 'softbank', station: '新宿西口', store: 'ビックカメラ新宿西口', price: 25000, dates: '6/6(土)〜6/7(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 4 },
-  { id: 208, carrier: 'softbank', station: '新宿西口', store: 'ビックカメラ新宿西口', price: 23000, dates: '6/6(土)〜6/7(日)', transport: '交通費込み', lodging: '', position: 'キャッチャー', count: 1 },
-  { id: 209, carrier: 'softbank', station: '北戸田', store: 'イオンモール北戸田', price: 24000, dates: '6/13(土)〜6/14(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
-  { id: 210, carrier: 'au', station: '駒生', store: 'ヤマダデンキ駒生', price: 22000, dates: '6/13(土)〜6/14(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 2 },
-  { id: 211, carrier: 'softbank', station: '磯子', store: 'ヤマダデンキ テックランド磯子店', price: 24000, dates: '6/13(土)〜6/14(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 2 },
-  { id: 212, carrier: 'softbank', station: '磯子', store: 'ヤマダデンキ テックランド磯子店', price: 17000, dates: '6/13(土)〜6/14(日)', transport: '交通費込み', lodging: '', position: 'キャッチャー', count: 1 },
-  { id: 213, carrier: 'softbank', station: '青葉', store: 'ヤマダデンキ テックランド青葉店', price: 25000, dates: '6/13(土)〜6/14(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
-  { id: 214, carrier: 'softbank', station: '港北センター', store: 'ヤマダデンキ Tecc LIFE SELECT 港北センター店', price: 24000, dates: '6/13(土)〜6/14(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
-  { id: 215, carrier: 'softbank', station: '新宿西口', store: 'ビックカメラ新宿西口', price: 25000, dates: '6/13(土)〜6/14(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 3 },
-  { id: 216, carrier: 'softbank', station: '新宿西口', store: 'ビックカメラ新宿西口', price: 23000, dates: '6/13(土)〜6/14(日)', transport: '交通費込み', lodging: '', position: 'キャッチャー', count: 1 },
-  { id: 217, carrier: 'softbank', station: '北戸田', store: 'イオンモール北戸田', price: 24000, dates: '6/20(土)〜6/21(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
-  { id: 218, carrier: 'softbank', station: '足立竹ノ塚', store: 'ヤマダ電機足立竹ノ塚', price: 25000, dates: '6/20(土)〜6/21(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
-  { id: 219, carrier: 'softbank', station: '足立', store: 'ヤマダ電機足立', price: 25000, dates: '6/20(土)〜6/21(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
-  { id: 220, carrier: 'softbank', station: '立川', store: 'ビックカメラ立川', price: 25000, dates: '6/20(土)〜6/21(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
-  { id: 221, carrier: 'softbank', station: '磯子', store: 'ヤマダデンキ テックランド磯子店', price: 24000, dates: '6/20(土)〜6/21(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 2 },
-  { id: 222, carrier: 'softbank', station: '磯子', store: 'ヤマダデンキ テックランド磯子店', price: 17000, dates: '6/20(土)〜6/21(日)', transport: '交通費込み', lodging: '', position: 'キャッチャー', count: 1 },
-  { id: 223, carrier: 'au', station: 'みどり', store: 'ケーズデンキみどり', price: 22000, dates: '6/23(月)〜6/24(火)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 2 },
-  { id: 224, carrier: 'softbank', station: 'ラゾーナ川崎', store: 'ビックカメララゾーナ川崎', price: 24000, dates: '6/26(金)〜6/28(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
-  { id: 225, carrier: 'softbank', station: '北戸田', store: 'イオンモール北戸田', price: 24000, dates: '6/27(土)〜6/28(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
-  { id: 226, carrier: 'au', station: 'つくば研究学園', store: 'ヤマダデンキつくば研究学園', price: 24000, dates: '6/27(土)〜6/28(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
-  { id: 227, carrier: 'au', station: '土浦真鍋', store: 'ケーズデンキ土浦真鍋', price: 22000, dates: '6/27(土)〜6/28(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
-  { id: 228, carrier: 'softbank', station: '足立竹ノ塚', store: 'ヤマダ電機足立竹ノ塚', price: 25000, dates: '6/27(土)〜6/28(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
-  { id: 229, carrier: 'softbank', station: '足立', store: 'ヤマダ電機足立', price: 25000, dates: '6/27(土)〜6/28(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
-  { id: 230, carrier: 'softbank', station: '立川', store: 'ビックカメラ立川', price: 25000, dates: '6/27(土)〜6/28(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 2 },
-  { id: 231, carrier: 'softbank', station: '立川', store: 'ビックカメラ立川', price: 24000, dates: '6/27(土)〜6/28(日)', transport: '交通費込み', lodging: '', position: 'キャッチャー', count: 1 },
-  { id: 232, carrier: 'softbank', station: '磯子', store: 'ヤマダデンキ テックランド磯子店', price: 24000, dates: '6/27(土)〜6/28(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 2 },
-  { id: 233, carrier: 'softbank', station: '磯子', store: 'ヤマダデンキ テックランド磯子店', price: 23000, dates: '6/27(土)〜6/28(日)', transport: '交通費込み', lodging: '', position: 'キャッチャー', count: 1 },
-  { id: 234, carrier: 'softbank', station: '港北センター', store: 'ヤマダデンキ Tecc LIFE SELECT 港北センター店', price: 24000, dates: '6/27(土)〜6/28(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 }
-];
-
-function rightRotate(value, amount) {
-  return (value >>> amount) | (value << (32 - amount));
-}
-
-function sha256(message) {
-  const utf8 = unescape(encodeURIComponent(message));
-  const words = [];
-  const messageLength = utf8.length * 8;
-  const hash = [
-    0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a,
-    0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19
-  ];
-  const k = [
-    0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
-    0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
-    0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
-    0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967,
-    0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
-    0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
-    0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
-    0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
-  ];
-
-  for (let i = 0; i < utf8.length; i++) {
-    words[i >> 2] = (words[i >> 2] || 0) | (utf8.charCodeAt(i) << (24 - (i % 4) * 8));
-  }
-  words[messageLength >> 5] = (words[messageLength >> 5] || 0) | (0x80 << (24 - messageLength % 32));
-  words[((messageLength + 64 >> 9) << 4) + 15] = messageLength;
-
-  for (let i = 0; i < words.length; i += 16) {
-    const w = Array.from({ length: 64 }, (_, t) => t < 16 ? (words[i + t] || 0) : 0);
-    for (let t = 16; t < 64; t++) {
-      const s0 = rightRotate(w[t - 15], 7) ^ rightRotate(w[t - 15], 18) ^ (w[t - 15] >>> 3);
-      const s1 = rightRotate(w[t - 2], 17) ^ rightRotate(w[t - 2], 19) ^ (w[t - 2] >>> 10);
-      w[t] = (w[t - 16] + s0 + w[t - 7] + s1) >>> 0;
-    }
-
-    let [a, b, c, d, e, f, g, h] = hash;
-    for (let t = 0; t < 64; t++) {
-      const s1 = rightRotate(e, 6) ^ rightRotate(e, 11) ^ rightRotate(e, 25);
-      const ch = (e & f) ^ (~e & g);
-      const temp1 = (h + s1 + ch + k[t] + w[t]) >>> 0;
-      const s0 = rightRotate(a, 2) ^ rightRotate(a, 13) ^ rightRotate(a, 22);
-      const maj = (a & b) ^ (a & c) ^ (b & c);
-      const temp2 = (s0 + maj) >>> 0;
-      h = g;
-      g = f;
-      f = e;
-      e = (d + temp1) >>> 0;
-      d = c;
-      c = b;
-      b = a;
-      a = (temp1 + temp2) >>> 0;
-    }
-
-    hash[0] = (hash[0] + a) >>> 0;
-    hash[1] = (hash[1] + b) >>> 0;
-    hash[2] = (hash[2] + c) >>> 0;
-    hash[3] = (hash[3] + d) >>> 0;
-    hash[4] = (hash[4] + e) >>> 0;
-    hash[5] = (hash[5] + f) >>> 0;
-    hash[6] = (hash[6] + g) >>> 0;
-    hash[7] = (hash[7] + h) >>> 0;
-  }
-
-  return hash.map(value => value.toString(16).padStart(8, '0')).join('');
-}
+const SESSION_KEY = 'esp_auth_v1';
 
 async function hashCredentials(id, pw) {
-  return sha256(id + ':' + pw + ':' + SALT);
+  const data = new TextEncoder().encode(id + ':' + pw + ':' + SALT);
+  const buf = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(buf))
+    .map(b => b.toString(16).padStart(2,'0')).join('');
 }
 
 function isLoggedIn() {
-  return sessionStorage.getItem(SESSION_KEY) === 'logged-in';
+  return sessionStorage.getItem(SESSION_KEY) === EXPECTED_HASH;
 }
 
 function showMain() {
@@ -394,7 +384,6 @@ function showMain() {
   document.getElementById('main-screen').classList.remove('hidden');
   renderJobs();
 }
-
 function showLogin() {
   document.getElementById('login-screen').classList.remove('hidden');
   document.getElementById('main-screen').classList.add('hidden');
@@ -406,6 +395,98 @@ function logout() {
   document.getElementById('login-pw').value = '';
   showLogin();
 }
+
+document.getElementById('login-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const id = document.getElementById('login-id').value.trim();
+  const pw = document.getElementById('login-pw').value;
+  const errEl = document.getElementById('login-error');
+  errEl.classList.remove('show');
+
+  const hash = await hashCredentials(id, pw);
+  if (hash === EXPECTED_HASH) {
+    sessionStorage.setItem(SESSION_KEY, hash);
+    showMain();
+  } else {
+    errEl.classList.add('show');
+    document.getElementById('login-pw').value = '';
+  }
+});
+
+if (isLoggedIn()) {
+  showMain();
+} else {
+  showLogin();
+}
+
+/* ============================================================
+   案件データ・表示
+   ============================================================ */
+const LINE_ID = '@597ckygq';
+
+const CARRIER = {
+  docomo:   { color:'#e53935', emoji:'🍄', label:'docomo' },
+  au:       { color:'#f57c00', emoji:'🍊', label:'au' },
+  softbank: { color:'#1565c0', emoji:'⚪', label:'SoftBank' },
+  uq:       { color:'#2e7d32', emoji:'♕', label:'UQ' },
+  ymobile:  { color:'#7b1fa2', emoji:'🐱', label:'Y!mobile' },
+  other:    { color:'#455a64', emoji:'🏢', label:'その他' }
+};
+
+const JOBS = [
+  // ===== 6月1週目(6/6,7) =====
+  { id: 201, carrier: 'softbank', station: '北戸田', store: 'イオンモール北戸田', price: 24000, dates: '6/6(土)〜6/7(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
+  { id: 202, carrier: 'au', station: 'たつのこまち', store: 'ケーズデンキたつのこまち', price: 24000, dates: '6/6(土)〜6/7(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
+  { id: 203, carrier: 'softbank', station: '立川', store: 'ビックカメラ立川', price: 25000, dates: '6/6(土)〜6/7(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
+  { id: 204, carrier: 'softbank', station: '磯子', store: 'ヤマダデンキ テックランド磯子店', price: 24000, dates: '6/6(土)〜6/7(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 2 },
+  { id: 205, carrier: 'softbank', station: '磯子', store: 'ヤマダデンキ テックランド磯子店', price: 19000, dates: '6/6(土)〜6/7(日)', transport: '交通費込み', lodging: '', position: 'キャッチャー', count: 1 },
+  { id: 206, carrier: 'softbank', station: '青葉', store: 'ヤマダデンキ テックランド青葉店', price: 25000, dates: '6/6(土)〜6/7(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
+  { id: 207, carrier: 'softbank', station: '新宿西口', store: 'ビックカメラ新宿西口', price: 25000, dates: '6/6(土)〜6/7(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 4 },
+  { id: 208, carrier: 'softbank', station: '新宿西口', store: 'ビックカメラ新宿西口', price: 23000, dates: '6/6(土)〜6/7(日)', transport: '交通費込み', lodging: '', position: 'キャッチャー', count: 1 },
+
+  // ===== 6月2週目(6/13,14) =====
+  { id: 209, carrier: 'softbank', station: '北戸田', store: 'イオンモール北戸田', price: 24000, dates: '6/13(土)〜6/14(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
+  { id: 210, carrier: 'au', station: '駒生', store: 'ヤマダデンキ駒生', price: 22000, dates: '6/13(土)〜6/14(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 2 },
+  { id: 211, carrier: 'softbank', station: '磯子', store: 'ヤマダデンキ テックランド磯子店', price: 24000, dates: '6/13(土)〜6/14(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 2 },
+  { id: 212, carrier: 'softbank', station: '磯子', store: 'ヤマダデンキ テックランド磯子店', price: 17000, dates: '6/13(土)〜6/14(日)', transport: '交通費込み', lodging: '', position: 'キャッチャー', count: 1 },
+  { id: 213, carrier: 'softbank', station: '青葉', store: 'ヤマダデンキ テックランド青葉店', price: 25000, dates: '6/13(土)〜6/14(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
+  { id: 214, carrier: 'softbank', station: '港北センター', store: 'ヤマダデンキ Tecc LIFE SELECT 港北センター店', price: 24000, dates: '6/13(土)〜6/14(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
+  { id: 215, carrier: 'softbank', station: '新宿西口', store: 'ビックカメラ新宿西口', price: 25000, dates: '6/13(土)〜6/14(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 3 },
+  { id: 216, carrier: 'softbank', station: '新宿西口', store: 'ビックカメラ新宿西口', price: 23000, dates: '6/13(土)〜6/14(日)', transport: '交通費込み', lodging: '', position: 'キャッチャー', count: 1 },
+
+  // ===== 6月3週目(6/20,21・6/23,24) =====
+  { id: 217, carrier: 'softbank', station: '北戸田', store: 'イオンモール北戸田', price: 24000, dates: '6/20(土)〜6/21(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
+  { id: 218, carrier: 'softbank', station: '足立竹ノ塚', store: 'ヤマダ電機足立竹ノ塚', price: 25000, dates: '6/20(土)〜6/21(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
+  { id: 219, carrier: 'softbank', station: '足立', store: 'ヤマダ電機足立', price: 25000, dates: '6/20(土)〜6/21(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
+  { id: 220, carrier: 'softbank', station: '立川', store: 'ビックカメラ立川', price: 25000, dates: '6/20(土)〜6/21(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
+  { id: 221, carrier: 'softbank', station: '磯子', store: 'ヤマダデンキ テックランド磯子店', price: 24000, dates: '6/20(土)〜6/21(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 2 },
+  { id: 222, carrier: 'softbank', station: '磯子', store: 'ヤマダデンキ テックランド磯子店', price: 17000, dates: '6/20(土)〜6/21(日)', transport: '交通費込み', lodging: '', position: 'キャッチャー', count: 1 },
+  { id: 223, carrier: 'au', station: 'みどり', store: 'ケーズデンキみどり', price: 22000, dates: '6/23(月)〜6/24(火)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 2 },
+
+  // ===== 6月4週目(6/26-28・6/27,28) =====
+  { id: 224, carrier: 'softbank', station: 'ラゾーナ川崎', store: 'ビックカメララゾーナ川崎', price: 24000, dates: '6/26(金)〜6/28(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
+  { id: 225, carrier: 'softbank', station: '北戸田', store: 'イオンモール北戸田', price: 24000, dates: '6/27(土)〜6/28(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
+  { id: 226, carrier: 'au', station: 'つくば研究学園', store: 'ヤマダデンキつくば研究学園', price: 24000, dates: '6/27(土)〜6/28(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
+  { id: 227, carrier: 'au', station: '土浦真鍋', store: 'ケーズデンキ土浦真鍋', price: 22000, dates: '6/27(土)〜6/28(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
+  { id: 228, carrier: 'softbank', station: '足立竹ノ塚', store: 'ヤマダ電機足立竹ノ塚', price: 25000, dates: '6/27(土)〜6/28(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
+  { id: 229, carrier: 'softbank', station: '足立', store: 'ヤマダ電機足立', price: 25000, dates: '6/27(土)〜6/28(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
+  { id: 230, carrier: 'softbank', station: '立川', store: 'ビックカメラ立川', price: 25000, dates: '6/27(土)〜6/28(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 2 },
+  { id: 231, carrier: 'softbank', station: '立川', store: 'ビックカメラ立川', price: 24000, dates: '6/27(土)〜6/28(日)', transport: '交通費込み', lodging: '', position: 'キャッチャー', count: 1 },
+  { id: 232, carrier: 'softbank', station: '磯子', store: 'ヤマダデンキ テックランド磯子店', price: 24000, dates: '6/27(土)〜6/28(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 2 },
+  { id: 233, carrier: 'softbank', station: '磯子', store: 'ヤマダデンキ テックランド磯子店', price: 23000, dates: '6/27(土)〜6/28(日)', transport: '交通費込み', lodging: '', position: 'キャッチャー', count: 1 },
+  { id: 234, carrier: 'softbank', station: '港北センター', store: 'ヤマダデンキ Tecc LIFE SELECT 港北センター店', price: 24000, dates: '6/27(土)〜6/28(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
+
+  // ===== 6月増員案件(SB & docomo) =====
+  { id: 235, carrier: 'docomo', station: '練馬', store: 'ヤマダデンキ練馬本店', price: 27000, dates: '6/12(金)〜6/14(日)', transport: '交通費別', lodging: '', position: 'クローザー', count: 1, tag: '増員' },
+  { id: 236, carrier: 'softbank', station: '女池(新潟)', store: 'K\'s女池', price: 30000, dates: '6/25(木)〜6/28(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 10, tag: '増員・大型', note: 'キャッチャー要相談' },
+
+  // ===== ドコモ量販店スポット(長期) =====
+  { id: 237, carrier: 'docomo', station: '池袋', store: 'ヤマダデンキ LABI池袋本店', price: 20000, dates: '6/22(月)〜7/5(日)', transport: '交通費別', lodging: '', position: 'クローザー', count: 5, tag: '長期スポット', note: '8H拘束/7H稼働・基本11:00-19:00・出れる日数が多い方優先・一人称完結必須・量販店経験者' },
+
+  // ===== 7月屋外イベント(イオンタウン南砂) =====
+  { id: 238, carrier: 'docomo', station: '南砂', store: 'イオンタウン南砂(屋外)', price: 22000, dates: '7/10(金)〜7/11(土)', transport: '要相談', lodging: '', position: 'クローザー', count: 2, tag: '屋外イベント' },
+  { id: 239, carrier: 'docomo', station: '南砂', store: 'イオンタウン南砂(屋外)', price: 22000, dates: '7/26(日)〜7/28(火)', transport: '要相談', lodging: '', position: 'クローザー', count: 2, tag: '屋外イベント' }
+];
 
 function renderJobs() {
   const list = document.getElementById('job-list');
@@ -453,7 +534,8 @@ function openModal(id) {
   document.getElementById('modal-tags').innerHTML =
     `<span style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:8px;background:rgba(0,0,0,.05);font-size:12px;font-weight:700;color:${c.color};">${c.emoji} ${c.label}</span>
      ${j.tag ? `<span style="margin-left:6px;background:rgba(192,25,26,.1);color:var(--accent);font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;">★ ${j.tag}</span>` : ''}`;
-  document.getElementById('modal-price').innerHTML = `¥${j.price.toLocaleString()}<span>/日</span>`;
+  document.getElementById('modal-price').innerHTML =
+    `¥${j.price.toLocaleString()}<span>/日</span>`;
   document.getElementById('modal-grid').innerHTML = `
     <div class="modal-item"><label>日程</label><div class="val">${j.dates}</div></div>
     <div class="modal-item"><label>ポジション</label><div class="val">${j.position} ${j.count}名</div></div>
@@ -465,7 +547,9 @@ function openModal(id) {
   const msg = encodeURIComponent(
     `【案件応募】\n${j.store}(${j.station})\n${j.dates}\n${j.position}\n¥${j.price.toLocaleString()}/日・${j.transport}${j.lodging ? ' / ' + j.lodging : ''}\n\n上記案件に応募します。`
   );
-  document.getElementById('modal-line-btn').href = `https://line.me/R/oaMessage/%40597ckygq/?${msg}`;
+  document.getElementById('modal-line-btn').href =
+    `https://line.me/R/oaMessage/%40597ckygq/?${msg}`;
+
   document.getElementById('modal').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
@@ -473,30 +557,6 @@ function openModal(id) {
 function closeModal() {
   document.getElementById('modal').classList.remove('open');
   document.body.style.overflow = '';
-}
-
-document.getElementById('login-form').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const id = document.getElementById('login-id').value.trim();
-  const pw = document.getElementById('login-pw').value;
-  const errEl = document.getElementById('login-error');
-  errEl.classList.remove('show');
-
-  if (id === LOGIN_ID && pw.trim() === LOGIN_PASSWORD) {
-    sessionStorage.setItem(SESSION_KEY, 'logged-in');
-    showMain();
-  } else {
-    errEl.textContent = 'IDまたはパスワードが違います';
-    errEl.classList.add('show');
-    document.getElementById('login-pw').value = '';
-  }
-});
-
-/* 重要: JOBSや関数をすべて定義した後に初期表示を実行します */
-if (isLoggedIn()) {
-  showMain();
-} else {
-  showLogin();
 }
 </script>
 </body>
