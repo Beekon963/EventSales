@@ -305,6 +305,21 @@
   .terms-sub > li { margin-bottom:3px; counter-increment:tsub; position:relative; }
   .terms-sub > li::before { content:"("counter(tsub)") "; color:var(--muted); }
   .terms-date { margin-top:10px; color:var(--muted); }
+  /* ===== 利用規約 同意チェックボックス ===== */
+  .terms-agree {
+    display:flex; align-items:center; gap:10px;
+    margin:14px 2px 16px; cursor:pointer;
+    font-size:13px; font-weight:700; color:var(--text);
+    user-select:none;
+  }
+  .terms-agree input[type="checkbox"] {
+    width:20px; height:20px; flex:0 0 auto;
+    accent-color:var(--accent); cursor:pointer;
+  }
+  .btn-line.disabled {
+    opacity:.4; pointer-events:none;
+    filter:grayscale(.4); box-shadow:none;
+  }
 </style>
 </head>
 <body>
@@ -699,7 +714,11 @@
 <p class="terms-date">制定日：20●●年●月●日</p>
 </div>
       </div>
-      <a class="btn-line" id="modal-line-btn" href="#" target="_blank">
+      <label class="terms-agree" for="terms-agree-cb">
+        <input type="checkbox" id="terms-agree-cb" onchange="toggleApply(this.checked)">
+        <span>利用規約に同意します</span>
+      </label>
+      <a class="btn-line disabled" id="modal-line-btn" href="#" target="_blank" aria-disabled="true">
         <svg width="22" height="22" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="12" fill="white"/><path d="M24 8C15.16 8 8 14.26 8 22c0 5.4 3.4 10.14 8.5 12.82-.36 1.34-1.28 4.86-1.46 5.6-.22.88.32.88.68.64.28-.18 4.38-2.98 6.16-4.18.68.1 1.38.14 2.12.14 8.84 0 16-6.26 16-14S32.84 8 24 8z" fill="#06C755"/></svg>
         出勤を希望する 🟢
       </a>
@@ -791,36 +810,7 @@ const CARRIER = {
 };
 
 const JOBS = [
-  // ===== 6月1週目(6/6,7) =====
-  { id: 201, carrier: 'softbank', station: '北戸田', store: 'イオンモール北戸田', price: 24000, dates: '6/6(土)〜6/7(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
-  { id: 202, carrier: 'au', station: 'たつのこまち', store: 'ケーズデンキたつのこまち', price: 24000, dates: '6/6(土)〜6/7(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
-  { id: 203, carrier: 'softbank', station: '立川', store: 'ビックカメラ立川', price: 25000, dates: '6/6(土)〜6/7(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
-  { id: 204, carrier: 'softbank', station: '磯子', store: 'ヤマダデンキ テックランド磯子店', price: 24000, dates: '6/6(土)〜6/7(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 2 },
-  { id: 205, carrier: 'softbank', station: '磯子', store: 'ヤマダデンキ テックランド磯子店', price: 19000, dates: '6/6(土)〜6/7(日)', transport: '交通費込み', lodging: '', position: 'キャッチャー', count: 1 },
-  { id: 206, carrier: 'softbank', station: '青葉', store: 'ヤマダデンキ テックランド青葉店', price: 25000, dates: '6/6(土)〜6/7(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
-  { id: 207, carrier: 'softbank', station: '新宿西口', store: 'ビックカメラ新宿西口', price: 25000, dates: '6/6(土)〜6/7(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 4 },
-  { id: 208, carrier: 'softbank', station: '新宿西口', store: 'ビックカメラ新宿西口', price: 23000, dates: '6/6(土)〜6/7(日)', transport: '交通費込み', lodging: '', position: 'キャッチャー', count: 1 },
-
-  // ===== 6月2週目(6/13,14) =====
-  { id: 209, carrier: 'softbank', station: '北戸田', store: 'イオンモール北戸田', price: 24000, dates: '6/13(土)〜6/14(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
-  { id: 210, carrier: 'au', station: '駒生', store: 'ヤマダデンキ駒生', price: 22000, dates: '6/13(土)〜6/14(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 2 },
-  { id: 211, carrier: 'softbank', station: '磯子', store: 'ヤマダデンキ テックランド磯子店', price: 24000, dates: '6/13(土)〜6/14(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 2 },
-  { id: 212, carrier: 'softbank', station: '磯子', store: 'ヤマダデンキ テックランド磯子店', price: 17000, dates: '6/13(土)〜6/14(日)', transport: '交通費込み', lodging: '', position: 'キャッチャー', count: 1 },
-  { id: 213, carrier: 'softbank', station: '青葉', store: 'ヤマダデンキ テックランド青葉店', price: 25000, dates: '6/13(土)〜6/14(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
-  { id: 214, carrier: 'softbank', station: '港北センター', store: 'ヤマダデンキ Tecc LIFE SELECT 港北センター店', price: 24000, dates: '6/13(土)〜6/14(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
-  { id: 215, carrier: 'softbank', station: '新宿西口', store: 'ビックカメラ新宿西口', price: 25000, dates: '6/13(土)〜6/14(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 3 },
-  { id: 216, carrier: 'softbank', station: '新宿西口', store: 'ビックカメラ新宿西口', price: 23000, dates: '6/13(土)〜6/14(日)', transport: '交通費込み', lodging: '', position: 'キャッチャー', count: 1 },
-
-  // ===== 6月3週目(6/20,21・6/23,24) =====
-  { id: 217, carrier: 'softbank', station: '北戸田', store: 'イオンモール北戸田', price: 24000, dates: '6/20(土)〜6/21(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
-  { id: 218, carrier: 'softbank', station: '足立竹ノ塚', store: 'ヤマダ電機足立竹ノ塚', price: 25000, dates: '6/20(土)〜6/21(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
-  { id: 219, carrier: 'softbank', station: '足立', store: 'ヤマダ電機足立', price: 25000, dates: '6/20(土)〜6/21(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
-  { id: 220, carrier: 'softbank', station: '立川', store: 'ビックカメラ立川', price: 25000, dates: '6/20(土)〜6/21(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
-  { id: 221, carrier: 'softbank', station: '磯子', store: 'ヤマダデンキ テックランド磯子店', price: 24000, dates: '6/20(土)〜6/21(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 2 },
-  { id: 222, carrier: 'softbank', station: '磯子', store: 'ヤマダデンキ テックランド磯子店', price: 17000, dates: '6/20(土)〜6/21(日)', transport: '交通費込み', lodging: '', position: 'キャッチャー', count: 1 },
-  { id: 223, carrier: 'au', station: 'みどり', store: 'ケーズデンキみどり', price: 22000, dates: '6/23(月)〜6/24(火)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 2 },
-
-  // ===== 6月4週目(6/26-28・6/27,28) =====
+  // ===== 6月末(6/26-28) =====
   { id: 224, carrier: 'softbank', station: 'ラゾーナ川崎', store: 'ビックカメララゾーナ川崎', price: 24000, dates: '6/26(金)〜6/28(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
   { id: 225, carrier: 'softbank', station: '北戸田', store: 'イオンモール北戸田', price: 24000, dates: '6/27(土)〜6/28(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
   { id: 226, carrier: 'au', station: 'つくば研究学園', store: 'ヤマダデンキつくば研究学園', price: 24000, dates: '6/27(土)〜6/28(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
@@ -833,12 +823,19 @@ const JOBS = [
   { id: 233, carrier: 'softbank', station: '磯子', store: 'ヤマダデンキ テックランド磯子店', price: 23000, dates: '6/27(土)〜6/28(日)', transport: '交通費込み', lodging: '', position: 'キャッチャー', count: 1 },
   { id: 234, carrier: 'softbank', station: '港北センター', store: 'ヤマダデンキ Tecc LIFE SELECT 港北センター店', price: 24000, dates: '6/27(土)〜6/28(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
 
-  // ===== 6月増員案件(SB & docomo) =====
-  { id: 235, carrier: 'docomo', station: '練馬', store: 'ヤマダデンキ練馬本店', price: 27000, dates: '6/12(金)〜6/14(日)', transport: '交通費別', lodging: '', position: 'クローザー', count: 1, tag: '増員' },
+  // ===== 6月増員(大型) =====
   { id: 236, carrier: 'softbank', station: '女池(新潟)', store: 'K\'s女池', price: 30000, dates: '6/25(木)〜6/28(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 10, tag: '増員・大型', note: 'キャッチャー要相談' },
+
+  // ===== docomoイベント増員(茂原) =====
+  { id: 244, carrier: 'docomo', station: '茂原', store: 'ケーズデンキ茂原', price: 27000, dates: '6/27(土)〜6/28(日)', transport: '交通費別', lodging: '宿泊あり', position: 'クローザー', count: 3, tag: '増員', note: '一人称完結可能・PI2件/日可能・勤怠良好・実績に貪欲な方' },
 
   // ===== ドコモ量販店スポット(長期) =====
   { id: 237, carrier: 'docomo', station: '池袋', store: 'ヤマダデンキ LABI池袋本店', price: 20000, dates: '6/22(月)〜7/5(日)', transport: '交通費別', lodging: '', position: 'クローザー', count: 5, tag: '長期スポット', note: '8H拘束/7H稼働・基本11:00-19:00・出れる日数が多い方優先・一人称完結必須・量販店経験者' },
+
+  // ===== 7月 docomo 外販スポット(相模大野) =====
+  { id: 241, carrier: 'docomo', station: '相模大野', store: '相模大野 軒先イベント', price: 25000, dates: '7/4,5 / 11,12 / 18,19 / 25,26(土日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1, tag: '7月スポット', note: '各日クローザー1名/docomo商材を一人称対応可能・外販量販でPI2〜3件以上獲得可能な方' },
+  { id: 242, carrier: 'docomo', station: '相模大野', store: '相模大野 外販イベント', price: 25000, dates: '7/4,5 / 11,12 / 25,26(土日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1, tag: '7月スポット', note: '各日クローザー1名/docomo商材を一人称対応可能・外販量販でPI2〜3件以上獲得可能な方' },
+  { id: 243, carrier: 'docomo', station: '相模大野', store: '相模大野 外販イベント', price: 16000, dates: '7/4,5 / 11,12 / 25,26(土日)', transport: '交通費込み', lodging: '', position: 'キャッチャー', count: 2, tag: '7月スポット', note: '各日キャッチャー2名/積極的な声掛け〜着座まで対応可能な方' },
 
   // ===== 7月屋外イベント(イオンタウン南砂) =====
   { id: 238, carrier: 'docomo', station: '南砂', store: 'イオンタウン南砂(屋外)', price: 22000, dates: '7/10(金)〜7/11(土)', transport: '要相談', lodging: '', position: 'クローザー', count: 2, tag: '屋外イベント' },
@@ -912,6 +909,22 @@ function openModal(id) {
 
   document.getElementById('modal').classList.add('open');
   document.body.style.overflow = 'hidden';
+
+  // 利用規約の同意状態をリセット（毎回チェックし直す必要あり）
+  document.getElementById('terms-agree-cb').checked = false;
+  toggleApply(false);
+  document.getElementById('modal-terms').scrollTop = 0;
+}
+
+function toggleApply(checked) {
+  const btn = document.getElementById('modal-line-btn');
+  if (checked) {
+    btn.classList.remove('disabled');
+    btn.setAttribute('aria-disabled', 'false');
+  } else {
+    btn.classList.add('disabled');
+    btn.setAttribute('aria-disabled', 'true');
+  }
 }
 
 function closeModal() {
