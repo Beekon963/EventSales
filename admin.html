@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>案件管理コンソール | SALES EVENT PORTAL</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<style>
+  :root{
+    --bg:#f1ebe0;            /* ベージュ背景 */
+    --bg-warm:#ece4d6;       /* 一段濃いベージュ */
+    --surface:#ffffff;       /* カード/パネル */
+    --surface2:#faf6ee;      /* 入力欄・薄い面 */
+    --line:rgba(74,52,30,.14);
+    --text:#211c17;
+    --muted:#8c8478;
+    --accent:#c0191a;        /* 赤 */
+    --accent-dark:#9c1314;
+    --accent-soft:rgba(192,25,26,.08);
+    --green:#06C755;
+    --docomo:#e53935; --au:#f57c00; --softbank:#1565c0; --uq:#2e7d32; --ymobile:#7b1fa2;
+    --warn:#b07d12;
+    --radius:14px;
+    --shadow:0 1px 3px rgba(74,52,30,.06), 0 8px 24px rgba(74,52,30,.05);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+  .mono{font-family:'Space Mono',monospace}
+  button{font-family:inherit;cursor:pointer}
+  input,select,textarea{font-family:inherit}
+  a{color:var(--accent)}
+
+  /* ===== ログインゲート ===== */
+  .gate{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:24px;background:radial-gradient(1100px 540px at 50% -12%,rgba(192,25,26,.10),transparent),var(--bg);z-index:50}
+  .gate-card{width:100%;max-width:380px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:30px 26px;box-shadow:var(--shadow)}
+  .gate-eyebrow{font-size:11px;letter-spacing:.22em;color:var(--accent);text-transform:uppercase;font-weight:700}
+  .gate-title{font-size:20px;font-weight:900;margin:6px 0 2px}
+  .gate-sub{font-size:12.5px;color:var(--muted);margin-bottom:20px}
+  .field{margin-bottom:14px}
+  .field label{display:block;font-size:11px;letter-spacing:.08em;color:var(--muted);margin-bottom:6px;font-weight:700}
+  .input{width:100%;background:var(--surface2);border:1px solid var(--line);border-radius:10px;padding:12px 13px;color:var(--text);font-size:15px;outline:none;transition:border-color .15s,box-shadow .15s}
+  .input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+  .btn{width:100%;border:none;border-radius:10px;padding:13px;font-size:14px;font-weight:900;color:#fff;background:var(--accent)}
+  .btn:hover{background:var(--accent-dark)}
+  .btn:active{transform:translateY(1px)}
+  .gate-err{display:none;background:var(--accent-soft);border:1px solid rgba(192,25,26,.35);color:var(--accent-dark);font-size:12.5px;padding:9px 12px;border-radius:9px;margin-bottom:12px}
+  .gate-err.show{display:block}
+  .gate-tool{margin-top:18px;border-top:1px solid var(--line);padding-top:14px}
+  .gate-tool summary{font-size:12px;color:var(--muted);cursor:pointer}
+  .gate-tool .row{display:flex;gap:8px;margin-top:10px}
+  .gate-tool .row .input{flex:1}
+  .gate-tool .mini{padding:0 14px;white-space:nowrap;width:auto}
+  .hashout{margin-top:8px;font-size:11px;color:var(--accent);word-break:break-all;min-height:16px}
+
+  /* ===== アプリ ===== */
+  .app{display:none;max-width:1080px;margin:0 auto;padding:0 16px 88px}
+  .app.show{display:block}
+  .topbar{position:sticky;top:0;z-index:20;background:rgba(241,235,224,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:14px 16px;margin:0 -16px 22px}
+  .brand{display:flex;align-items:baseline;gap:10px}
+  .brand b{font-size:16px;font-weight:900}
+  .brand span{font-size:10px;letter-spacing:.2em;color:var(--accent);font-weight:700}
+  .top-actions{display:flex;gap:8px;align-items:center}
+  .ghost{background:var(--surface);border:1px solid var(--line);color:var(--text);border-radius:9px;padding:8px 12px;font-size:12.5px;font-weight:700;width:auto}
+  .ghost:hover{border-color:var(--accent);color:var(--accent)}
+
+  .section-h{font-size:12px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin:26px 2px 12px;font-weight:700;display:flex;align-items:center}
+  .step{display:inline-flex;width:20px;height:20px;border-radius:6px;background:var(--accent);color:#fff;font-size:11px;font-weight:900;align-items:center;justify-content:center;margin-right:8px;font-family:'Space Mono',monospace}
+
+  .paste-wrap{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
+  textarea.paste{width:100%;min-height:150px;resize:vertical;background:var(--surface2);border:1px solid var(--line);border-radius:10px;padding:13px;color:var(--text);font-size:14px;line-height:1.7;outline:none;transition:border-color .15s,box-shadow .15s}
+  textarea.paste:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+  .paste-actions{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+  .paste-actions .pri{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:11px 18px;font-weight:900;font-size:13.5px;width:auto}
+  .paste-actions .pri:hover{background:var(--accent-dark)}
+  .paste-actions .sec{background:transparent;border:1px solid var(--line);color:var(--text);border-radius:10px;padding:11px 16px;font-weight:700;font-size:13px;width:auto}
+  .paste-actions .sec:hover{border-color:var(--accent);color:var(--accent)}
+  .hint{font-size:11.5px;color:var(--muted);margin-top:10px}
+
+  .count-line{display:flex;align-items:center;gap:10px;margin:0 2px 12px}
+  .count-line b{font-size:14px}
+  .pill{font-size:11px;font-weight:700;padding:3px 9px;border-radius:100px;background:var(--surface);border:1px solid var(--line);color:var(--muted)}
+
+  /* ===== 案件カード（編集） ===== */
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:720px){.cards{grid-template-columns:1fr}}
+  .jc{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px;position:relative;overflow:hidden;box-shadow:var(--shadow)}
+  .jc.isnew{border-color:rgba(6,199,85,.55);box-shadow:0 0 0 1px rgba(6,199,85,.22) inset,var(--shadow)}
+  .jc.isfull{opacity:.6}
+  .jc-bar{position:absolute;left:0;top:0;bottom:0;width:4px}
+  .jc-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px;padding-left:6px}
+  .jc-badges{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+  .tag-new{font-size:10px;font-weight:900;color:#067a37;background:rgba(6,199,85,.14);padding:2px 8px;border-radius:100px}
+  .tag-id{font-size:10px;color:var(--muted)}
+  .del{width:auto;background:transparent;border:1px solid var(--line);color:var(--accent);border-radius:8px;padding:5px 10px;font-size:11.5px;font-weight:700}
+  .del:hover{border-color:var(--accent);background:var(--accent-soft)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .cell{display:flex;flex-direction:column;gap:4px}
+  .cell.full{grid-column:span 2}
+  .cell label{font-size:10px;letter-spacing:.06em;color:var(--muted);font-weight:700}
+  .cell .input{padding:8px 10px;font-size:13px;border-radius:8px}
+  .cell select.input{appearance:none;-webkit-appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 16px) 50%,calc(100% - 11px) 50%;background-size:5px 5px,5px 5px;background-repeat:no-repeat;padding-right:28px}
+  .jc-foot{display:flex;align-items:center;gap:14px;margin-top:10px;padding-left:6px}
+  .chk{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer}
+  .chk input{width:17px;height:17px;accent-color:var(--accent)}
+
+  .empty{background:var(--surface);border:1px dashed var(--line);border-radius:var(--radius);padding:34px;text-align:center;color:var(--muted);font-size:13px}
+
+  /* ===== 公開バー ===== */
+  .publish{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:12px 16px;box-shadow:0 -6px 20px rgba(74,52,30,.06)}
+  .publish-in{max-width:1080px;margin:0 auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .publish .pub{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:12px 18px;font-weight:900;font-size:13.5px;width:auto}
+  .publish .pub:hover{background:var(--accent-dark)}
+  .publish .pub.git{background:var(--surface);color:var(--text);border:1px solid var(--line)}
+  .publish .pub.git:hover{border-color:var(--accent);color:var(--accent)}
+  .publish .pub:disabled{opacity:.5}
+  .publish .status{font-size:12px;color:var(--muted);margin-left:auto}
+
+  dialog{border:none;background:transparent;padding:0;max-width:520px;width:92%}
+  dialog::backdrop{background:rgba(40,28,16,.45)}
+  .modal{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:var(--shadow)}
+  .modal h3{font-size:16px;font-weight:900;margin-bottom:6px}
+  .modal p{font-size:12.5px;color:var(--muted);margin-bottom:14px}
+  .modal .warnbox{background:rgba(176,125,18,.10);border:1px solid rgba(176,125,18,.35);color:var(--warn);font-size:11.5px;padding:10px 12px;border-radius:9px;margin-bottom:14px}
+  .modal .field{margin-bottom:10px}
+  .modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:6px}
+  .modal-actions .x{background:transparent;border:1px solid var(--line);color:var(--text);border-radius:9px;padding:10px 16px;font-weight:700;width:auto}
+  .modal-actions .go{background:var(--accent);color:#fff;border:none;border-radius:9px;padding:10px 18px;font-weight:900;width:auto}
+  .modal-actions .go:hover{background:var(--accent-dark)}
+  .log{margin-top:12px;font-size:11.5px;font-family:'Space Mono',monospace;color:var(--muted);max-height:120px;overflow:auto;white-space:pre-wrap;background:var(--surface2);border-radius:8px;padding:8px 10px}
+  .log:empty{display:none}
+  .toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%);background:#211c17;border:1px solid rgba(0,0,0,.2);color:#fff;padding:11px 18px;border-radius:100px;font-size:13px;font-weight:700;z-index:60;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;box-shadow:var(--shadow)}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(-6px)}
+
+  .tag-dirty{font-size:10px;font-weight:900;color:var(--warn);background:rgba(176,125,18,.14);padding:2px 8px;border-radius:100px}
+  .jc.isdirty{border-color:rgba(176,125,18,.5)}
+  .save-btn{margin-left:auto;width:auto;background:var(--accent);color:#fff;border:none;border-radius:9px;padding:8px 16px;font-size:12.5px;font-weight:900}
+  .save-btn:hover{background:var(--accent-dark)}
+  .save-btn:disabled{background:var(--surface2);color:var(--muted);border:1px solid var(--line);cursor:default}
+  .refresh-banner{display:none;align-items:center;gap:12px;background:rgba(176,125,18,.10);border:1px solid rgba(176,125,18,.4);color:var(--warn);border-radius:12px;padding:11px 14px;margin:0 2px 12px;font-size:12.5px;font-weight:700}
+  .refresh-banner button{width:auto;background:var(--warn);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-weight:800;font-size:12px}
+  .live-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);margin-right:6px;vertical-align:middle;box-shadow:0 0 0 0 rgba(6,199,85,.5);animation:pulse 2s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(6,199,85,.5)}70%{box-shadow:0 0 0 7px rgba(6,199,85,0)}100%{box-shadow:0 0 0 0 rgba(6,199,85,0)}}
+</style>
+</head>
+<body>
+
+<!-- ===== ゲート（管理者ログイン） ===== -->
+<div class="gate" id="gate">
+  <div class="gate-card">
+    <div class="gate-eyebrow">SALES EVENT PORTAL</div>
+    <div class="gate-title">案件管理コンソール</div>
+    <div class="gate-sub">管理者アカウントでログインしてください。</div>
+    <div class="gate-err" id="gate-err">メールアドレスまたはパスワードが違います</div>
+    <div class="field"><label>メールアドレス</label>
+      <input class="input" id="gate-email" type="email" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false"></div>
+    <div class="field"><label>パスワード</label>
+      <input class="input" id="gate-pw" type="password" autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false"></div>
+    <button class="btn" id="gate-btn">ログイン</button>
+  </div>
+</div>
+
+<!-- ===== アプリ ===== -->
+<div class="app" id="app">
+  <div class="topbar">
+    <div class="brand"><b>案件管理</b><span>LIVE CONSOLE</span></div>
+    <div class="top-actions">
+      <button class="ghost" id="reload-btn">再読み込み</button>
+      <button class="ghost" id="lock-btn">ログアウト</button>
+    </div>
+  </div>
+
+  <div class="section-h"><span class="step">1</span>協力会社のテキストを貼り付け</div>
+  <div class="paste-wrap">
+    <textarea class="paste" id="paste" placeholder="LINEやメールで届いた案件テキストをそのまま貼り付け。書式が違っても解析を試みます。&#10;例：&#10;【docomoイベント増員】&#10;6月27.28日 ケーズデンキ茂原 クローザー3名/27,000円 交別 宿泊あり"></textarea>
+    <div class="paste-actions">
+      <button class="pri" id="parse-btn">解析して下書きを追加</button>
+      <button class="sec" id="addempty-btn">空の案件を手動で追加</button>
+      <button class="sec" id="clearpaste-btn">クリア</button>
+    </div>
+    <div class="hint">解析は下書きを作るための補助です。内容を確認し、各カードの「追加して公開」を押すと全端末に即時反映されます。企業名・担当者名・電話番号はページに載りません。</div>
+  </div>
+
+  <div class="section-h"><span class="step">2</span>掲載中の案件（確認・修正・削除）</div>
+  <div class="refresh-banner" id="refresh-banner">
+    <span>他の端末で案件が更新されました。未保存の編集があるため自動更新を保留しています。</span>
+    <button id="refresh-now">最新を読み込む</button>
+  </div>
+  <div class="count-line">
+    <b id="count">0 件</b>
+    <span class="pill" id="newcount">未保存 0</span>
+    <span class="pill" id="fullcount">満員 0</span>
+  </div>
+  <div class="cards" id="cards"></div>
+  <div class="empty" id="empty" style="display:none">まだ案件がありません。上のボックスに貼り付けて「解析」するか、「空の案件を手動で追加」してください。</div>
+</div>
+
+<!-- ===== ステータスバー ===== -->
+<div class="publish" id="statusbar" style="display:none">
+  <div class="publish-in">
+    <button class="pub" id="saveall-btn">未保存をすべて公開</button>
+    <span class="status" id="conn"><span class="live-dot"></span>接続中…</span>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ===================== Supabase ===================== */
+let sb = null;
+function getSB(){
+  if(sb) return sb;
+  if(window.supabase && window.SUPABASE_URL && window.SUPABASE_ANON_KEY
+     && !/YOUR-PROJECT/.test(window.SUPABASE_URL)){
+    sb = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+  }
+  return sb;
+}
+
+const CARRIERS = [
+  {v:'docomo', label:'docomo', emoji:'🍄', color:'#e53935'},
+  {v:'au', label:'au', emoji:'🍊', color:'#f57c00'},
+  {v:'softbank', label:'SoftBank', emoji:'⚪', color:'#1565c0'},
+  {v:'uq', label:'UQ', emoji:'♕', color:'#2e7d32'},
+  {v:'ymobile', label:'Y!mobile', emoji:'🐱', color:'#7b1fa2'},
+];
+const carrierColor = v => (CARRIERS.find(c=>c.v===v)||{color:'#888'}).color;
+
+let jobs = [];
+let tmpSeq = 1;
+let nextId = 1;            // パーサ内部用（実IDには使わない）
+let rtSubbed = false;
+
+const $ = s => document.querySelector(s);
+const toast = (m)=>{const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2200);};
+
+/* ===================== 認証 ===================== */
+async function doLogin(){
+  const client = getSB();
+  const errEl = $('#gate-err'); errEl.classList.remove('show');
+  if(!client){ errEl.textContent='接続設定が未完了です（supabase-config.js を確認してください）'; errEl.classList.add('show'); return; }
+  const email = $('#gate-email').value.trim();
+  const password = $('#gate-pw').value;
+  $('#gate-btn').disabled = true; $('#gate-btn').textContent='確認中…';
+  const { error } = await client.auth.signInWithPassword({ email, password });
+  $('#gate-btn').disabled = false; $('#gate-btn').textContent='ログイン';
+  if(error){ errEl.textContent='メールアドレスまたはパスワードが違います'; errEl.classList.add('show'); $('#gate-pw').value=''; return; }
+  enterApp();
+}
+async function doLogout(){ const c=getSB(); if(c) await c.auth.signOut(); location.reload(); }
+async function hasSession(){ const c=getSB(); if(!c) return false; const { data } = await c.auth.getSession(); return !!(data && data.session); }
+function enterApp(){
+  $('#gate').style.display='none';
+  $('#app').classList.add('show');
+  $('#statusbar').style.display='block';
+  loadJobs();
+}
+
+/* ===================== 読込 ===================== */
+function mapRow(r){
+  return { id:r.id, carrier:r.carrier||'docomo', station:r.station||'', store:r.store||'',
+    price:Number(r.price)||0, dates:r.dates||'', transport:r.transport||'', lodging:r.lodging||'',
+    position:r.position||'クローザー', count:Number(r.count)||1, tag:r.tag||'', note:r.note||'',
+    status:r.status||'', sort_order:Number(r.sort_order)||0, _new:false, _dirty:false, _tmp:'t'+(tmpSeq++) };
+}
+async function fetchRows(){
+  const client = getSB();
+  const { data, error } = await client.from('event_jobs').select('*')
+    .order('sort_order',{ascending:true}).order('id',{ascending:true});
+  if(error) throw error;
+  return (data||[]).map(mapRow);
+}
+async function loadJobs(){
+  $('#conn').innerHTML = '<span class="live-dot"></span>読み込み中…';
+  try{
+    jobs = await fetchRows();
+    render();
+    $('#conn').innerHTML = '<span class="live-dot"></span>接続中（自動反映ON）';
+    $('#refresh-banner').style.display='none';
+    subscribeRealtime();
+  }catch(e){
+    $('#conn').textContent = '読込エラー';
+    toast('案件の読み込みに失敗しました');
+  }
+}
+function hasUnsaved(){ return jobs.some(j=>j._new||j._dirty); }
+async function reloadSafely(){
+  if(hasUnsaved()){ $('#refresh-banner').style.display='flex'; return; }
+  await loadJobs();
+}
+
+/* ===================== リアルタイム ===================== */
+function subscribeRealtime(){
+  const client = getSB(); if(rtSubbed || !client) return; rtSubbed = true;
+  client.channel('admin_event_jobs')
+    .on('postgres_changes', { event:'*', schema:'public', table:'event_jobs' }, ()=> reloadSafely())
+    .subscribe();
+}
+
+/* ===================== 保存・削除 ===================== */
+function nextSort(){ return jobs.reduce((m,j)=>Math.max(m, j.sort_order||0), 0) + 10; }
+function payload(j){
+  return { carrier:j.carrier, station:j.station, store:j.store, price:Number(j.price)||0,
+    dates:j.dates, transport:j.transport, lodging:j.lodging, position:j.position,
+    count:Number(j.count)||1, tag:j.tag, note:j.note, status:j.status };
+}
+async function saveJob(j){
+  const client = getSB(); if(!client) return;
+  try{
+    if(j._new){
+      const ins = Object.assign(payload(j), { sort_order: j.sort_order||nextSort() });
+      const { data, error } = await client.from('event_jobs').insert(ins).select().single();
+      if(error) throw error;
+      j.id = data.id; j.sort_order = data.sort_order; j._new=false; j._dirty=false;
+      toast('追加しました（全端末に即時反映）');
+    } else {
+      const { error } = await client.from('event_jobs').update(payload(j)).eq('id', j.id);
+      if(error) throw error;
+      j._dirty=false;
+      toast('更新しました（全端末に即時反映）');
+    }
+    render();
+  }catch(e){ toast('保存に失敗しました: ' + (e.message||'')); }
+}
+async function saveAllNew(){
+  const targets = jobs.filter(j=>j._new || j._dirty);
+  if(!targets.length){ toast('未保存の変更はありません'); return; }
+  for(const j of targets){ await saveJob(j); }
+  toast('すべて公開しました');
+}
+async function deleteJob(j){
+  if(j._new){ jobs = jobs.filter(x=>x!==j); render(); return; }
+  if(!confirm('この案件を削除しますか？（全端末から削除されます）')) return;
+  const client = getSB();
+  try{
+    const { error } = await client.from('event_jobs').delete().eq('id', j.id);
+    if(error) throw error;
+    jobs = jobs.filter(x=>x!==j); render();
+    toast('削除しました（全端末に反映）');
+  }catch(e){ toast('削除に失敗しました'); }
+}
+
+/* ===================== パーサ ===================== */
+function z2h(s){
+  return s.replace(/[０-９]/g, d=>String.fromCharCode(d.charCodeAt(0)-0xFEE0))
+          .replace(/，/g,',').replace(/／/g,'/').replace(/　/g,' ');
+}
+function detectCarrier(t){
+  if(/ドコモ|ｄｏｃｏｍｏ|docomo/i.test(t)) return 'docomo';
+  if(/ワイモバイル|ｙ！ｍｏｂｉｌｅ|y!?mobile|ymobile/i.test(t)) return 'ymobile';
+  if(/ＵＱ|uq/i.test(t)) return 'uq';
+  if(/ソフトバンク|ｓｏｆｔｂａｎｋ|softbank|ＳＢ/i.test(t)) return 'softbank';
+  if(/povo|au|ＡＵ/i.test(t)) return 'au';
+  return 'docomo';
+}
+const POSITIONS = [
+  {name:'クローザー', re:/クローザー|ｸﾛｰｻﾞｰ|closer/i},
+  {name:'キャッチャー', re:/キャッチャー|ｷｬｯﾁｬｰ|catcher/i},
+  {name:'ラウンダー', re:/ラウンダー|rounder/i},
+];
+function findDatesInLine(line){
+  const out = [];
+  let m;
+  const reA = /(\d{1,2})月([\d\.\,]+)日(?:\s*[\(（]([^\)）]{1,3})[\)）])?/g;
+  while((m=reA.exec(line))){
+    const mo=m[1], days=m[2].split(/[\.\,]/).filter(Boolean), dow=m[3]?('('+m[3]+')'):'';
+    days.forEach(d=> out.push(mo+'/'+d+(days.length===1?dow:'')));
+  }
+  const reB = /(\d{1,2})\/(\d{1,2})(?:\s*[\(（]([^\)）]{1,3})[\)）])?/g;
+  while((m=reB.exec(line))){
+    out.push(m[1]+'/'+m[2]+(m[3]?('('+m[3]+')'):''));
+  }
+  return out;
+}
+function findPrice(line){
+  let m = line.match(/[¥￥]\s*([\d,]{3,})/) || line.match(/([\d,]{3,})\s*円/);
+  if(m) return Number(m[1].replace(/,/g,''));
+  return null;
+}
+function countForPosition(line, pos){
+  const m = line.match(new RegExp(pos.name + '[^0-9]{0,4}(\\d{1,2})\\s*名'));
+  return m ? Number(m[1]) : null;
+}
+function findTransport(line){
+  if(/交込|交通費込|交費込|込み/.test(line)) return '交通費込み';
+  if(/交別|交通費別|別途/.test(line)) return '交通費別';
+  return '';
+}
+function findLodging(line){
+  if(/宿泊なし|宿泊無/.test(line)) return '';
+  if(/宿泊あり|宿泊有|宿泊込|宿泊費|宿泊/.test(line)) return '宿泊あり';
+  return '';
+}
+const CHAIN = /(ヤマダデンキ|ヤマダ電機|ケーズデンキ|ビックカメラ|エディオン|ジョーシン|イオンモール|イオンタウン|イオン|Tecc ?LIFE ?SELECT|テックランド|K's|Ｋ’ｓ)/i;
+function looksLikeLocation(line){
+  if(POSITIONS.some(p=>p.re.test(line))) return false;
+  const t = line.trim();
+  if(/^(単価|価格|日程|スキル|面談|求める|報酬|条件|注\d|備考)/.test(t)) return false;
+  if(/^[=\-―—–\*＊・※]+$/.test(t)) return false;
+  return CHAIN.test(line) || /駅|店|会場|軒先|モール|タウン|エリア|催事|百貨店|ショッピング/.test(line) || /イベント/.test(line);
+}
+function cleanLocation(line){
+  return line
+    .replace(/^[\s①-⑳0-9\.\)）\(（〇○◯◇◆■□●▼▶・※\-—–\*＊]+/,'')
+    .replace(/[（(][^）)]*[）)]/g,'').replace(/[:：].*$/,'')
+    .replace(/株式会社|（株）|\(株\)|有限会社/g,'')
+    .trim();
+}
+function guessStation(store){
+  const noChain = store.replace(CHAIN,'').trim();
+  const firstTok = noChain.split(/[ \u3000]/)[0];
+  return (firstTok || noChain || store).replace(/本店|駅前|駅$/,'') || store;
+}
+function looksLikeForbidden(line){
+  return /株式会社|（株）|\(株\)|有限会社|担当者|TEL|電話|\d{2,4}-\d{2,4}-\d{3,4}|0[789]0-?\d/.test(line);
+}
+function isStopLine(line){
+  return /スキルシート|求めるスキル|面談可能日|よろしくお願い|お願いいたします|ご協力の程/.test(line);
+}
+
+function parseJobs(rawText){
+  const carrier = detectCarrier(rawText);
+  const lines = z2h(rawText).split(/\r?\n/);
+  const blocks = [];
+  let cur = null, pending = [];
+  const ensure = (store)=>{
+    cur = {store:store||'', station: store?guessStation(store):'', dates:[], transport:'', lodging:'', genericPrice:0, pos:{}};
+    cur.dates.push(...pending); pending = [];
+    blocks.push(cur); return cur;
+  };
+
+  for(let raw of lines){
+    const line = raw.trim();
+    if(!line) continue;
+    if(isStopLine(line)) break;
+    const hasPos = POSITIONS.some(p=>p.re.test(line));
+    if(looksLikeForbidden(line) && !hasPos) continue;
+
+    if(looksLikeLocation(line)){
+      ensure(cleanLocation(line));
+      cur.dates.push(...findDatesInLine(line));
+      const tr=findTransport(line), lo=findLodging(line);
+      if(tr) cur.transport=tr; if(lo) cur.lodging=lo;
+      continue;
+    }
+
+    const dts = findDatesInLine(line);
+    if(!cur){
+      if(hasPos){ ensure(''); }
+      else { if(dts.length) pending.push(...dts); continue; }
+    }
+    if(dts.length) cur.dates.push(...dts);
+    const tr=findTransport(line), lo=findLodging(line);
+    if(tr) cur.transport=tr; if(lo) cur.lodging=lo;
+    const price = findPrice(line);
+
+    if(hasPos){
+      for(const p of POSITIONS.filter(p=>p.re.test(line))){
+        if(!cur.pos[p.name]) cur.pos[p.name] = {count:0, price:0};
+        const c = countForPosition(line, p);
+        if(c) cur.pos[p.name].count = Math.max(cur.pos[p.name].count, c);
+        if(price) cur.pos[p.name].price = price;
+      }
+    } else if(price){
+      cur.genericPrice = price;
+    }
+  }
+
+  const out = [];
+  for(const b of blocks){
+    const dates = uniq(b.dates).join(' / ');
+    const names = Object.keys(b.pos);
+    const single = names.length === 1;
+    for(const name of names){
+      const pi = b.pos[name];
+      const price = pi.price || (single ? b.genericPrice : 0);
+      if(!(pi.price>0 || pi.count>0 || (single && b.genericPrice>0))) continue;
+      out.push({
+        id: nextId++, carrier,
+        station: b.station, store: b.store,
+        price: price || 0,
+        dates,
+        transport: b.transport || findTransport(rawText),
+        lodging: b.lodging || '',
+        position: name,
+        count: pi.count || 1,
+        tag:'', note:'', status:''
+      });
+    }
+  }
+  return out;
+}
+function uniq(a){ return [...new Set(a)]; }
+
+function addParsed(text){
+  const drafts = parseJobs(text);
+  if(!drafts.length){ toast('案件を読み取れませんでした。手動追加をお試しください。'); return; }
+  let so = nextSort();
+  drafts.forEach(d=>{
+    jobs.push({ id:null, carrier:d.carrier, station:d.station, store:d.store, price:d.price,
+      dates:d.dates, transport:d.transport, lodging:d.lodging, position:d.position, count:d.count,
+      tag:d.tag||'', note:d.note||'', status:'', sort_order:so, _new:true, _dirty:false, _tmp:'t'+(tmpSeq++) });
+    so += 10;
+  });
+  render();
+  toast(drafts.length + '件の下書きを追加。確認して「追加して公開」を押してください。');
+  window.scrollTo({top:document.body.scrollHeight, behavior:'smooth'});
+}
+
+/* ===================== レンダリング ===================== */
+function render(){
+  const wrap = $('#cards'); wrap.innerHTML='';
+  $('#empty').style.display = jobs.length ? 'none' : 'block';
+  let newN=0, fullN=0;
+  jobs.forEach((j, idx)=>{
+    if(j._new||j._dirty) newN++;
+    if(j.status==='full') fullN++;
+    wrap.appendChild(jobCard(j, idx));
+  });
+  $('#count').textContent = jobs.length + ' 件';
+  $('#newcount').textContent = '未保存 ' + newN;
+  $('#fullcount').textContent = '満員 ' + fullN;
+}
+function opt(j,key,val,label){ return `<option value="${val}" ${j[key]===val?'selected':''}>${label}</option>`; }
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function jobCard(j, idx){
+  const isNew=j._new, dirty=j._dirty;
+  const el = document.createElement('div');
+  el.className = 'jc' + (isNew?' isnew':'') + (dirty?' isdirty':'') + (j.status==='full'?' isfull':'');
+  el.innerHTML = `
+    <div class="jc-bar" style="background:${carrierColor(j.carrier)}"></div>
+    <div class="jc-head">
+      <div class="jc-badges">
+        ${isNew?'<span class="tag-new">新規・未保存</span>':(dirty?'<span class="tag-dirty">未保存</span>':'')}
+        <span class="tag-id mono">${isNew?'NEW':'#'+j.id}</span>
+      </div>
+      <button class="del" data-i="${idx}">削除</button>
+    </div>
+    <div class="grid2">
+      <div class="cell"><label>キャリア</label>
+        <select class="input" data-i="${idx}" data-k="carrier">${CARRIERS.map(c=>opt(j,'carrier',c.v,c.emoji+' '+c.label)).join('')}</select></div>
+      <div class="cell"><label>ポジション</label>
+        <select class="input" data-i="${idx}" data-k="position">${['クローザー','キャッチャー','ラウンダー'].map(p=>opt(j,'position',p,p)).join('')}</select></div>
+      <div class="cell"><label>最寄駅</label><input class="input" data-i="${idx}" data-k="station" value="${esc(j.station)}"></div>
+      <div class="cell"><label>店舗 / 会場</label><input class="input" data-i="${idx}" data-k="store" value="${esc(j.store)}"></div>
+      <div class="cell"><label>単価(円)</label><input class="input" data-i="${idx}" data-k="price" inputmode="numeric" value="${j.price}"></div>
+      <div class="cell"><label>人数</label><input class="input" data-i="${idx}" data-k="count" inputmode="numeric" value="${j.count}"></div>
+      <div class="cell full"><label>日程</label><input class="input" data-i="${idx}" data-k="dates" value="${esc(j.dates)}"></div>
+      <div class="cell"><label>交通費</label><input class="input" data-i="${idx}" data-k="transport" value="${esc(j.transport)}" placeholder="交通費込み / 別"></div>
+      <div class="cell"><label>宿泊</label><input class="input" data-i="${idx}" data-k="lodging" value="${esc(j.lodging)}" placeholder="なし / 宿泊あり"></div>
+      <div class="cell"><label>タグ(任意)</label><input class="input" data-i="${idx}" data-k="tag" value="${esc(j.tag)}" placeholder="増員 など"></div>
+      <div class="cell"><label>備考(任意)</label><input class="input" data-i="${idx}" data-k="note" value="${esc(j.note)}"></div>
+    </div>
+    <div class="jc-foot">
+      <label class="chk"><input type="checkbox" data-i="${idx}" data-k="status" ${j.status==='full'?'checked':''}>満員にする</label>
+      <button class="save-btn" data-i="${idx}" ${(isNew||dirty)?'':'disabled'}>${isNew?'追加して公開':'変更を保存'}</button>
+    </div>`;
+  return el;
+}
+
+/* ===================== イベント ===================== */
+$('#gate-btn').addEventListener('click', doLogin);
+$('#gate-pw').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
+$('#gate-email').addEventListener('keydown', e=>{ if(e.key==='Enter') $('#gate-pw').focus(); });
+$('#lock-btn').addEventListener('click', doLogout);
+$('#reload-btn').addEventListener('click', ()=>{
+  if(hasUnsaved() && !confirm('未保存の変更があります。破棄して最新を読み込みますか？')) return;
+  jobs = jobs.filter(()=>false); loadJobs();
+});
+$('#refresh-now').addEventListener('click', ()=>{
+  if(hasUnsaved() && !confirm('未保存の変更があります。破棄して最新を読み込みますか？')) return;
+  loadJobs();
+});
+$('#saveall-btn').addEventListener('click', saveAllNew);
+
+$('#parse-btn').addEventListener('click', ()=>{
+  const txt = $('#paste').value;
+  if(!txt.trim()){ toast('テキストを貼り付けてください'); return; }
+  addParsed(txt);
+  $('#paste').value='';
+});
+$('#addempty-btn').addEventListener('click', ()=>{
+  jobs.push({ id:null, carrier:'docomo', station:'', store:'', price:0, dates:'', transport:'交通費込み',
+    lodging:'', position:'クローザー', count:1, tag:'', note:'', status:'', sort_order:nextSort(),
+    _new:true, _dirty:false, _tmp:'t'+(tmpSeq++) });
+  render();
+  window.scrollTo({top:document.body.scrollHeight, behavior:'smooth'});
+});
+$('#clearpaste-btn').addEventListener('click', ()=>{ $('#paste').value=''; });
+
+$('#cards').addEventListener('input', e=>{
+  const t=e.target, i=t.dataset.i, k=t.dataset.k; if(i==null||!k) return;
+  const j = jobs[Number(i)];
+  if(k==='price'||k==='count') j[k] = Number(String(t.value).replace(/[^\d]/g,''))||0;
+  else j[k] = t.value;
+  if(!j._new) j._dirty = true;
+  const card = t.closest('.jc');
+  if(card){ const b = card.querySelector('.save-btn'); if(b) b.disabled=false; card.classList.add('isdirty'); }
+});
+$('#cards').addEventListener('change', e=>{
+  const t=e.target; if(!t.dataset.k) return;
+  const j = jobs[Number(t.dataset.i)];
+  if(t.dataset.k==='status'){ j.status = t.checked?'full':''; if(!j._new) j._dirty=true; render(); }
+  if(t.dataset.k==='carrier'){ j.carrier = t.value; if(!j._new) j._dirty=true; render(); }
+});
+$('#cards').addEventListener('click', e=>{
+  if(e.target.classList.contains('del')) deleteJob(jobs[Number(e.target.dataset.i)]);
+  if(e.target.classList.contains('save-btn')) saveJob(jobs[Number(e.target.dataset.i)]);
+});
+
+/* ===================== 起動 ===================== */
+(async()=>{ if(await hasSession()) enterApp(); })();
+</script>
+</body>
+</html>

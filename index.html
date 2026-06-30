@@ -6,6 +6,8 @@
 <title>案件一覧 | SALES EVENT PORTAL</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
 <style>
   :root {
     --bg: #f5f4f2;
@@ -320,6 +322,9 @@
     opacity:.4; pointer-events:none;
     filter:grayscale(.4); box-shadow:none;
   }
+  /* 満員カード */
+  .job-card.is-full{opacity:.5;filter:grayscale(.35);pointer-events:none}
+  .job-card .full-badge{background:#7a7a7a;color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:100px}
 </style>
 </head>
 <body>
@@ -758,7 +763,7 @@ function isLoggedIn() {
 function showMain() {
   document.getElementById('login-screen').classList.add('hidden');
   document.getElementById('main-screen').classList.remove('hidden');
-  renderJobs();
+  loadJobs();
 }
 function showLogin() {
   document.getElementById('login-screen').classList.remove('hidden');
@@ -809,53 +814,69 @@ const CARRIER = {
   other:    { color:'#455a64', emoji:'🏢', label:'その他' }
 };
 
-const JOBS = [
-  // ===== 6月末(6/26-28) =====
-  { id: 224, carrier: 'softbank', station: 'ラゾーナ川崎', store: 'ビックカメララゾーナ川崎', price: 24000, dates: '6/26(金)〜6/28(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
-  { id: 225, carrier: 'softbank', station: '北戸田', store: 'イオンモール北戸田', price: 24000, dates: '6/27(土)〜6/28(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
-  { id: 226, carrier: 'au', station: 'つくば研究学園', store: 'ヤマダデンキつくば研究学園', price: 24000, dates: '6/27(土)〜6/28(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
-  { id: 227, carrier: 'au', station: '土浦真鍋', store: 'ケーズデンキ土浦真鍋', price: 22000, dates: '6/27(土)〜6/28(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
-  { id: 228, carrier: 'softbank', station: '足立竹ノ塚', store: 'ヤマダ電機足立竹ノ塚', price: 25000, dates: '6/27(土)〜6/28(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
-  { id: 229, carrier: 'softbank', station: '足立', store: 'ヤマダ電機足立', price: 25000, dates: '6/27(土)〜6/28(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
-  { id: 230, carrier: 'softbank', station: '立川', store: 'ビックカメラ立川', price: 25000, dates: '6/27(土)〜6/28(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 2 },
-  { id: 231, carrier: 'softbank', station: '立川', store: 'ビックカメラ立川', price: 24000, dates: '6/27(土)〜6/28(日)', transport: '交通費込み', lodging: '', position: 'キャッチャー', count: 1 },
-  { id: 232, carrier: 'softbank', station: '磯子', store: 'ヤマダデンキ テックランド磯子店', price: 24000, dates: '6/27(土)〜6/28(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 2 },
-  { id: 233, carrier: 'softbank', station: '磯子', store: 'ヤマダデンキ テックランド磯子店', price: 23000, dates: '6/27(土)〜6/28(日)', transport: '交通費込み', lodging: '', position: 'キャッチャー', count: 1 },
-  { id: 234, carrier: 'softbank', station: '港北センター', store: 'ヤマダデンキ Tecc LIFE SELECT 港北センター店', price: 24000, dates: '6/27(土)〜6/28(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1 },
+let JOBS = [];
 
-  // ===== 6月増員(大型) =====
-  { id: 236, carrier: 'softbank', station: '女池(新潟)', store: 'K\'s女池', price: 30000, dates: '6/25(木)〜6/28(日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 10, tag: '増員・大型', note: 'キャッチャー要相談' },
-
-  // ===== docomoイベント増員(茂原) =====
-  { id: 244, carrier: 'docomo', station: '茂原', store: 'ケーズデンキ茂原', price: 27000, dates: '6/27(土)〜6/28(日)', transport: '交通費別', lodging: '宿泊あり', position: 'クローザー', count: 3, tag: '増員', note: '一人称完結可能・PI2件/日可能・勤怠良好・実績に貪欲な方' },
-
-  // ===== ドコモ量販店スポット(長期) =====
-  { id: 237, carrier: 'docomo', station: '池袋', store: 'ヤマダデンキ LABI池袋本店', price: 20000, dates: '6/22(月)〜7/5(日)', transport: '交通費別', lodging: '', position: 'クローザー', count: 5, tag: '長期スポット', note: '8H拘束/7H稼働・基本11:00-19:00・出れる日数が多い方優先・一人称完結必須・量販店経験者' },
-
-  // ===== 7月 docomo 外販スポット(相模大野) =====
-  { id: 241, carrier: 'docomo', station: '相模大野', store: '相模大野 軒先イベント', price: 25000, dates: '7/4,5 / 11,12 / 18,19 / 25,26(土日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1, tag: '7月スポット', note: '各日クローザー1名/docomo商材を一人称対応可能・外販量販でPI2〜3件以上獲得可能な方' },
-  { id: 242, carrier: 'docomo', station: '相模大野', store: '相模大野 外販イベント', price: 25000, dates: '7/4,5 / 11,12 / 25,26(土日)', transport: '交通費込み', lodging: '', position: 'クローザー', count: 1, tag: '7月スポット', note: '各日クローザー1名/docomo商材を一人称対応可能・外販量販でPI2〜3件以上獲得可能な方' },
-  { id: 243, carrier: 'docomo', station: '相模大野', store: '相模大野 外販イベント', price: 16000, dates: '7/4,5 / 11,12 / 25,26(土日)', transport: '交通費込み', lodging: '', position: 'キャッチャー', count: 2, tag: '7月スポット', note: '各日キャッチャー2名/積極的な声掛け〜着座まで対応可能な方' },
-
-  // ===== 7月屋外イベント(イオンタウン南砂) =====
-  { id: 238, carrier: 'docomo', station: '南砂', store: 'イオンタウン南砂(屋外)', price: 22000, dates: '7/10(金)〜7/11(土)', transport: '要相談', lodging: '', position: 'クローザー', count: 2, tag: '屋外イベント' },
-  { id: 239, carrier: 'docomo', station: '南砂', store: 'イオンタウン南砂(屋外)', price: 22000, dates: '7/26(日)〜7/28(火)', transport: '要相談', lodging: '', position: 'クローザー', count: 2, tag: '屋外イベント' },
-
-  // ===== ドコモイベントモバイルPI販促支援(長期・週3) =====
-  { id: 240, carrier: 'docomo', station: '関東エリア', store: 'docomoイベント販促(大型商業施設)', price: 30000, dates: '週3(金土日祝)・長期', transport: '交通費別途支給(実費精算)', lodging: '宿泊費別途支給(実費精算)', position: 'クローザー', count: 1, tag: '人気・長期固定', note: 'イオン・アリオ等大型商業施設/週毎に配属店舗変動/宿泊伴う現場あり/初期は稼働エリア制限可/PI生産性2-3/人員固定・長期稼働できる方' }
-];
+/* ============================================================
+   Supabase ライブ読込（再公開なしで全端末に反映）
+   ============================================================ */
+let _sb = null, _rtSubbed = false;
+function getSB(){
+  if(_sb) return _sb;
+  if(window.supabase && window.SUPABASE_URL && window.SUPABASE_ANON_KEY
+     && !/YOUR-PROJECT/.test(window.SUPABASE_URL)){
+    _sb = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+  }
+  return _sb;
+}
+async function fetchJobs(){
+  const sb = getSB();
+  if(!sb) return { ok:false, reason:'config' };
+  const { data, error } = await sb.from('event_jobs').select('*')
+    .order('sort_order', { ascending:true }).order('id', { ascending:true });
+  if(error) return { ok:false, reason:'error' };
+  return { ok:true, data: data || [] };
+}
+async function loadJobs(){
+  const list = document.getElementById('job-list');
+  const badge = document.getElementById('count-badge');
+  const r = await fetchJobs();
+  if(!r.ok){
+    badge.textContent = (r.reason==='config') ? '設定待ち' : '読込エラー';
+    list.innerHTML = '<div style="grid-column:1/-1;padding:36px;text-align:center;color:var(--muted);font-size:13px;line-height:1.8;">'
+      + ((r.reason==='config')
+          ? '案件データの接続設定が未完了です。<br>管理者にご連絡ください。'
+          : '案件を読み込めませんでした。<br>時間をおいて再読み込みしてください。')
+      + '</div>';
+    return;
+  }
+  JOBS = r.data;
+  renderJobs();
+  subscribeRealtime();
+}
+function subscribeRealtime(){
+  const sb = getSB();
+  if(_rtSubbed || !sb) return;
+  _rtSubbed = true;
+  sb.channel('event_jobs_rt')
+    .on('postgres_changes', { event:'*', schema:'public', table:'event_jobs' }, async ()=>{
+      const r = await fetchJobs();
+      if(r.ok){ JOBS = r.data; renderJobs(); }
+    })
+    .subscribe();
+}
 
 function renderJobs() {
   const list = document.getElementById('job-list');
-  document.getElementById('count-badge').textContent = `募集中 ${JOBS.length}件`;
+  document.getElementById('count-badge').textContent = `募集中 ${JOBS.filter(j=>j.status!=='full').length}件`;
   list.innerHTML = JOBS.map((j, i) => {
     const c = CARRIER[j.carrier] || { color:'#888', emoji:'📋', label:j.carrier };
     return `
-      <div class="job-card" style="animation-delay:${i * 0.04}s" onclick="openModal(${j.id})">
+      <div class="job-card${j.status==='full'?' is-full':''}" style="animation-delay:${i * 0.04}s" onclick="openModal(${j.id})">
         <div class="carrier-bar" style="background:${c.color};"></div>
         <div class="job-body">
           <div class="job-meta">
             <span class="carrier-tag" style="color:${c.color};">${c.emoji} ${c.label}</span>
+            ${j.status==='full' ? '<span class="full-badge">満員</span>' : ''}
             ${j.tag ? `<span style="background:rgba(192,25,26,.1);color:var(--accent);font-size:10px;font-weight:700;padding:2px 8px;border-radius:100px;">★ ${j.tag}</span>` : ''}
           </div>
           <div class="job-station">${j.station}</div>
