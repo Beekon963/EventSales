@@ -7,5 +7,5 @@
      SUPABASE_ANON_KEY に貼り付けてください。
    ※ sb_publishable_... の新形式キーは使わないでください（ログイン不可になります）
    ============================================================ */
-window.SUPABASE_URL = 'https://YOUR-PROJECT-ref.supabase.co';
-window.SUPABASE_ANON_KEY = 'eyJhbGciOi...ここにanon publicキー...';
+window.SUPABASE_URL = 'https://ytoygassrpwemkcnkfgk.supabase.co/rest/v1/';
+window.SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl0b3lnYXNzcnB3ZW1rY25rZmdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3ODAwODAsImV4cCI6MjA5ODM1NjA4MH0.J-gYsUHVMDCa_cr2UF1GWgwOgUqxyKFYLK63j_emHpA';
