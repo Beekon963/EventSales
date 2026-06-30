@@ -1,11 +1,21 @@
-/* ============================================================
-   Supabase 接続設定（このファイルだけ書き換えればOK）
-   ------------------------------------------------------------
-   Supabase ダッシュボード → Project Settings → API（Data API）
-   ・Project URL を SUPABASE_URL に
-   ・「Project API keys」の anon public（※ eyJ... で始まる legacy 形式）を
-     SUPABASE_ANON_KEY に貼り付けてください。
-   ※ sb_publishable_... の新形式キーは使わないでください（ログイン不可になります）
-   ============================================================ */
-window.SUPABASE_URL = 'https://ytoygassrpwemkcnkfgk.supabase.co/rest/v1/';
-window.SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl0b3lnYXNzcnB3ZW1rY25rZmdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3ODAwODAsImV4cCI6MjA5ODM1NjA4MH0.J-gYsUHVMDCa_cr2UF1GWgwOgUqxyKFYLK63j_emHpA';
+-- ============================================================
+--  権限の明示付与（案件が表示されない場合に実行）
+--  プロジェクト作成時に「Automatically expose new tables」を
+--  オフにしていた場合などに必要です。何度実行しても安全です。
+-- ============================================================
+
+grant usage on schema public to anon, authenticated;
+
+-- 公開ページ（anon）：読み取り
+grant select on public.event_jobs to anon;
+
+-- 管理画面（ログイン済み）：読み書き
+grant select, insert, update, delete on public.event_jobs to authenticated;
+
+-- identity（自動採番）列のための権限
+grant usage, select on all sequences in schema public to anon, authenticated;
+
+-- 念のため RLS ポリシーを再確認（既にあれば作り直し）
+drop policy if exists "public can read jobs" on public.event_jobs;
+create policy "public can read jobs"
+  on public.event_jobs for select using (true);
