@@ -855,11 +855,10 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
   }
 });
 
-if (isLoggedIn()) {
-  showMain();
-} else {
-  showLogin();
-}
+/* 起動はここでは行わない。showMain() → loadJobs() が下方の `let _sb` を参照するため、
+   宣言より前に呼ぶと ReferenceError（一時的死角）になり、catch に飲まれて一覧が空になる。
+   「同じタブのまま再読み込みした人にだけ案件が0件に見える」不具合の原因がこれだった。
+   起動は全宣言の後（スクリプト末尾・生存印の直前）へ移した。 */
 
 /* ============================================================
    案件データ・表示
@@ -1085,6 +1084,13 @@ function toggleApply(checked) {
 function closeModal() {
   document.getElementById('modal').classList.remove('open');
   document.body.style.overflow = '';
+}
+
+/* 起動。全ての宣言より後ろに置くこと（上の「起動はここでは行わない」参照）。 */
+if (isLoggedIn()) {
+  showMain();
+} else {
+  showLogin();
 }
 
 /* 生存印：ここに到達＝本体スクリプトが最後まで走った。
