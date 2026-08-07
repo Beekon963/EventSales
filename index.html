@@ -3,10 +3,54 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
 <title>案件一覧 | SALES EVENT PORTAL</title>
+<script>
+/* ============================================================
+   生存印・エラー可視化（本体スクリプトとは別タグに置くこと）
+   本体スクリプトに構文エラーが出ても、このタグは独立して生き残る。
+   本体が最後まで走った印は本体スクリプト末尾で dataset.js='ok' を立てる。
+   ============================================================ */
+(function(){
+  document.documentElement.dataset.js = 'boot';
+  var pending = [];
+  function paint(msg){
+    if(!document.body){ pending.push(msg); return; }
+    var el = document.getElementById('js-error-banner');
+    if(!el){
+      el = document.createElement('div');
+      el.id = 'js-error-banner';
+      el.setAttribute('role','alert');
+      el.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;'
+        + 'background:#c0191a;color:#fff;font:700 13px/1.6 sans-serif;'
+        + 'padding:10px 14px;text-align:center;';
+      document.body.appendChild(el);
+    }
+    el.textContent = msg;
+  }
+  window.__espError = paint;
+  window.addEventListener('error', function(ev){
+    var t = ev && ev.target;
+    if(t && t !== window && t.tagName){
+      /* リソース読込失敗。スクリプト以外(フォント等)は表示に影響しないので黙る */
+      if(String(t.tagName).toUpperCase() === 'SCRIPT'){
+        paint('必要なファイルを読み込めませんでした。通信環境を確認して再読み込みしてください。');
+      }
+      return;
+    }
+    paint('画面の読み込み中に問題が発生しました。再読み込みしてください。');
+  }, true);
+  window.addEventListener('unhandledrejection', function(){
+    paint('通信中に問題が発生しました。再読み込みしてください。');
+  });
+  document.addEventListener('DOMContentLoaded', function(){
+    while(pending.length) paint(pending.shift());
+  });
+})();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.0" integrity="sha384-De+l/Df7qym5QBDVocD3+gW1S7IjR3epf+6KbRDjB3FCCzM/LqVTwqckT6FhFar8" crossorigin="anonymous"></script>
 <script src="supabase-config.js"></script>
 <style>
   :root {
@@ -226,6 +270,11 @@
     animation:slideUp .25s ease;
     max-height:90vh; overflow-y:auto;
   }
+  /* iOS SafariのURLバー可変で下部が画面外に出るのを防ぐ。
+     dvh非対応ブラウザは上の90vhがそのまま効く */
+  @supports (max-height: 90dvh) {
+    .modal-sheet { max-height:90dvh; }
+  }
   @keyframes slideUp {
     from { transform:translateY(100%); }
     to   { transform:translateY(0); }
@@ -322,6 +371,16 @@
     opacity:.4; pointer-events:none;
     filter:grayscale(.4); box-shadow:none;
   }
+  /* 自動更新が止まったときの警告バー */
+  .rt-warn {
+    display:none;
+    margin:12px 16px 0; max-width:600px;
+    background:rgba(192,25,26,.08); border:1px solid rgba(192,25,26,.2);
+    color:var(--accent); border-radius:12px;
+    padding:10px 14px; font-size:12px; font-weight:700; line-height:1.6;
+  }
+  .rt-warn.show { display:block; }
+  @media (min-width:632px) { .rt-warn { margin-left:auto; margin-right:auto; } }
   /* 満員カード */
   .job-card.is-full{opacity:.5;filter:grayscale(.35);pointer-events:none}
   .job-card .full-badge{background:#7a7a7a;color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:100px}
@@ -376,6 +435,8 @@
       <button class="btn-logout" onclick="logout()">ログアウト</button>
     </div>
   </div>
+
+  <div class="rt-warn" id="rt-warn" role="status"></div>
 
   <div class="job-list" id="job-list"></div>
 
@@ -817,6 +878,44 @@ const CARRIER = {
 let JOBS = [];
 
 /* ============================================================
+   表示ヘルパ（HTMLへ差し込む値は必ずここを通す）
+   ============================================================ */
+const ESC_MAP = { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;', '`':'&#96;' };
+/* HTMLエスケープ。属性値に入る場合もあるので ' と ` も必ず落とす。
+   null/undefined は '' になる（画面に文字列 "null" を出さない） */
+function esc(v){
+  return String(v ?? '').replace(/[&<>"'`]/g, ch => ESC_MAP[ch]);
+}
+/* 金額整形。null/undefined/文字列/全角数字でも例外を投げない（非数値は0） */
+function yen(v){
+  let n = (typeof v === 'number') ? v : NaN;
+  if(!Number.isFinite(n)){
+    const s = String(v ?? '')
+      .replace(/[０-９]/g, d => String.fromCharCode(d.charCodeAt(0) - 0xFEE0))
+      .replace(/[，,\s￥¥]/g, '');
+    n = Number(s);
+  }
+  if(!Number.isFinite(n)) n = 0;
+  return n.toLocaleString();
+}
+/* インラインJS（onclick）へ入れる数値。数値でなければ null を書き出す */
+function jsNum(v){
+  const n = Number(v);
+  return Number.isFinite(n) ? String(n) : 'null';
+}
+/* 未知キャリアでも label に生データが入るため、描画側で必ずescすること */
+function carrierOf(j){
+  return CARRIER[j && j.carrier] || { color:'#888', emoji:'📋', label:(j ? j.carrier : '') };
+}
+/* 自動更新の停止・再取得失敗を利用者に見せる */
+function setRtWarn(msg){
+  const el = document.getElementById('rt-warn');
+  if(!el) return;
+  el.textContent = msg || '';
+  el.classList.toggle('show', !!msg);
+}
+
+/* ============================================================
    Supabase ライブ読込（再公開なしで全端末に反映）
    ============================================================ */
 let _sb = null, _rtSubbed = false;
@@ -829,29 +928,50 @@ function getSB(){
   return _sb;
 }
 async function fetchJobs(){
+  /* CDNが落ちている＝window.supabaseが無い。設定不備とは原因が違うので分ける */
+  if(!window.supabase) return { ok:false, reason:'cdn' };
   const sb = getSB();
   if(!sb) return { ok:false, reason:'config' };
-  const { data, error } = await sb.from('event_jobs').select('*')
-    .order('sort_order', { ascending:true }).order('id', { ascending:true });
-  if(error) return { ok:false, reason:'error' };
-  return { ok:true, data: data || [] };
-}
-async function loadJobs(){
-  const list = document.getElementById('job-list');
-  const badge = document.getElementById('count-badge');
-  const r = await fetchJobs();
-  if(!r.ok){
-    badge.textContent = (r.reason==='config') ? '設定待ち' : '読込エラー';
-    list.innerHTML = '<div style="grid-column:1/-1;padding:36px;text-align:center;color:var(--muted);font-size:13px;line-height:1.8;">'
-      + ((r.reason==='config')
-          ? '案件データの接続設定が未完了です。<br>管理者にご連絡ください。'
-          : '案件を読み込めませんでした。<br>時間をおいて再読み込みしてください。')
-      + '</div>';
-    return;
+  try{
+    const { data, error } = await sb.from('event_jobs').select('*')
+      .order('sort_order', { ascending:true }).order('id', { ascending:true });
+    if(error) return { ok:false, reason:'error' };
+    return { ok:true, data: data || [] };
+  }catch(e){
+    return { ok:false, reason:'error' };
   }
-  JOBS = r.data;
-  renderJobs();
-  subscribeRealtime();
+}
+
+const LOAD_BADGE = { cdn:'接続エラー', config:'設定待ち', error:'読込エラー' };
+const LOAD_MSG = {
+  cdn:    '案件データに接続できませんでした。<br>通信環境を確認して再読み込みしてください。',
+  config: '案件データの接続設定が未完了です。<br>管理者にご連絡ください。',
+  error:  '案件を読み込めませんでした。<br>時間をおいて再読み込みしてください。'
+};
+function showLoadMessage(html){
+  document.getElementById('job-list').innerHTML =
+    '<div style="grid-column:1/-1;padding:36px;text-align:center;color:var(--muted);font-size:13px;line-height:1.8;">'
+    + html + '</div>';
+}
+
+async function loadJobs(){
+  const badge = document.getElementById('count-badge');
+  try{
+    const r = await fetchJobs();
+    if(!r.ok){
+      badge.textContent = LOAD_BADGE[r.reason] || '読込エラー';
+      showLoadMessage(LOAD_MSG[r.reason] || LOAD_MSG.error);
+      return;
+    }
+    JOBS = r.data || [];
+    renderJobs();
+    subscribeRealtime();
+  }catch(e){
+    /* 描画例外を握りつぶすと「件数だけ出て一覧が空」の白画面になる */
+    badge.textContent = '表示エラー';
+    showLoadMessage('案件を表示できませんでした。<br>お手数ですが再読み込みしてください。');
+    if(window.__espError) window.__espError('案件一覧の表示に失敗しました。再読み込みしてください。');
+  }
 }
 function subscribeRealtime(){
   const sb = getSB();
@@ -860,41 +980,54 @@ function subscribeRealtime(){
   sb.channel('event_jobs_rt')
     .on('postgres_changes', { event:'*', schema:'public', table:'event_jobs' }, async ()=>{
       const r = await fetchJobs();
-      if(r.ok){ JOBS = r.data; renderJobs(); }
+      if(r.ok){
+        JOBS = r.data || [];
+        try{ renderJobs(); setRtWarn(''); }
+        catch(e){ setRtWarn('最新の案件を表示できませんでした。再読み込みしてください。'); }
+      }else{
+        setRtWarn('最新の案件を取得できませんでした。再読み込みしてください。');
+      }
     })
-    .subscribe();
+    .subscribe((status)=>{
+      /* SUBSCRIBED以外＝購読が生きていない。緑ランプだけ出し続けない */
+      if(status === 'SUBSCRIBED') setRtWarn('');
+      else setRtWarn('自動更新が止まっています。再読み込みしてください。');
+    });
 }
 
 function renderJobs() {
   const list = document.getElementById('job-list');
-  document.getElementById('count-badge').textContent = `募集中 ${JOBS.filter(j=>j.status!=='full').length}件`;
+  const total = JOBS.length;
+  const open = JOBS.filter(j => j.status !== 'full').length;
+  /* バッジと一覧の枚数が食い違うので母数も出す */
+  document.getElementById('count-badge').textContent = `募集中 ${open}件 / 全${total}件`;
   list.innerHTML = JOBS.map((j, i) => {
-    const c = CARRIER[j.carrier] || { color:'#888', emoji:'📋', label:j.carrier };
+    const c = carrierOf(j);
     return `
-      <div class="job-card${j.status==='full'?' is-full':''}" style="animation-delay:${i * 0.04}s" onclick="openModal(${j.id})">
-        <div class="carrier-bar" style="background:${c.color};"></div>
+      <div class="job-card${j.status==='full'?' is-full':''}" style="animation-delay:${i * 0.04}s" onclick="openModal(${jsNum(j.id)})">
+        <div class="carrier-bar" style="background:${esc(c.color)};"></div>
         <div class="job-body">
           <div class="job-meta">
-            <span class="carrier-tag" style="color:${c.color};">${c.emoji} ${c.label}</span>
+            <span class="carrier-tag" style="color:${esc(c.color)};">${esc(c.emoji)} ${esc(c.label)}</span>
             ${j.status==='full' ? '<span class="full-badge">満員</span>' : ''}
-            ${j.tag ? `<span style="background:rgba(192,25,26,.1);color:var(--accent);font-size:10px;font-weight:700;padding:2px 8px;border-radius:100px;">★ ${j.tag}</span>` : ''}
+            ${j.tag ? `<span style="background:rgba(192,25,26,.1);color:var(--accent);font-size:10px;font-weight:700;padding:2px 8px;border-radius:100px;">★ ${esc(j.tag)}</span>` : ''}
           </div>
-          <div class="job-station">${j.station}</div>
-          <div class="job-store">${j.store}</div>
+          <div class="job-station">${esc(j.station)}</div>
+          <div class="job-store">${esc(j.store)}</div>
           <div class="job-price-wrap">
             <div class="job-price-left">
-              <span class="job-price">¥${j.price.toLocaleString()}</span>
+              <span class="job-price">¥${esc(yen(j.price))}</span>
               <span class="job-price-unit">/日</span>
             </div>
             <span class="job-price-label">単価</span>
           </div>
           <div class="job-row">
-            <div class="job-item"><span>日程</span><div class="val">${j.dates}</div></div>
-            <div class="job-item"><span>募集</span><div class="val">${j.position} ${j.count}名</div></div>
+            <div class="job-item"><span>日程</span><div class="val">${esc(j.dates)}</div></div>
+            <div class="job-item"><span>募集</span><div class="val">${esc(j.position)} ${esc(j.count)}名</div></div>
           </div>
           <div class="transport-badge">
-            <span class="transport-tag">🚃 ${j.transport}</span>
-            ${j.lodging ? `<span class="transport-tag lodging">🏨 ${j.lodging}</span>` : ''}
+            <span class="transport-tag">🚃 ${esc(j.transport)}</span>
+            ${j.lodging ? `<span class="transport-tag lodging">🏨 ${esc(j.lodging)}</span>` : ''}
           </div>
         </div>
       </div>`;
@@ -904,26 +1037,27 @@ function renderJobs() {
 function openModal(id) {
   const j = JOBS.find(j => j.id === id);
   if (!j) return;
-  const c = CARRIER[j.carrier] || { color:'#888', emoji:'📋', label:j.carrier };
+  const c = carrierOf(j);
 
   document.getElementById('modal-bar').style.background = c.color;
-  document.getElementById('modal-station').textContent = j.station;
-  document.getElementById('modal-store').textContent = j.store;
+  document.getElementById('modal-station').textContent = j.station ?? '';
+  document.getElementById('modal-store').textContent = j.store ?? '';
   document.getElementById('modal-tags').innerHTML =
-    `<span style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:8px;background:rgba(0,0,0,.05);font-size:12px;font-weight:700;color:${c.color};">${c.emoji} ${c.label}</span>
-     ${j.tag ? `<span style="margin-left:6px;background:rgba(192,25,26,.1);color:var(--accent);font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;">★ ${j.tag}</span>` : ''}`;
+    `<span style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:8px;background:rgba(0,0,0,.05);font-size:12px;font-weight:700;color:${esc(c.color)};">${esc(c.emoji)} ${esc(c.label)}</span>
+     ${j.tag ? `<span style="margin-left:6px;background:rgba(192,25,26,.1);color:var(--accent);font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;">★ ${esc(j.tag)}</span>` : ''}`;
   document.getElementById('modal-price').innerHTML =
-    `¥${j.price.toLocaleString()}<span>/日</span>`;
+    `¥${esc(yen(j.price))}<span>/日</span>`;
   document.getElementById('modal-grid').innerHTML = `
-    <div class="modal-item"><label>日程</label><div class="val">${j.dates}</div></div>
-    <div class="modal-item"><label>ポジション</label><div class="val">${j.position} ${j.count}名</div></div>
-    <div class="modal-item"><label>交通費</label><div class="val">${j.transport}</div></div>
-    <div class="modal-item"><label>宿泊費</label><div class="val">${j.lodging || 'なし'}</div></div>
-    ${j.note ? `<div class="modal-item" style="grid-column:span 2;"><label>備考</label><div class="val">${j.note}</div></div>` : ''}
+    <div class="modal-item"><label>日程</label><div class="val">${esc(j.dates)}</div></div>
+    <div class="modal-item"><label>ポジション</label><div class="val">${esc(j.position)} ${esc(j.count)}名</div></div>
+    <div class="modal-item"><label>交通費</label><div class="val">${esc(j.transport)}</div></div>
+    <div class="modal-item"><label>宿泊費</label><div class="val">${esc(j.lodging || 'なし')}</div></div>
+    ${j.note ? `<div class="modal-item" style="grid-column:span 2;"><label>備考</label><div class="val">${esc(j.note)}</div></div>` : ''}
   `;
 
+  /* LINE本文はURLエンコードされるためHTMLエスケープは不要。NULLの "null" 混入だけ防ぐ */
   const msg = encodeURIComponent(
-    `【案件応募】\n${j.store}(${j.station})\n${j.dates}\n${j.position}\n¥${j.price.toLocaleString()}/日・${j.transport}${j.lodging ? ' / ' + j.lodging : ''}\n\n上記案件に応募します。`
+    `【案件応募】\n${j.store ?? ''}(${j.station ?? ''})\n${j.dates ?? ''}\n${j.position ?? ''}\n¥${yen(j.price)}/日・${j.transport ?? ''}${j.lodging ? ' / ' + j.lodging : ''}\n\n上記案件に応募します。`
   );
   document.getElementById('modal-line-btn').href =
     `https://line.me/R/oaMessage/%40597ckygq/?${msg}`;
@@ -952,6 +1086,10 @@ function closeModal() {
   document.getElementById('modal').classList.remove('open');
   document.body.style.overflow = '';
 }
+
+/* 生存印：ここに到達＝本体スクリプトが最後まで走った。
+   HTTP 200ではなくこの印を「動いている」の判定に使う */
+document.documentElement.dataset.js = 'ok';
 </script>
 </body>
 </html>

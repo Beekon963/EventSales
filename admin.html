@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex, nofollow">
 <title>案件管理コンソール | SALES EVENT PORTAL</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.0" integrity="sha384-De+l/Df7qym5QBDVocD3+gW1S7IjR3epf+6KbRDjB3FCCzM/LqVTwqckT6FhFar8" crossorigin="anonymous"></script>
 <script src="supabase-config.js"></script>
 <style>
   :root{
@@ -57,7 +57,7 @@
   .hashout{margin-top:8px;font-size:11px;color:var(--accent);word-break:break-all;min-height:16px}
 
   /* ===== アプリ ===== */
-  .app{display:none;max-width:1080px;margin:0 auto;padding:0 16px 88px}
+  .app{display:none;max-width:1080px;margin:0 auto;padding:0 16px 88px;padding-bottom:calc(88px + env(safe-area-inset-bottom,0px))}
   .app.show{display:block}
   .topbar{position:sticky;top:0;z-index:20;background:rgba(241,235,224,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:14px 16px;margin:0 -16px 22px}
   .brand{display:flex;align-items:baseline;gap:10px}
@@ -110,7 +110,9 @@
   .empty{background:var(--surface);border:1px dashed var(--line);border-radius:var(--radius);padding:34px;text-align:center;color:var(--muted);font-size:13px}
 
   /* ===== 公開バー ===== */
-  .publish{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:12px 16px;box-shadow:0 -6px 20px rgba(74,52,30,.06)}
+  .publish{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:12px 16px;padding-bottom:calc(12px + env(safe-area-inset-bottom,0px));box-shadow:0 -6px 20px rgba(74,52,30,.06);transition:transform .15s}
+  /* Androidのソフトキーボード表示中は編集欄に被らないよう退避（visualViewportで検知） */
+  .publish.kbd{transform:translateY(130%);pointer-events:none}
   .publish-in{max-width:1080px;margin:0 auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
   .publish .pub{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:12px 18px;font-weight:900;font-size:13.5px;width:auto}
   .publish .pub:hover{background:var(--accent-dark)}
@@ -143,6 +145,8 @@
   .refresh-banner{display:none;align-items:center;gap:12px;background:rgba(176,125,18,.10);border:1px solid rgba(176,125,18,.4);color:var(--warn);border-radius:12px;padding:11px 14px;margin:0 2px 12px;font-size:12.5px;font-weight:700}
   .refresh-banner button{width:auto;background:var(--warn);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-weight:800;font-size:12px}
   .live-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);margin-right:6px;vertical-align:middle;box-shadow:0 0 0 0 rgba(6,199,85,.5);animation:pulse 2s infinite}
+  .live-dot.off{background:var(--warn);animation:none;box-shadow:none}
+  .publish .status.off{color:var(--warn);font-weight:700}
   @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(6,199,85,.5)}70%{box-shadow:0 0 0 7px rgba(6,199,85,0)}100%{box-shadow:0 0 0 0 rgba(6,199,85,0)}}
 </style>
 </head>
@@ -220,24 +224,57 @@ function getSB(){
   return sb;
 }
 
+/* index.html の CARRIER 定義と同一（other を含む）。
+   other が無いと DB の other 行が先頭の docomo として表示され、触ると本当に docomo に書き換わる。 */
 const CARRIERS = [
   {v:'docomo', label:'docomo', emoji:'🍄', color:'#e53935'},
   {v:'au', label:'au', emoji:'🍊', color:'#f57c00'},
   {v:'softbank', label:'SoftBank', emoji:'⚪', color:'#1565c0'},
   {v:'uq', label:'UQ', emoji:'♕', color:'#2e7d32'},
   {v:'ymobile', label:'Y!mobile', emoji:'🐱', color:'#7b1fa2'},
+  {v:'other', label:'その他', emoji:'🏢', color:'#455a64'},
 ];
 const carrierColor = v => (CARRIERS.find(c=>c.v===v)||{color:'#888'}).color;
+/* CARRIERS に無い値が DB に入っていても、その値のまま選択表示する（表示だけが嘘になるのを防ぐ） */
+function carrierList(j){
+  const list = CARRIERS.slice();
+  if(j.carrier && !list.some(c=>c.v===j.carrier)) list.push({v:j.carrier, label:j.carrier, emoji:'❓', color:'#888'});
+  return list;
+}
 
 let jobs = [];
 let tmpSeq = 1;
 let nextId = 1;            // パーサ内部用（実IDには使わない）
 let rtSubbed = false;
+let rtStatus = 'INIT';     // realtime購読の実状態（'SUBSCRIBED' 以外は自動反映OFF表示）
+let savingAll = false;     // 「未保存をすべて公開」の二重実行ガード
 
 const $ = s => document.querySelector(s);
 const toast = (m)=>{const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2200);};
 
 /* ===================== 認証 ===================== */
+/* ログイン失敗の原因を切り分けて出す（全部「PWが違います」だと通信断・回数制限・メール未確認で詰む） */
+function loginErrorMessage(error){
+  const msg = String((error && error.message) || '');
+  const status = Number((error && (error.status || error.statusCode)) || 0);
+  if(typeof navigator!=='undefined' && navigator.onLine===false)
+    return 'ネットワークに接続されていません。通信状態を確認してから再度お試しください。';
+  if(status===429 || /rate ?limit|too many/i.test(msg))
+    return '試行回数が多すぎます。しばらく（数分）待ってから再度お試しください。';
+  if(/email not confirmed|not confirmed|confirm your email/i.test(msg))
+    return 'メールアドレスの確認が完了していません。確認メールのリンクを開いてください。';
+  if(/invalid login credentials|invalid credentials|invalid email or password/i.test(msg))
+    return 'メールアドレスまたはパスワードが違います';
+  if(/failed to fetch|networkerror|network ?error|load failed|timeout/i.test(msg))
+    return '認証サーバーに接続できませんでした。通信状態を確認してから再度お試しください。';
+  if(status>=500)
+    return '認証サーバー側でエラーが発生しました。時間をおいて再度お試しください。';
+  return 'ログインできませんでした（' + (msg || '原因不明') + '）';
+}
+function isCredentialError(error){
+  const msg = String((error && error.message) || '');
+  return /invalid login credentials|invalid credentials|invalid email or password/i.test(msg);
+}
 async function doLogin(){
   const client = getSB();
   const errEl = $('#gate-err'); errEl.classList.remove('show');
@@ -245,9 +282,18 @@ async function doLogin(){
   const email = $('#gate-email').value.trim();
   const password = $('#gate-pw').value;
   $('#gate-btn').disabled = true; $('#gate-btn').textContent='確認中…';
-  const { error } = await client.auth.signInWithPassword({ email, password });
+  let error = null;
+  try{
+    const res = await client.auth.signInWithPassword({ email, password });
+    error = res && res.error;
+  }catch(e){ error = e; }
   $('#gate-btn').disabled = false; $('#gate-btn').textContent='ログイン';
-  if(error){ errEl.textContent='メールアドレスまたはパスワードが違います'; errEl.classList.add('show'); $('#gate-pw').value=''; return; }
+  if(error){
+    errEl.textContent = loginErrorMessage(error);
+    errEl.classList.add('show');
+    if(isCredentialError(error)) $('#gate-pw').value='';   // 通信断でPWを消すと入力し直しになるので消さない
+    return;
+  }
   enterApp();
 }
 async function doLogout(){ const c=getSB(); if(c) await c.auth.signOut(); location.reload(); }
@@ -273,15 +319,31 @@ async function fetchRows(){
   if(error) throw error;
   return (data||[]).map(mapRow);
 }
+/* realtime購読の実状態を接続表示に反映（切れているのに緑ランプ、を無くす） */
+function applyConn(){
+  const el = $('#conn'); if(!el) return;
+  if(rtStatus === 'SUBSCRIBED'){
+    el.className = 'status';
+    el.innerHTML = '<span class="live-dot"></span>接続中（自動反映ON）';
+  } else if(rtStatus === 'INIT'){
+    el.className = 'status';
+    el.innerHTML = '<span class="live-dot"></span>接続中…';
+  } else {
+    el.className = 'status off';
+    el.innerHTML = '<span class="live-dot off"></span>自動反映OFF・手動で「再読み込み」してください';
+  }
+}
 async function loadJobs(){
+  $('#conn').className = 'status';
   $('#conn').innerHTML = '<span class="live-dot"></span>読み込み中…';
   try{
     jobs = await fetchRows();
     render();
-    $('#conn').innerHTML = '<span class="live-dot"></span>接続中（自動反映ON）';
     $('#refresh-banner').style.display='none';
     subscribeRealtime();
+    applyConn();
   }catch(e){
+    $('#conn').className = 'status off';
     $('#conn').textContent = '読込エラー';
     toast('案件の読み込みに失敗しました');
   }
@@ -297,56 +359,107 @@ function subscribeRealtime(){
   const client = getSB(); if(rtSubbed || !client) return; rtSubbed = true;
   client.channel('admin_event_jobs')
     .on('postgres_changes', { event:'*', schema:'public', table:'event_jobs' }, ()=> reloadSafely())
-    .subscribe();
+    .subscribe((status)=>{
+      // 'SUBSCRIBED' / 'CHANNEL_ERROR' / 'TIMED_OUT' / 'CLOSED'
+      rtStatus = status || 'CLOSED';
+      applyConn();
+    });
 }
 
 /* ===================== 保存・削除 ===================== */
 function nextSort(){ return jobs.reduce((m,j)=>Math.max(m, j.sort_order||0), 0) + 10; }
+const NO_CLIENT_MSG = '接続設定が未完了です（supabase-config.js を確認してください）';
+const NO_ROW_MSG = '対象が見つかりません（他の端末で削除された可能性）';
 function payload(j){
+  // count/price の正規化は入力時（normInt）に一本化。ここで 0→1 に戻すと画面0名／DB1名の食い違いが出る
   return { carrier:j.carrier, station:j.station, store:j.store, price:Number(j.price)||0,
     dates:j.dates, transport:j.transport, lodging:j.lodging, position:j.position,
-    count:Number(j.count)||1, tag:j.tag, note:j.note, status:j.status };
+    count:Number(j.count)||0, tag:j.tag, note:j.note, status:j.status };
 }
-async function saveJob(j){
-  const client = getSB(); if(!client) return;
+/* 成功なら true / 失敗なら false を返す（saveAllNew が成否を数えるため） */
+async function saveJob(j, btn){
+  if(!j) return false;
+  if(j._saving) return false;                       // 連打による二重INSERT防止
+  const client = getSB();
+  if(!client){ toast(NO_CLIENT_MSG); return false; }
+  j._saving = true;
+  if(btn) btn.disabled = true;
   try{
     if(j._new){
       const ins = Object.assign(payload(j), { sort_order: j.sort_order||nextSort() });
       const { data, error } = await client.from('event_jobs').insert(ins).select().single();
       if(error) throw error;
+      if(!data || data.id==null) throw new Error('登録結果を確認できませんでした');
       j.id = data.id; j.sort_order = data.sort_order; j._new=false; j._dirty=false;
       toast('追加しました（全端末に即時反映）');
     } else {
-      const { error } = await client.from('event_jobs').update(payload(j)).eq('id', j.id);
+      // .select() を付けて実際に更新された行を確認する（0行なら「更新しました」と嘘をつかない）
+      const { data, error } = await client.from('event_jobs').update(payload(j)).eq('id', j.id).select();
       if(error) throw error;
+      if(!data || !data.length) throw new Error(NO_ROW_MSG);
       j._dirty=false;
       toast('更新しました（全端末に即時反映）');
     }
     render();
-  }catch(e){ toast('保存に失敗しました: ' + (e.message||'')); }
+    return true;
+  }catch(e){
+    toast('保存に失敗しました: ' + (e.message||''));
+    return false;
+  }finally{
+    j._saving = false;
+    if(btn) btn.disabled = false;
+  }
 }
 async function saveAllNew(){
+  if(savingAll) return;                             // 連打ガード
   const targets = jobs.filter(j=>j._new || j._dirty);
   if(!targets.length){ toast('未保存の変更はありません'); return; }
-  for(const j of targets){ await saveJob(j); }
-  toast('すべて公開しました');
+  const btn = $('#saveall-btn');
+  savingAll = true; if(btn) btn.disabled = true;
+  let ok=0, ng=0;
+  try{
+    for(const j of targets){ if(await saveJob(j)) ok++; else ng++; }
+  }finally{
+    savingAll = false; if(btn) btn.disabled = false;
+  }
+  // 失敗を握りつぶして「すべて公開しました」と出さない。失敗したカードは _dirty/_new のまま残る
+  if(ng===0) toast('すべて公開しました（成功 ' + ok + '件）');
+  else toast('成功 ' + ok + '件 / 失敗 ' + ng + '件（失敗した案件は未保存のまま残っています）');
 }
-async function deleteJob(j){
+async function deleteJob(j, btn){
+  if(!j) return;
   if(j._new){ jobs = jobs.filter(x=>x!==j); render(); return; }
+  if(j._saving) return;
   if(!confirm('この案件を削除しますか？（全端末から削除されます）')) return;
   const client = getSB();
+  if(!client){ toast(NO_CLIENT_MSG); return; }
+  j._saving = true;
+  if(btn) btn.disabled = true;
   try{
-    const { error } = await client.from('event_jobs').delete().eq('id', j.id);
+    const { data, error } = await client.from('event_jobs').delete().eq('id', j.id).select();
     if(error) throw error;
+    if(!data || !data.length) throw new Error(NO_ROW_MSG);
     jobs = jobs.filter(x=>x!==j); render();
     toast('削除しました（全端末に反映）');
-  }catch(e){ toast('削除に失敗しました'); }
+  }catch(e){
+    toast('削除に失敗しました: ' + (e.message||''));
+  }finally{
+    j._saving = false;
+    if(btn) btn.disabled = false;
+  }
 }
 
 /* ===================== パーサ ===================== */
 function z2h(s){
-  return s.replace(/[０-９]/g, d=>String.fromCharCode(d.charCodeAt(0)-0xFEE0))
-          .replace(/，/g,',').replace(/／/g,'/').replace(/　/g,' ');
+  return String(s==null?'':s)
+    .replace(/[０-９]/g, d=>String.fromCharCode(d.charCodeAt(0)-0xFEE0))
+    .replace(/，/g,',').replace(/／/g,'/').replace(/　/g,' ')
+    // 波ダッシュ(U+301C)と全角チルダ(U+FF5E)は環境で入れ替わる同義字なので半角ハイフンに寄せる
+    .replace(/[〜～]/g,'-')
+    // 「6月27、28日」「6月27・28日」の日付区切り。数字に挟まれた時だけ変換する
+    // （行頭の「・」は箇条書きなので一律変換すると会場名に「,」が残る）
+    // 後続の数字は先読みで消費しない＝「2、3、4」のような連鎖も1回で全部変換される
+    .replace(/(\d)[、・](?=\d)/g,'$1,');
 }
 function detectCarrier(t){
   if(/ドコモ|ｄｏｃｏｍｏ|docomo/i.test(t)) return 'docomo';
@@ -369,7 +482,9 @@ function findDatesInLine(line){
     const mo=m[1], days=m[2].split(/[\.\,]/).filter(Boolean), dow=m[3]?('('+m[3]+')'):'';
     days.forEach(d=> out.push(mo+'/'+d+(days.length===1?dow:'')));
   }
-  const reB = /(\d{1,2})\/(\d{1,2})(?:\s*[\(（]([^\)）]{1,3})[\)）])?/g;
+  // 直前が数字だと「2026/6/27」が「26/6」に化けるので、直前は非数字（または行頭）に限定する。
+  // 直前の「/」は許す（"2026/6/27" から "6/27" を拾うため）。直後の数字も禁止（"6/2" で切らない）
+  const reB = /(?:^|[^0-9])(\d{1,2})\/(\d{1,2})(?!\d)(?:\s*[\(（]([^\)）]{1,3})[\)）])?/g;
   while((m=reB.exec(line))){
     out.push(m[1]+'/'+m[2]+(m[3]?('('+m[3]+')'):''));
   }
@@ -381,17 +496,25 @@ function findPrice(line){
   return null;
 }
 function countForPosition(line, pos){
-  const m = line.match(new RegExp(pos.name + '[^0-9]{0,4}(\\d{1,2})\\s*名'));
+  // pos.name（全角表記）ではなく検出に使った正規表現そのものを使う。
+  // 半角カナ「ｸﾛｰｻﾞｰ 3名」でも人数が取れる。桁は \d{1,3}（「100名」が 1 に化けていた）
+  const m = line.match(new RegExp('(?:' + pos.re.source + ')[^0-9]{0,4}(\\d{1,3})\\s*名', 'i'));
   return m ? Number(m[1]) : null;
 }
 function findTransport(line){
-  if(/交込|交通費込|交費込|込み/.test(line)) return '交通費込み';
-  if(/交別|交通費別|別途/.test(line)) return '交通費別';
+  // 「税込み」「駐車場代は別途」を交通費と誤判定しないよう、裸の /込み/ /別途/ は使わず
+  // 必ず交通費の文脈語（交通費・交費・交通・交込/交別）とセットで判定する
+  if(/交込|交通費込|交費込/.test(line)) return '交通費込み';
+  if(/交別|交通費別|交費別/.test(line)) return '交通費別';
+  const m = line.match(/(?:交通費|交費|交通)\s*[:：]?\s*(込み?|支給|あり|有|別途?|なし|無し|無|自己負担|自腹)/);
+  if(m) return /込|支給|あり|有/.test(m[1]) ? '交通費込み' : '交通費別';
   return '';
 }
 function findLodging(line){
-  if(/宿泊なし|宿泊無/.test(line)) return '';
-  if(/宿泊あり|宿泊有|宿泊込|宿泊費|宿泊/.test(line)) return '宿泊あり';
+  // 否定形を先に総取りする。「宿泊費なし」が /宿泊費/ に食われて「宿泊あり」になっていた
+  if(/宿泊(?:費|代)?\s*(?:なし|無し|無|不要|自己負担)/.test(line)) return '';
+  if(/宿泊(?:費|代)?\s*(?:あり|有り|有|込み?|支給|要)/.test(line)) return '宿泊あり';
+  if(/宿泊/.test(line)) return '宿泊あり';
   return '';
 }
 const CHAIN = /(ヤマダデンキ|ヤマダ電機|ケーズデンキ|ビックカメラ|エディオン|ジョーシン|イオンモール|イオンタウン|イオン|Tecc ?LIFE ?SELECT|テックランド|K's|Ｋ’ｓ)/i;
@@ -471,7 +594,7 @@ function parseJobs(rawText){
 
   const out = [];
   for(const b of blocks){
-    const dates = uniq(b.dates).join(' / ');
+    const dates = uniqDates(b.dates).join(' / ');
     const names = Object.keys(b.pos);
     const single = names.length === 1;
     for(const name of names){
@@ -493,7 +616,18 @@ function parseJobs(rawText){
   }
   return out;
 }
-function uniq(a){ return [...new Set(a)]; }
+/* 「6/27(金)」と「6/27」は同じ日。曜日を落とした形をキーにして重複を潰す（曜日つきを残す） */
+function uniqDates(a){
+  const seen = new Map();
+  for(const d of (a||[])){
+    const s = String(d);
+    const key = s.replace(/[\(（][^\)）]*[\)）]/g,'').replace(/\s+/g,'');
+    if(!key) continue;
+    const prev = seen.get(key);
+    if(prev===undefined || String(prev).length < s.length) seen.set(key, s);
+  }
+  return [...seen.values()];
+}
 
 function addParsed(text){
   const drafts = parseJobs(text);
@@ -515,50 +649,58 @@ function render(){
   const wrap = $('#cards'); wrap.innerHTML='';
   $('#empty').style.display = jobs.length ? 'none' : 'block';
   let newN=0, fullN=0;
-  jobs.forEach((j, idx)=>{
+  jobs.forEach((j)=>{
     if(j._new||j._dirty) newN++;
     if(j.status==='full') fullN++;
-    wrap.appendChild(jobCard(j, idx));
+    wrap.appendChild(jobCard(j));
   });
   $('#count').textContent = jobs.length + ' 件';
   $('#newcount').textContent = '未保存 ' + newN;
   $('#fullcount').textContent = '満員 ' + fullN;
+  // 未保存が解消したら更新バナーを残さない（残ると不要な再読み込み＝編集破棄を誘発する）
+  if(newN===0) $('#refresh-banner').style.display='none';
 }
-function opt(j,key,val,label){ return `<option value="${val}" ${j[key]===val?'selected':''}>${label}</option>`; }
-function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function jobCard(j, idx){
+function opt(j,key,val,label){ return `<option value="${esc(val)}" ${j[key]===val?'selected':''}>${esc(label)}</option>`; }
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;').replace(/`/g,'&#96;'); }
+function jobCard(j){
   const isNew=j._new, dirty=j._dirty;
+  const t = esc(j._tmp);   // 配列indexではなく安定キーで結び付ける（他端末更新の再描画でズレない）
   const el = document.createElement('div');
   el.className = 'jc' + (isNew?' isnew':'') + (dirty?' isdirty':'') + (j.status==='full'?' isfull':'');
   el.innerHTML = `
-    <div class="jc-bar" style="background:${carrierColor(j.carrier)}"></div>
+    <div class="jc-bar" style="background:${esc(carrierColor(j.carrier))}"></div>
     <div class="jc-head">
       <div class="jc-badges">
         ${isNew?'<span class="tag-new">新規・未保存</span>':(dirty?'<span class="tag-dirty">未保存</span>':'')}
-        <span class="tag-id mono">${isNew?'NEW':'#'+j.id}</span>
+        <span class="tag-id mono">${isNew?'NEW':'#'+esc(j.id)}</span>
       </div>
-      <button class="del" data-i="${idx}">削除</button>
+      <button class="del" data-tmp="${t}">削除</button>
     </div>
     <div class="grid2">
       <div class="cell"><label>キャリア</label>
-        <select class="input" data-i="${idx}" data-k="carrier">${CARRIERS.map(c=>opt(j,'carrier',c.v,c.emoji+' '+c.label)).join('')}</select></div>
+        <select class="input" data-tmp="${t}" data-k="carrier">${carrierList(j).map(c=>opt(j,'carrier',c.v,c.emoji+' '+c.label)).join('')}</select></div>
       <div class="cell"><label>ポジション</label>
-        <select class="input" data-i="${idx}" data-k="position">${['クローザー','キャッチャー','ラウンダー'].map(p=>opt(j,'position',p,p)).join('')}</select></div>
-      <div class="cell"><label>最寄駅</label><input class="input" data-i="${idx}" data-k="station" value="${esc(j.station)}"></div>
-      <div class="cell"><label>店舗 / 会場</label><input class="input" data-i="${idx}" data-k="store" value="${esc(j.store)}"></div>
-      <div class="cell"><label>単価(円)</label><input class="input" data-i="${idx}" data-k="price" inputmode="numeric" value="${j.price}"></div>
-      <div class="cell"><label>人数</label><input class="input" data-i="${idx}" data-k="count" inputmode="numeric" value="${j.count}"></div>
-      <div class="cell full"><label>日程</label><input class="input" data-i="${idx}" data-k="dates" value="${esc(j.dates)}"></div>
-      <div class="cell"><label>交通費</label><input class="input" data-i="${idx}" data-k="transport" value="${esc(j.transport)}" placeholder="交通費込み / 別"></div>
-      <div class="cell"><label>宿泊</label><input class="input" data-i="${idx}" data-k="lodging" value="${esc(j.lodging)}" placeholder="なし / 宿泊あり"></div>
-      <div class="cell"><label>タグ(任意)</label><input class="input" data-i="${idx}" data-k="tag" value="${esc(j.tag)}" placeholder="増員 など"></div>
-      <div class="cell"><label>備考(任意)</label><input class="input" data-i="${idx}" data-k="note" value="${esc(j.note)}"></div>
+        <select class="input" data-tmp="${t}" data-k="position">${['クローザー','キャッチャー','ラウンダー'].map(p=>opt(j,'position',p,p)).join('')}</select></div>
+      <div class="cell"><label>最寄駅</label><input class="input" data-tmp="${t}" data-k="station" value="${esc(j.station)}"></div>
+      <div class="cell"><label>店舗 / 会場</label><input class="input" data-tmp="${t}" data-k="store" value="${esc(j.store)}"></div>
+      <div class="cell"><label>単価(円)</label><input class="input" data-tmp="${t}" data-k="price" inputmode="numeric" value="${esc(j.price)}"></div>
+      <div class="cell"><label>人数</label><input class="input" data-tmp="${t}" data-k="count" inputmode="numeric" value="${esc(j.count)}"></div>
+      <div class="cell full"><label>日程</label><input class="input" data-tmp="${t}" data-k="dates" value="${esc(j.dates)}"></div>
+      <div class="cell"><label>交通費</label><input class="input" data-tmp="${t}" data-k="transport" value="${esc(j.transport)}" placeholder="交通費込み / 別"></div>
+      <div class="cell"><label>宿泊</label><input class="input" data-tmp="${t}" data-k="lodging" value="${esc(j.lodging)}" placeholder="なし / 宿泊あり"></div>
+      <div class="cell"><label>タグ(任意)</label><input class="input" data-tmp="${t}" data-k="tag" value="${esc(j.tag)}" placeholder="増員 など"></div>
+      <div class="cell"><label>備考(任意)</label><input class="input" data-tmp="${t}" data-k="note" value="${esc(j.note)}"></div>
     </div>
     <div class="jc-foot">
-      <label class="chk"><input type="checkbox" data-i="${idx}" data-k="status" ${j.status==='full'?'checked':''}>満員にする</label>
-      <button class="save-btn" data-i="${idx}" ${(isNew||dirty)?'':'disabled'}>${isNew?'追加して公開':'変更を保存'}</button>
+      <label class="chk"><input type="checkbox" data-tmp="${t}" data-k="status" ${j.status==='full'?'checked':''}>満員にする</label>
+      <button class="save-btn" data-tmp="${t}" ${(isNew||dirty)?'':'disabled'}>${isNew?'追加して公開':'変更を保存'}</button>
     </div>`;
   return el;
+}
+/* data-tmp から案件オブジェクトを引く（配列indexの結合をやめたので必須） */
+function jobOf(el){
+  const key = el && el.dataset ? el.dataset.tmp : null;
+  return key ? jobs.find(x=>x._tmp===key) : null;
 }
 
 /* ===================== イベント ===================== */
@@ -591,10 +733,16 @@ $('#addempty-btn').addEventListener('click', ()=>{
 });
 $('#clearpaste-btn').addEventListener('click', ()=>{ $('#paste').value=''; });
 
+/* 数値欄の正規化はここ1箇所。全角「２７０００」を先に半角化してから数字だけ取る
+   （z2h を通さないと ¥0 のまま公開されていた）。payload 側で 0→1 に戻さないこと */
+function normInt(v){
+  const n = Number(z2h(String(v==null?'':v)).replace(/[^\d]/g,''));
+  return Number.isFinite(n) ? n : 0;
+}
 $('#cards').addEventListener('input', e=>{
-  const t=e.target, i=t.dataset.i, k=t.dataset.k; if(i==null||!k) return;
-  const j = jobs[Number(i)];
-  if(k==='price'||k==='count') j[k] = Number(String(t.value).replace(/[^\d]/g,''))||0;
+  const t=e.target, k=t.dataset.k; if(!k) return;
+  const j = jobOf(t); if(!j) return;
+  if(k==='price'||k==='count') j[k] = normInt(t.value);
   else j[k] = t.value;
   if(!j._new) j._dirty = true;
   const card = t.closest('.jc');
@@ -602,14 +750,36 @@ $('#cards').addEventListener('input', e=>{
 });
 $('#cards').addEventListener('change', e=>{
   const t=e.target; if(!t.dataset.k) return;
-  const j = jobs[Number(t.dataset.i)];
+  const j = jobOf(t); if(!j) return;
   if(t.dataset.k==='status'){ j.status = t.checked?'full':''; if(!j._new) j._dirty=true; render(); }
   if(t.dataset.k==='carrier'){ j.carrier = t.value; if(!j._new) j._dirty=true; render(); }
 });
 $('#cards').addEventListener('click', e=>{
-  if(e.target.classList.contains('del')) deleteJob(jobs[Number(e.target.dataset.i)]);
-  if(e.target.classList.contains('save-btn')) saveJob(jobs[Number(e.target.dataset.i)]);
+  const t = e.target;
+  if(t.classList.contains('del')) deleteJob(jobOf(t), t);
+  if(t.classList.contains('save-btn')) saveJob(jobOf(t), t);
 });
+
+/* 下書き（未保存）を抱えたままの離脱・再読み込みを警告する（モバイルWebView破棄で消えるのを防ぐ） */
+window.addEventListener('beforeunload', e=>{
+  if(!hasUnsaved()) return;
+  e.preventDefault();
+  e.returnValue = '';
+  return '';
+});
+
+/* Androidのソフトキーボードで固定バーが編集欄に被るのを避ける */
+(function(){
+  const vv = window.visualViewport; if(!vv) return;
+  const bar = $('#statusbar');
+  const apply = ()=>{
+    const overlap = window.innerHeight - (vv.height + vv.offsetTop);
+    bar.classList.toggle('kbd', overlap > 100);
+  };
+  vv.addEventListener('resize', apply);
+  vv.addEventListener('scroll', apply);
+  apply();
+})();
 
 /* ===================== 起動 ===================== */
 (async()=>{ if(await hasSession()) enterApp(); })();
